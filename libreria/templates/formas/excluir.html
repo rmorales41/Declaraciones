@@ -1,0 +1,16 @@
+{% extends "paginas/base.html" %}
+
+{% block titulo %} Dar de Baja a la Declaraciones  {% endblock %}
+
+{% block contenido %}
+
+<div class="card">
+    <div class="card-header">Eliminar Declaraciones</div>
+    <div class="card-body">
+        <h4 class="card-title">Declaración</h4>
+       {% include 'formas/form.html' %}
+    </div>
+    <div class="card-footer text-muted">Registro</div>
+ </div>
+
+{% endblock %}

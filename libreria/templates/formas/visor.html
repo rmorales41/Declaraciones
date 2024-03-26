@@ -1,0 +1,63 @@
+{% extends "paginas/base.html" %}
+
+{% block titulo %} Registro de Declaraciones  {% endblock %}
+
+{% block contenido %}
+
+<div class="card">
+    <div class="card-header">
+        <a
+            name=""
+            id=""
+            class="btn btn-success"
+            href="{% url 'crear' %}"
+            role="button"
+            >Crear Declaraciones</a
+        >
+        
+    </div>
+    <div class="card-body">
+        <h4 class="card-title">Visor</h4>
+        <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Código</th>
+                        <th scope="col">Detalle</th>
+                        <th scope="col">Tiempo</th>
+                        <th scope="col">Estado</th>
+                        <th scope="col">Observación</th> 
+                        <th scope="col">Imagen</th> 
+                        <th scope="col">Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                                  
+                    {% for a in dvisor %}
+
+                    <tr class="">
+                        <td scope="row">{{a.id}}</td>
+                        <td scope="row">{{a.codigo}}</td>
+                        <td scope="row">{{a.detalle}}</td>
+                        <td scope="row">{{a.tiempo}}</td>
+                        {% if a.estado %}
+                        <td scope="row">Activo</td>                        
+                        {%else %}
+                        <td scope="row">Inactivo </td>                        
+                        {% endif%}                        
+                        <td scope="row">{{a.observaciones}}</td> 
+                        <td>
+                            <img src="{{ a.imagen.url }}" height ="50" />      
+                        </td>                    
+                        <td><a name="" id="" class="btn btn-primary" href="{% url 'editar' %}"  role="button">Editar</a>
+                         |  <a name="" id="" class="btn btn-danger"  href="{% url 'excluir' %}" role="button">Borrar</a>
+                        </td>
+                    {% endfor %}                                          
+
+                </tbody>
+         </table>
+    </div>
+    <div class="card-footer text-muted">Defina las fechas de Presentación</div>
+</div>
+
+{% endblock %}

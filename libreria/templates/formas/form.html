@@ -1,0 +1,20 @@
+<form enctype="multipart/form-data" method="post">
+ {% csrf_token %}  <!-- llave de formulario de Django--> 
+
+ {% for campo in var_formulario %}
+    <div class="mb-3">
+        <label for="" class="form-label">{{ campo.label }}:</label>
+        <input 
+         type="{{campo.field.widget.input_type}}"
+         class="form-control"  
+         name="{{ campo.name }}" 
+         id=""  
+         aria-describedby="helpId" 
+         placeholder="{{ campo.label }}"/>            
+    </div>
+    <!-- controla el error -->
+    <div class="col-12 help-text"> {{campo.errors}} </div>
+    {% endfor %}
+    
+    <input name="" id="" class="btn btn-success" type="submit" value="Enviar Datos"/>  
+</form>

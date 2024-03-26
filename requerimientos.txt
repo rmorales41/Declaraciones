@@ -1,0 +1,106 @@
+https://www.youtube.com/watch?v=ezIj71CX944
+
+👉 Instalar entorno virtual
+
+$  python  -m  venv  env
+
+$  .\env\Scripts\activate
+👉 Instalar dependencias
+
+$  python  -m  venv  env
+
+$  .\env\Scripts\activate
+pip  install  -r  requirements.txt
+👉 Instalación de librerías (Si hizo el paso anterior omita esta parte)
+
+$  pip  install  Django
+
+$  pip  install  djangorestframework
+
+$  pip  install  Django==5.0.1
+
+$  pip  install  django-cors-headers==4.3.1
+
+$  pip  install  djangorestframework==3.14.0
+
+$  pip  install  mysqlclient==2.2.1
+
+$  pip  install  drf-yasg==1.21.7 <--  Swagger
+
+$  pip  install  --upgrade  setuptools
+
+$  py  -m  pip  install  --upgrade  pip
+👉 Libs Necesarias para utilizar con MSSQL
+
+$  pip  install  mssql-django==1.4
+
+$  pip  install  pyodbc==5.0.1
+👉 Comandos comunes Django
+
+$  django-admin  startproject  mysite
+
+$  django-admin  startapp  nueva  app
+
+$  py  manage.py  runserver
+
+$  py  manage.py  makemigrations
+
+$  py  manage.py  migrate
+
+$  py  manage.py  createsuperuser
+
+$  py  --version
+
+$  py  manage.py  showmigrations
+
+👉 Recordatorio: Si se conecta a la base de datos de MSSQL debe tener el drvier ODBC instaldo --> en este caso: ODBC Driver 17 for SQL Server
+
+
+👉 Crear usuario superuser
+
+$  py  manage.py  createsuperuser
+👉 Ejecutar Proyecto
+
+$  py  manage.py  runserver
+Deberías ver la ejecución de la aplicación así... http://127.0.0.1:8000/.
+
+Volver a la conexion por defecto BASE:
+
+POST : http://127.0.0.1:8000/api/conexion-default/
+
+
+USO DE TOKEN -- POSTMAN
+👉 Se utilizó la librería de rest_framework_simplejwt
+
+Para obtener un token puede hacerlo por 2 vías:
+
+API http://127.0.0.1:8000/api/inicio-sesion/ y este devolverá el token
+
+Como ingresar el token para petición API
+----------------------------------
+entorno virtual py 
+py  -m  venv  env
+ .\env\Scripts\activate
+instalar Django primero crea el entorno virtual 
+pip  install  Django
+** crear carpetas de Django 
+
+------------ para crear la base de datos 
+
+prepara la base para realizar la migracion 
+py manage.py makemigrations 
+py manage.py migrate 
+-----------
+Crear usuario para el administrativo
+py mange.py createsuperuser
+correo 
+password 
+
+coordinador superuser
+correo : rmorales41@hotmail.com
+Pasw   : Abc123456
+
+
+
+
+
