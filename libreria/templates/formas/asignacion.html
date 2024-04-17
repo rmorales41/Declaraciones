@@ -1,0 +1,30 @@
+{% extends "paginas/base.html" %}
+
+{% load static %}
+
+{% block titulo %} Asigna Declaraciones  {% endblock %}
+
+{% block contenido %}
+<!-- Combo -->
+<script src="{% static 'js/index.js' %}"></script> 
+ 
+<div class="card">
+    <div class="card-header">Asigna Declaraciones</div>
+    <div class="card-body">
+        <h4 class="card-title">Asigna Declaraciones de Clientes a Funcionarios</h4>                
+
+        <div class="row">
+            <div class="col-md-6">
+              <form action ="" method="POST">
+                  {% csrf_token %}
+          
+                  {% include 'formas/asignacion_form.html' %}
+             
+              </form>
+            </div> 
+        </div>                           
+    </div>
+    <div class="card-footer text-muted">Asigna</div>
+ </div>
+{% endblock %}
+

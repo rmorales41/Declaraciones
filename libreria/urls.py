@@ -13,7 +13,9 @@ urlpatterns = [
     path('base',views.base, name= 'base'),
     path('visor',views.visor,name='visor'),
     path('crear',views.crear,name='crear'),
-    path('editar',views.editar,name='editar'),
-    path('excluir',views.excluir,name='excluir'),    
+    path('editar/<int:IDD>',views.editar,name='editar'),
+    path('elimina/<int:IDD>',views.elimina,name='elimina'),  
+    path('asigna',views.asigna,name='asigna'),  
+    path('pendiente',views.pendiente,name='pendiente'),  
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,0 +1,61 @@
+<!-- https://www.youtube.com/watch?v=qgf0UYzL5BY -->
+{% load static %}
+
+<body>
+    <!-- Se indica la ruta de la carpeta static para java--> 
+    <script src="{% static 'js/index.js' %}"></script>    
+    <!-- Indica los funcionarios  de la empresa -->    
+
+    <a><label>Colaboradores </label></a>
+    <select class="form-select" >
+      {% for campo in var_Funcionarios %}    
+          <option id="#" value ="{{campo.Nombre}}"> {{campo.Nombre}} </option>          
+      {% endfor %}
+    </select>
+    <select id="ListClient"></select>
+    </br>
+
+
+    <a></label>Lista de Clientes Pendientes de Asignar</label></a><br><select id="#"></select></BR>
+    </br>
+    
+      <!-- Muestra los clientes asignados al Colaborador -->
+      {% block js %} 
+            <!--- listado de clientes -->
+            <a></label>Lista de Clientes</label></a><br><select id="ListClient"></select></BR>
+            
+            
+            <!-- muestra las declaraciones -->
+            <div class="card-body">
+              <h4 class="card-title">Declaraciones por Cliente </h4>
+              <table class="table">
+                      <thead>
+                          <tr>
+                            <th scope="col">ID_Declaración</th>
+                            <th scope="col">Codigo</th>                          
+                            <th scope="col">Detalle</th>
+                            <th scope="col">Presentada</th>
+                            <th scope="col">Asignadan</th>
+                          </tr>
+                      </thead>
+                      <tbody>                        
+                        {% for a in dvisor %} 
+
+                          <tr class="">
+                              <td scope="row">{{a.IDClientes_Proveedores}}</td>
+                              <td scope="row">{{a.Descripcion}}</td>                                                    
+                              <td><a name="" id="" class="btn btn-primary" href="{% url 'editar' a.IDDeclaracion %}"  role="button">Editar</a>
+                                  <a name="" id="" class="btn btn-danger"  href="#" onclick="eliminadecla({{ a.IDDeclaracion }})"  role="button">Borrar</a>
+                              </td>
+                          {% endfor %}                                                
+                      </tbody>
+              
+              </table>     
+            </div>
+
+
+            <div class="card-footer text-muted">Muestra las asignaciones de los Colaboradores</div>
+          </div>
+
+      {% endblock %}
+</body>

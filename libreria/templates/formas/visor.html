@@ -1,8 +1,33 @@
 {% extends "paginas/base.html" %}
-
 {% block titulo %} Registro de Declaraciones  {% endblock %}
-
 {% block contenido %}
+
+
+{% block js %} 
+
+    <script> 
+        function eliminadecla(id) {
+               Swal.fire({
+                "title":"Desea Eliminar la declaración",
+                "text":"Una vez realizada se elimina por completo ",
+                "icon":"warning",
+                "showCancelButton": true,
+                "cancelButtonText": "No, Cancelar",
+                "confirmButtonText": "Si, Eliminar",
+                "reverseButtons":true,
+                "confirmButtonColor": "#dc3545",
+                "backdrop":true,
+                "showLoaderOmConfim": true,
+            })
+            .then(function(result){
+                if(result.isConfirmed){                    
+                    window.location.href = "/elimina/"+id
+                }
+            })
+        }
+    </script>
+{% endblock %}
+
 
 <div class="card">
     <div class="card-header">
@@ -31,33 +56,41 @@
                         <th scope="col">Acción</th>
                     </tr>
                 </thead>
-                <tbody>
-                                  
+                <tbody>       
                     {% for a in dvisor %}
 
                     <tr class="">
-                        <td scope="row">{{a.id}}</td>
+                        <td scope="row">{{a.IDDeclaracion}}</td>
                         <td scope="row">{{a.codigo}}</td>
                         <td scope="row">{{a.detalle}}</td>
                         <td scope="row">{{a.tiempo}}</td>
                         {% if a.estado %}
-                        <td scope="row">Activo</td>                        
+                            <td scope="row" style="color: red">Activo</td>                        
                         {%else %}
-                        <td scope="row">Inactivo </td>                        
+                            <td scope="row" style="color: black">Inactivo </td>                        
                         {% endif%}                        
                         <td scope="row">{{a.observaciones}}</td> 
                         <td>
                             <img src="{{ a.imagen.url }}" height ="50" />      
                         </td>                    
-                        <td><a name="" id="" class="btn btn-primary" href="{% url 'editar' %}"  role="button">Editar</a>
-                         |  <a name="" id="" class="btn btn-danger"  href="{% url 'excluir' %}" role="button">Borrar</a>
+                        <td><a name="" id="" class="btn btn-primary" href="{% url 'editar' a.IDDeclaracion %}"  role="button">Editar</a>
+                            <a name="" id="" class="btn btn-danger"  href="#" onclick="eliminadecla({{ a.IDDeclaracion }})"  role="button">Borrar</a>
                         </td>
-                    {% endfor %}                                          
+                    {% endfor %}    
 
+                  
                 </tbody>
-         </table>
+         
+         </table>     
+                <!-- paginacion-->                                                       
+                {% include "formas/paginacion.html" %}   
     </div>
     <div class="card-footer text-muted">Defina las fechas de Presentación</div>
 </div>
 
 {% endblock %}
+
+
+<!-- <a name="" id="" class="btn btn-danger"  href="{% url 'elimina' a.id %}" role="button">Borrar</a> -->
+
+

@@ -28,6 +28,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# mensajes 
+MESSAGE_STORAGE = "django.contrib.messages.storage.cookie.CookieStorage"
+
 # Application definition
 
 INSTALLED_APPS = [

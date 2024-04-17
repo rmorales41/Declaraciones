@@ -19,9 +19,7 @@
         />
     </head>
 
-    <body>
-  
-    
+    <body>      
 
       <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
@@ -34,9 +32,10 @@
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Declaraciones</a>
                 <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="{% url 'visor' %}">Registro</a></li>
-                  <li><a class="dropdown-item" href="#">Asignaciones</a></li>
-                  <li><a class="dropdown-item" href="#">Pendientes</a></li>
+                  <li><a class="dropdown-item" href="{% url 'visor' %}">Visor General</a></li>
+                  <li><a class="dropdown-item" href="{% url 'asigna' %}">Asigna Declaraciones</a></li>
+                  <li><a class="dropdown-item" href="{% url 'pendiente' %}">Pendientes de asignación</a></li>
+                  <li><a class="dropdown-item" href="{% url 'pendiente' %}">Buscar Movimientos por Declaración</a></li>
                   <li><hr class="dropdown-divider"></li>
                   <li><a class="dropdown-item" href="#">Histórico</a></li>
                 </ul>
@@ -44,7 +43,7 @@
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Clientes</a>
                 <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="#">Consulta</a></li>
+                  <li><a class="dropdown-item" href="#">Pendientes por Realizar</a></li>
                   <li><a class="dropdown-item" href="">Registro de Recibos</a></li>
                   <li><hr class="dropdown-divider"></li>
                   <li><a class="dropdown-item" href="#"></a></li>
@@ -77,7 +76,8 @@
         </div>
 
       </div>
-      
+      <!--# sweetalert2 -->
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
         
         <script
             src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
@@ -89,6 +89,19 @@
             src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
             integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
             crossorigin="anonymous"
-        ></script>                
+        ></script>   
+
+        <!--- Control de mensajes -->
+        {% if messages %}
+          {% for m in messages %}
+             <script>
+                Swal.fire({
+                  "title": "Felicidades",
+                  "text": "{{m}}",
+                  "icon": "success"
+                })
+             </script>
+          {% endfor %}
+        {% endif %}        
     </body>
 </html>
