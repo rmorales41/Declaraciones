@@ -28,6 +28,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# mensajes 
+MESSAGE_STORAGE = "django.contrib.messages.storage.cookie.CookieStorage"
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -77,7 +80,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'mssql',
         'NAME':'Declaraciones',
-        'HOST':'192.168.10.100',
+        'HOST':'192.168.1.16',
         'PORT':'1433',
         'USER':'Usuario05',
         'PASSWORD':'Usuario05',

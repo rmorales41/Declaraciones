@@ -1,5 +1,6 @@
 https://www.youtube.com/watch?v=ezIj71CX944
 
+
 👉 Instalar entorno virtual
 
 $  python  -m  venv  env
@@ -7,9 +8,6 @@ $  python  -m  venv  env
 $  .\env\Scripts\activate
 👉 Instalar dependencias
 
-$  python  -m  venv  env
-
-$  .\env\Scripts\activate
 pip  install  -r  requirements.txt
 👉 Instalación de librerías (Si hizo el paso anterior omita esta parte)
 
@@ -97,6 +95,7 @@ correo
 password 
 
 coordinador superuser
+usuario: rmorales
 correo : rmorales41@hotmail.com
 Pasw   : Abc123456
 
