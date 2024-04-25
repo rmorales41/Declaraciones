@@ -2,14 +2,15 @@
 <!doctype html>
 <html lang="en">
     <head>
-        <title>{% block titulo %} {% endblock %}</title>
+        <title>{% block titulo %} {% endblock %}</title>       
         <!-- Required meta tags -->
         <meta charset="utf-8" />
-        <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1, shrink-to-fit=no"
-        />
-
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+         <!-- Incluir jQuery       
+        <script src="{% static 'https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.js' %}"></script>        -->   
+        
+        <!-- Otros elementos del head -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">       
         <!-- Bootstrap CSS v5.2.1 -->
         <link
             href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
@@ -20,6 +21,11 @@
     </head>
 
     <body>      
+<<<<<<< Updated upstream
+=======
+
+     
+>>>>>>> Stashed changes
 
       <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
@@ -31,11 +37,21 @@
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Declaraciones</a>
+<<<<<<< Updated upstream
                 <ul class="dropdown-menu">
                   <li><a class="dropdown-item" href="{% url 'visor' %}">Visor General</a></li>
                   <li><a class="dropdown-item" href="{% url 'asigna' %}">Asigna Declaraciones</a></li>
                   <li><a class="dropdown-item" href="{% url 'pendiente' %}">Pendientes de asignación</a></li>
                   <li><a class="dropdown-item" href="{% url 'pendiente' %}">Buscar Movimientos por Declaración</a></li>
+=======
+                <ul class="dropdown-menu">                 
+                  <li><a class="dropdown-item" href="{% url 'visor' %}"><i class="bi bi-0-circle"></i> Visor General</a></li>
+                  <li><a class="dropdown-item" href="{% url 'asigna' %}">Asigna Declaraciones a Funcionarios</a></li>
+                  <li><a class="dropdown-item" href="{% url 'pendiente' %}">Clientes Sin Asignación</a></li>
+                  <li><a class="dropdown-item" href="{% url 'pendiente' %}">Buscar Movimientos por Declaración</a></li>
+                  <li><a class="dropdown-item" href="{% url 'pendiente' %}">Visor de Status de Declaraciones</a></li>
+                  <li><a class="dropdown-item" href="{% url 'pendiente' %}">Finaliza Declaración por Cliente</a></li>
+>>>>>>> Stashed changes
                   <li><hr class="dropdown-divider"></li>
                   <li><a class="dropdown-item" href="#">Histórico</a></li>
                 </ul>
@@ -43,6 +59,10 @@
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Clientes</a>
                 <ul class="dropdown-menu">
+<<<<<<< Updated upstream
+=======
+                  <li><a class="dropdown-item" href="#">Asigna Declaraciones a Clientes</a></li>
+>>>>>>> Stashed changes
                   <li><a class="dropdown-item" href="#">Pendientes por Realizar</a></li>
                   <li><a class="dropdown-item" href="">Registro de Recibos</a></li>
                   <li><hr class="dropdown-divider"></li>

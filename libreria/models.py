@@ -40,6 +40,10 @@ class Asignacion(models.Model):
     Fecha_Presenta = models.DateField(blank=True,null=True, verbose_name='Fecha_Presenta')
     Fecha_Asigna = models.DateField(blank=True,null=True, verbose_name='Fecha_Asigna')
     Fecha_Proxima = models.DateField(blank=True,null=True, verbose_name='Fecha_Proxima')
+<<<<<<< Updated upstream
+=======
+    correo =models.BooleanField(default=False)
+>>>>>>> Stashed changes
       
     # llaves foraneas 
     IDClientes_Proveedores = models.ForeignKey(cliente_proveedor_cliente_proveedor, on_delete=models.CASCADE) 

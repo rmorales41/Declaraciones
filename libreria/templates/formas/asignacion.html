@@ -9,6 +9,7 @@
 <script src="{% static 'js/index.js' %}"></script> 
  
 <div class="card">
+<<<<<<< Updated upstream
     <div class="card-header">Asigna Declaraciones</div>
     <div class="card-body">
         <h4 class="card-title">Asigna Declaraciones de Clientes a Funcionarios</h4>                
@@ -20,6 +21,23 @@
           
                   {% include 'formas/asignacion_form.html' %}
              
+=======
+    <div class="card-header" >Asigna Declaraciones</div>
+    <div class="card-body">
+        <h4 class="card-title" style="text-align: center;">Asigna Declaraciones de Clientes a Funcionarios</h4>   
+         <!-- Botón al final de la fila -->
+        <div class="row mt-3">
+            <div class="col text-right">
+             <input type="button" onclick="history.back()" class="btn btn-primary" name="volver atrás" value="volver atrás" style="float: left;">
+            </div>
+        </div>
+                
+        <div class="row">
+            <div class="col-md-26">
+              <form action ="" method="POST">
+                  {% csrf_token %}          
+                  {% include 'formas/asignacion_form.html' %}             
+>>>>>>> Stashed changes
               </form>
             </div> 
         </div>                           

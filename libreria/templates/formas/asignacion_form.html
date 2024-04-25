@@ -1,7 +1,12 @@
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 <!-- https://www.youtube.com/watch?v=qgf0UYzL5BY -->
 {% load static %}
 
 <body>
+<<<<<<< Updated upstream
     <!-- Se indica la ruta de la carpeta static para java--> 
     <script src="{% static 'js/index.js' %}"></script>    
     <!-- Indica los funcionarios  de la empresa -->    
@@ -59,3 +64,74 @@
 
       {% endblock %}
 </body>
+=======
+ 
+    <!-- Se indica la ruta de la carpeta static para java-->     
+    <script src="{% static '/js/index.js' %}">
+    </script>    
+
+    <!-- Indica los funcionarios  de la empresa -->    
+    <div class="container-fluid">
+      <div class="row justify-content-end">
+        <div class="col-md-16"> <!-- Define el tamaño del combo -->
+              <a><label class="text-primary">Colaboradores Registrados </label></a>
+              <select class="form-select" onchange="listarClientes()" id ="clientes" >
+              {% for campo in var_Funcionarios %}    
+                  <option id="{{ campo.IDPlanilla_Funcionarios_id }}"   value ="{{campo.IDPlanilla_Funcionarios}}">{{campo.IDPlanilla_Funcionarios}} - {{campo.Nombre}} </option>          
+              {% endfor %}
+            </select>
+        </div>
+        </br>
+      </div>
+    </div>
+   
+  <div class="container-xl">
+    <div class="row justify-content-end">
+        <div class="col-md-10"> <!-- Alinea el combo al centro de la pantalla -->
+            <div class="form-group d-flex align-items-center">                                    
+                <label class="text-primary me-2" for="clientepend"></br>Lista de Clientes Pendientes de Asignar</label>
+                <select class="form-select me-2" onchange="Carga_Clientesfuncionario()" id="clientepend"></select>                             
+                <button type="button" class="btn btn-success" onclick="Clientessinasignacion()">Asigna</button></a>                                    
+              </div>          
+        </div>
+     </div>
+  </div>
+
+  <div class="container-xl">
+    <div class="row justify-content-end">
+      <div class="col-md-14"> <!-- Alinea el combo al centro de la pantalla -->
+        <div class="form-group d-flex align-items-center">
+          <label class="text-primary me-2"></br>Lista de Clientes por Funcionario</label></br>
+          <select class="form-select me-2" onchange="Carga_Declaracion_Cliente(this.value)" id="Clientfunc"></select>        
+          <button type="button" class="btn btn-warning">Desasigna</button>
+        
+        </div>
+      </div>
+    </div>
+  </div>
+  <div>        
+            <!--- Detalle de declaraciones por cliente  -->                                           
+            <div class="card-body">
+              <h4 class="card-title" style="text-align: center;">Declaraciones por Cliente </h4>
+              <table class="table">
+                      <thead>
+                          <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Codigo</th>                          
+                            <th scope="col">Detalle</th>
+                            <th scope="col">Presentada</th>
+                            <th scope="col">Asignada</th>                            
+                            <th scope="col">Correo</th> 
+                          </tr>
+                      </thead>
+                      <tbody id="declaracionesTabla">                                                                                      
+                      </tbody>              
+              </table>     
+            </div>
+            <div class="card-footer text-muted">Muestra las asignaciones de los Colaboradores</div>
+          </div>
+       </div>
+
+</body>
+
+>>>>>>> Stashed changes

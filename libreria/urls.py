@@ -17,5 +17,13 @@ urlpatterns = [
     path('elimina/<int:IDD>',views.elimina,name='elimina'),  
     path('asigna',views.asigna,name='asigna'),  
     path('pendiente',views.pendiente,name='pendiente'),  
+<<<<<<< Updated upstream
+=======
+    path('clientesgeneral/', views.Clientes_General, name='clientesgeneral'),
+    path('clientespendientes/', views.Clientes_pendientes, name='clientespendientes'),
+    path('asignaciones/<int:IDD>', views.Clientes_Funcionario, name='asignaciones'),
+    path('declaracionxcliente/<int:IDD>',views.Declaracion_Cliente, name='declaracionxcliente'),
+    path('asigna_declaracion/<int:cliente_id>/<int:colaborador_id>',views.Asigna_Declaracion, name='asigna_declaracion'),
+>>>>>>> Stashed changes
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
