@@ -1,5 +1,4 @@
 //<!-- https://www.youtube.com/watch?v=qgf0UYzL5BY -->
-<<<<<<< Updated upstream
 //  alert("UskokruM2010 - prueba");
 // cuando se carga se agrega un escuchador al formulario y que espere por la funcion carga
 
@@ -202,4 +201,3 @@ async function Clientessinasignacion() {
       window.location.href = asignaDeclaracionURL + selectedClientId + "/" + selectedColaboradorId ; // Redirecciona a la vista y pasa dos parametros 
   }
 
->>>>>>> Stashed changes
