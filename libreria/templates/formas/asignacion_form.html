@@ -1,71 +1,9 @@
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <!-- https://www.youtube.com/watch?v=qgf0UYzL5BY -->
 {% load static %}
 
 <body>
-<<<<<<< Updated upstream
-    <!-- Se indica la ruta de la carpeta static para java--> 
-    <script src="{% static 'js/index.js' %}"></script>    
-    <!-- Indica los funcionarios  de la empresa -->    
-
-    <a><label>Colaboradores </label></a>
-    <select class="form-select" >
-      {% for campo in var_Funcionarios %}    
-          <option id="#" value ="{{campo.Nombre}}"> {{campo.Nombre}} </option>          
-      {% endfor %}
-    </select>
-    <select id="ListClient"></select>
-    </br>
-
-
-    <a></label>Lista de Clientes Pendientes de Asignar</label></a><br><select id="#"></select></BR>
-    </br>
-    
-      <!-- Muestra los clientes asignados al Colaborador -->
-      {% block js %} 
-            <!--- listado de clientes -->
-            <a></label>Lista de Clientes</label></a><br><select id="ListClient"></select></BR>
-            
-            
-            <!-- muestra las declaraciones -->
-            <div class="card-body">
-              <h4 class="card-title">Declaraciones por Cliente </h4>
-              <table class="table">
-                      <thead>
-                          <tr>
-                            <th scope="col">ID_Declaración</th>
-                            <th scope="col">Codigo</th>                          
-                            <th scope="col">Detalle</th>
-                            <th scope="col">Presentada</th>
-                            <th scope="col">Asignadan</th>
-                          </tr>
-                      </thead>
-                      <tbody>                        
-                        {% for a in dvisor %} 
-
-                          <tr class="">
-                              <td scope="row">{{a.IDClientes_Proveedores}}</td>
-                              <td scope="row">{{a.Descripcion}}</td>                                                    
-                              <td><a name="" id="" class="btn btn-primary" href="{% url 'editar' a.IDDeclaracion %}"  role="button">Editar</a>
-                                  <a name="" id="" class="btn btn-danger"  href="#" onclick="eliminadecla({{ a.IDDeclaracion }})"  role="button">Borrar</a>
-                              </td>
-                          {% endfor %}                                                
-                      </tbody>
-              
-              </table>     
-            </div>
-
-
-            <div class="card-footer text-muted">Muestra las asignaciones de los Colaboradores</div>
-          </div>
-
-      {% endblock %}
-</body>
-=======
- 
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <!-- Se indica la ruta de la carpeta static para java-->     
     <script src="{% static '/js/index.js' %}">
     </script>    
@@ -75,7 +13,7 @@
       <div class="row justify-content-end">
         <div class="col-md-16"> <!-- Define el tamaño del combo -->
               <a><label class="text-primary">Colaboradores Registrados </label></a>
-              <select class="form-select" onchange="listarClientes()" id ="clientes" >
+              <select class="form-select" onchange="listarfuncionarios()" id ="funcionarios" >
               {% for campo in var_Funcionarios %}    
                   <option id="{{ campo.IDPlanilla_Funcionarios_id }}"   value ="{{campo.IDPlanilla_Funcionarios}}">{{campo.IDPlanilla_Funcionarios}} - {{campo.Nombre}} </option>          
               {% endfor %}
@@ -85,36 +23,37 @@
       </div>
     </div>
    
+
   <div class="container-xl">
     <div class="row justify-content-end">
-        <div class="col-md-10"> <!-- Alinea el combo al centro de la pantalla -->
+        <div class="col-md-10"> <!-- Alinea el combo al centro de la pantalla onchange="Carga_Clientesfuncionario()"--> 
             <div class="form-group d-flex align-items-center">                                    
                 <label class="text-primary me-2" for="clientepend"></br>Lista de Clientes Pendientes de Asignar</label>
-                <select class="form-select me-2" onchange="Carga_Clientesfuncionario()" id="clientepend"></select>                             
-                <button type="button" class="btn btn-success" onclick="Clientessinasignacion()">Asigna</button></a>                                    
+                <select class="form-select me-2" id="clientepend"></select>                             
+                <button type="button" class="btn btn-success" onclick="Stagregacliente_a_funcionario()">Asignar</button></a>                                    
               </div>          
         </div>
      </div>
   </div>
 
+
   <div class="container-xl">
     <div class="row justify-content-end">
-      <div class="col-md-14"> <!-- Alinea el combo al centro de la pantalla -->
+      <div class="col-md-14"> <!-- Alinea el combo al centro de la pantalla onclick="Carga_Declaracion_Cliente(this.value)"-->
         <div class="form-group d-flex align-items-center">
-          <label class="text-primary me-2"></br>Lista de Clientes por Funcionario</label></br>
-          <select class="form-select me-2" onchange="Carga_Declaracion_Cliente(this.value)" id="Clientfunc"></select>        
-          <button type="button" class="btn btn-warning">Desasigna</button>
-        
+          <label class="text-primary me-2"></br>Lista de Clientes por Funcionario</label></br>           
+          <select class="form-select me-2" onclick="Carga_Declaracion_Cliente(this.value)"  id="Clientfunc"></select>        
+          <button type="button" class="btn btn-warning" onclick="Stdesasignacliente_a_funcionario()">Desasigna</button>          
         </div>
       </div>
     </div>
   </div>
   <div>        
-            <!--- Detalle de declaraciones por cliente  -->                                           
-            <div class="card-body">
-              <h4 class="card-title" style="text-align: center;">Declaraciones por Cliente </h4>
-              <table class="table">
-                      <thead>
+  <!--- Detalle de declaraciones por cliente  -->                                           
+  <div class="card-body">
+        <h4 class="card-title" style="text-align: center;">Declaraciones por Cliente </h4>
+        <table class="table">
+        <thead>
                           <tr>
                             <th scope="col">ID</th>
                             <th scope="col">Codigo</th>                          
@@ -122,6 +61,7 @@
                             <th scope="col">Presentada</th>
                             <th scope="col">Asignada</th>                            
                             <th scope="col">Correo</th> 
+                          </td>
                           </tr>
                       </thead>
                       <tbody id="declaracionesTabla">                                                                                      
@@ -132,6 +72,40 @@
           </div>
        </div>
 
+
+       <script>
+        $(document).ready(function() {
+            // Función para ordenar los datos al hacer clic en el encabezado de la columna
+            $('th').click(function() {
+                var table = $(this).parents('table').eq(0);
+                var rows = table.find('tr:gt(0)').toArray().sort(comparar($(this).index()));
+      
+                this.asc = !this.asc;
+                if (!this.asc) {
+                    rows = rows.reverse();
+                }
+                for (var i = 0; i < rows.length; i++) {
+                    table.append(rows[i]);
+                }
+            });
+            
+            // Función para comparar los valores y ordenarlos
+            function comparar(index) {
+                return function(a, b) {
+                    var valA = getCellValue(a, index);
+                    var valB = getCellValue(b, index);
+                    return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.localeCompare(valB);
+                };
+            }
+      
+            // Función para obtener el valor de la celda
+            function getCellValue(row, index) {
+                return $(row).children('td').eq(index).text();
+            }
+        });
+      </script>
+
+
 </body>
 
->>>>>>> Stashed changes
+

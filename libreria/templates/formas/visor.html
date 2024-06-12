@@ -4,6 +4,8 @@
 
 
 {% block js %} 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
 
     <script> 
         function eliminadecla(id) {
@@ -74,7 +76,7 @@
                             <img src="{{ a.imagen.url }}" height ="50" />      
                         </td>                    
                         <td><a name="" id="" class="btn btn-primary" href="{% url 'editar' a.IDDeclaracion %}"  role="button">Editar</a>
-                            <a name="" id="" class="btn btn-danger"  href="#" onclick="eliminadecla({{ a.IDDeclaracion }})"  role="button">Borrar</a>
+                            <a name="" id="" class="btn btn-danger"  href="#" onclick="eliminadecla({{a.IDDeclaracion}})"  role="button">Borrar</a>
                         </td>
                     {% endfor %}    
 
@@ -88,9 +90,37 @@
     <div class="card-footer text-muted">Defina las fechas de Presentación</div>
 </div>
 
+
+
+<script>
+    $(document).ready(function() {
+        // Función para ordenar los datos al hacer clic en el encabezado de la columna
+        $('th').click(function() {
+            var table = $(this).parents('table').eq(0);
+            var rows = table.find('tr:gt(0)').toArray().sort(comparar($(this).index()));
+
+            this.asc = !this.asc;
+            if (!this.asc) {
+                rows = rows.reverse();
+            }
+            for (var i = 0; i < rows.length; i++) {
+                table.append(rows[i]);
+            }
+        });
+        
+        // Función para comparar los valores y ordenarlos
+        function comparar(index) {
+            return function(a, b) {
+                var valA = getCellValue(a, index);
+                var valB = getCellValue(b, index);
+                return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.localeCompare(valB);
+            };
+        }
+
+        // Función para obtener el valor de la celda
+        function getCellValue(row, index) {
+            return $(row).children('td').eq(index).text();
+        }
+    });
+</script>
 {% endblock %}
-
-
-<!-- <a name="" id="" class="btn btn-danger"  href="{% url 'elimina' a.id %}" role="button">Borrar</a> -->
-
-

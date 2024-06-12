@@ -1,0 +1,51 @@
+{% extends "paginas/base.html" %}
+{% load static %}
+{% block titulo %} Busca Declaraciones a Clientes {% endblock %}
+{% block contenido %}
+<!-- busca los script para todos los clientes-->
+<script src="{% static 'js/index.js' %}"></script> 
+
+<body onload="StLista_Declaraciones()">
+   
+
+<div class="card">    
+    <div class="card-body">
+        <h4 class="card-title" style="text-align: center;">Búsqueda de Declaración Asignada a Clientes</h4>   
+         <!-- Botón al final de la fila -->
+        <div class="row mt-3">
+            <div class="col text-right">
+              <a href="{% url 'visor' %}" class="btn btn-primary"><i class="fa fa-reply"> Volver al menú </i></a>                                              
+            </div>
+        </div>                  
+    
+        <!-- Muestra el combo de las declaraciones del sistema -->
+
+    <div class="container-fluid">
+        <div class="row justify-content-end">
+          <div class="col-md-16"> <!-- Define el tamaño del combo -->
+                <a><label class="text-primary">Escoja Declaración activas </label></a>
+                <select class="form-select" onchange="StLista_Declaraciones_datos()" id ="ldeclaraciones" ></select>
+          </div>
+          </br>
+        </div>
+      </div>  
+      <div class="card-body">        
+        <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">ID</th>                        
+                        <th scope="col">Nombre del Cliente</th>                                                
+                        <th scope="col">Ult/Mov.</th>
+                        <th scope="col">Estado</th>                        
+                    </tr>
+                </thead>
+                <tbody>       
+                                
+                </tbody>         
+         </table>     
+    </div>
+    <div class="card-footer text-muted">Declaraciones por cliente</div>
+ </div>
+{% endblock %}
+
+

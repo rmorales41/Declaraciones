@@ -80,7 +80,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'mssql',
         'NAME':'Declaraciones',
-        'HOST':'192.168.1.16',
+        'HOST':'192.168.10.100',
         'PORT':'1433',
         'USER':'Usuario05',
         'PASSWORD':'Usuario05',

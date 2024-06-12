@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Salir del Sistema</title>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+</head>
+<body>
+      <script>
+        // Función para mostrar el mensaje de confirmación    
+            swal({
+                title: "¿Estás seguro?",
+                text: "¿Deseas salir de la aplicación?",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            })
+            .then((willExit) => {
+                if (willExit) {
+                    // Redirigir a la página de salida
+                    window.location.href = "/exit";
+                }
+            });
+    </script>
+</body>
+</html>

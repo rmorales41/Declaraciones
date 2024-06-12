@@ -6,12 +6,15 @@
         <!-- Required meta tags -->
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+        <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
          <!-- Incluir jQuery       
-        <script src="{% static 'https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.js' %}"></script>        -->   
-        
+        <script src="{% static 'https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.js' %}"></script>        -->           
         <!-- Otros elementos del head -->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">       
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">               
         <!-- Bootstrap CSS v5.2.1 -->
+        <!-- iconos de font-awesome -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
         <link
             href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
             rel="stylesheet"
@@ -21,11 +24,6 @@
     </head>
 
     <body>      
-<<<<<<< Updated upstream
-=======
-
-     
->>>>>>> Stashed changes
 
       <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
@@ -36,33 +34,25 @@
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
               <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Declaraciones</a>
-<<<<<<< Updated upstream
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="{% url 'visor' %}">Visor General</a></li>
-                  <li><a class="dropdown-item" href="{% url 'asigna' %}">Asigna Declaraciones</a></li>
-                  <li><a class="dropdown-item" href="{% url 'pendiente' %}">Pendientes de asignación</a></li>
-                  <li><a class="dropdown-item" href="{% url 'pendiente' %}">Buscar Movimientos por Declaración</a></li>
-=======
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa fa-book"></i> Declaraciones</a>
                 <ul class="dropdown-menu">                 
-                  <li><a class="dropdown-item" href="{% url 'visor' %}"><i class="bi bi-0-circle"></i> Visor General</a></li>
-                  <li><a class="dropdown-item" href="{% url 'asigna' %}">Asigna Declaraciones a Funcionarios</a></li>
-                  <li><a class="dropdown-item" href="{% url 'pendiente' %}">Clientes Sin Asignación</a></li>
-                  <li><a class="dropdown-item" href="{% url 'pendiente' %}">Buscar Movimientos por Declaración</a></li>
-                  <li><a class="dropdown-item" href="{% url 'pendiente' %}">Visor de Status de Declaraciones</a></li>
-                  <li><a class="dropdown-item" href="{% url 'pendiente' %}">Finaliza Declaración por Cliente</a></li>
->>>>>>> Stashed changes
+                  <li><a class="dropdown-item" href="{% url 'visor' %}"><i class="fa fa-outdent"> Visor General</i> </a></li>
                   <li><hr class="dropdown-divider"></li>
-                  <li><a class="dropdown-item" href="#">Histórico</a></li>
+                  <li><a class="dropdown-item" href="{% url 'calendario' %}"><i class="bi bi-calendar2-date" > Calendario Tributario</i></a></li>
+                  <li><a class="dropdown-item" href="{% url 'asigna' %}"><i class="fa fa-address-book" > Asigna Clientes a Funcionarios</i></a></li>
+                  <li><a class="dropdown-item" href="{% url 'pendiente' %}"><i class="fa fa-street-view"> Clientes Sin Asignación</i></a></li>
+                  <li><a class="dropdown-item" href="{% url 'buscadeclaracion' %}"><i class="fas fa-asterisk"> Buscar Declaración a Clientes</i></a></li>                  
+                  <li><a class="dropdown-item" href="{% url 'iniciadeclaracion' %}"><i class="bi bi-cone"> Iniciar o Finaliza Declaración por Cliente</i></a></li>                  
+                  <li><a class="dropdown-item" href="{% url 'StatusDeclaracion' %}"><i class="bi bi-chat-left-text"> Status de las Declaraciones</i></a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item" href="{% url 'ConfirmaDeclaracion' %}"><i class="bi bi-file-lock2-fill"> Confirma Declaraciones</i></a></li>
+                  <li><a class="dropdown-item" href="#">Borrar Histórico</a></li>
                 </ul>
               </li>
               <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Clientes</a>
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa fa-address-book"></i> Clientes</a>
                 <ul class="dropdown-menu">
-<<<<<<< Updated upstream
-=======
-                  <li><a class="dropdown-item" href="#">Asigna Declaraciones a Clientes</a></li>
->>>>>>> Stashed changes
+                  <li><a class="dropdown-item" href="{% url 'clientes_declaraciones' %}"><i class="fa fa-deaf"> Asigna Declaraciones a Clientes</i></a></li>
                   <li><a class="dropdown-item" href="#">Pendientes por Realizar</a></li>
                   <li><a class="dropdown-item" href="">Registro de Recibos</a></li>
                   <li><hr class="dropdown-divider"></li>
@@ -70,7 +60,7 @@
                 </ul>
               </li>
               <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Funcionarios</a>
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa fa-sitemap"></i> Funcionarios</a>
                 <ul class="dropdown-menu">
                   <li><a class="dropdown-item" href="#">Funcionarios</a></li>
                   <li><a class="dropdown-item" href="#">Asignadas</a></li>
@@ -79,11 +69,40 @@
                   <li><a class="dropdown-item" href="#">Envios</a></li>
                 </ul>
               </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-card-checklist"></i> Beneficios</a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="#">Condicion PYME</a></li>
+                  <li><a class="dropdown-item" href="#">Exoneraciones Exonet</a></li>  
+                  <li><a class="dropdown-item" href="#">Otras Exoneraciones</a></li>
+                  <li><a class="dropdown-item" href="#"></a></li>                  
+                  <li><hr class="dropdown-divider"></li>                  
+                </ul>
+              </li>
             </ul>
-            <form class="d-flex" role="search">
-              <input class="form-control me-2" type="search" placeholder="Buscar" aria-label="Search">
-              <button class="btn btn-outline-success" type="submit">Buscar</button>
+                <!--<form class="d-flex" role="search">
+                  <input class="form-control me-2" type="search" placeholder="Buscar" aria-label="Search">
+                  <button class="btn btn-outline-success" type="submit">Buscar </button>
+                  <button class="btn btn-primary" type="button">Terminar</button>
+                </form>
+              -->
+              <form id="miFormulario">
+                <!-- Otros elementos del formulario -->
+                <button type="button" class="btn btn-primary" onclick="exit_confirmation()">Finaliza</button>
             </form>
+            
+
+            <script>
+              function exit_confirmation() {                  
+                  fetch(`/salir/`).then(response => {
+                      
+                  }).catch(error=>{
+                      console.error('Error al salir ',error);
+                  });
+              }
+          </script>
+
+              
           </div>
         </div>
       </nav>
