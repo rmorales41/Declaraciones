@@ -640,8 +640,7 @@ function Stlistarfuncionario(){
                     diasRestantesHTML = `<td>${diffDias} días</td>`; // calcula dias                                                                             
                     if (item.IDDeclaracion__estado){
                         let Tipo ="";
-                        if (item.Suspendida){
-                            console.log('entro')
+                        if (item.Suspendida){                            
                             Tipo="Reinicia"
                         }else{
                             Tipo="Cerrar"
@@ -894,21 +893,28 @@ function StStatushistoricoDeclaraciones() {
             const fechaActual = new Date(); // fecha actual
             const diffTiempo = fechaProxima.getTime() - fechaActual.getTime();
             const diffDias = Math.ceil(diffTiempo / (1000 * 60 * 60 * 24));
-            console.log(item)
-            let diasRestantesHTML = `<td>${diffDias} días</td>`; // Calcula días restantes
-                                                                             
+            
+            let diasRestantesHTML = `<td>${diffDias} días</td>`; // Calcula días restantes                                                          
+
           row.innerHTML = `
                 <td>${item.IDHistorico_Declaraciones}</td>
-                <td>${item.IDDeclaracion__codigo}</td>
-                <td>${item.IDDeclaracion__detalle}</td>
+                <td>${item.IDDeclaracion__codigo}</td>                
                 <td>${item.IDClientes_Proveedores__IDClientes_Proveedores}</td>
                 <td>${item.IDClientes_Proveedores__Descripcion}</td>
                 <td>${formatDate(item.Fecha_Asigna)}</td>
                 <td>${formatDate(item.Fecha_Presenta)}</td>
                 <td>${formatDate(item.Fecha_Cierre)}</td>                          
                 <td>${item.IDPlanilla_Funcionarios__Nombre}</td>              
-                <td>${item.IDDeclaracion__estado ? "A" : "I"}</td>             `   
-                
+                <td>${item.IDDeclaracion__estado ? "A" : "I"}</td>  
+                <td>
+                    <select name='correo'>
+                    <option value ='Si' selected>Si</option>
+                    <option value ='No' selected>No</option>
+                    </select>
+                </td>      
+                <td><input type="text" name="numero_comprobante" value="" placeholder='Comprobante'></td>                
+                <td><input type="date" id="fecha_cierre" name="fecha_cierre"></td>                      
+                <td><a name="" id="" class="btn btn-warning" href="#" onclick="StConfirma(${item.IDHistorico_Declaraciones})"  role="button">Confirma</a></td>`                   
 
             tbody.appendChild(row);
         });
@@ -916,4 +922,147 @@ function StStatushistoricoDeclaraciones() {
     .catch(error => {
         console.error('Error al obtener los datos:', error);
     });
+}
+
+// Confirma la declaracion para el historico 
+function StConfirm_old(idHistoricoDeclaraciones) {   
+  
+    Swal.fire({
+        title: "Confirmador de Declaraciones",
+        text: "¿Desea continuar con la confirmación de esta línea?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Sí, proceder"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            console.log(idHistoricoDeclaraciones)
+            // Obtener los datos del formulario 
+            const otroDato = document.querySelector(`input[name="numero_comprobante"]`).value;
+            console.log('ver',otroDato)
+            const fechaCierre = document.querySelector(`input[name="fecha_cierre"]`).value;
+            const correo = document.querySelector(`select[name="correo"]`).value;
+            console.log('fecha',fechaCierre)            
+            console.log('correo',correo)
+            console.log('otro',otroDato)
+            // Validar si el campo del comprobante está vacío
+            if (otroDato.trim() === "") {
+                Swal.fire({
+                    title: "Error",
+                    text: "Por favor, ingrese un número de comprobante válido",
+                    icon: "error"
+                });
+                return; // Detener la ejecución si el campo está vacío
+            }
+
+            // Solicitud POST
+            fetch(`/Confirma/${idHistoricoDeclaraciones}`, {        
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCSRFToken() 
+                },
+                // empaca datos para el server 
+                body: JSON.stringify({
+                    numero_comprobante: otroDato,
+                    fecha_cierre: fechaCierre,
+                    correo: correo
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error: No se pudo confirmar la declaración');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // indica que el dato llego bien     si es response es ok 
+                Swal.fire({
+                    title: "¡Actualizado !",
+                    text: "Su registro fue actualizado.",
+                    icon: "success"
+                });
+                // recarga la pagina 
+                location.reload();  
+            })
+            .catch(error => {
+                console.error('Error al confirmar la declaración:', error);
+            });
+        }
+    });       
+}
+
+
+function StConfirma(idHistoricoDeclaraciones) {   
+    Swal.fire({
+        title: "Confirmador de Declaraciones",
+        text: "¿Desea continuar con la confirmación de esta línea?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Sí, proceder"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            console.log(idHistoricoDeclaraciones);
+            // Obtener los datos del formulario 
+            const otroDato = document.querySelector(`#fila-${idHistoricoDeclaraciones} input[name="numero_comprobante"]`).value;
+            const fechaCierre = document.querySelector(`#fila-${idHistoricoDeclaraciones} input[name="fecha_cierre"]`).value;
+            const correo = document.querySelector(`#fila-${idHistoricoDeclaraciones} select[name="correo"]`).value;
+
+            // Validar si el campo del comprobante está vacío
+            if (otroDato.trim() === "") {
+                Swal.fire({
+                    title: "Error",
+                    text: "Por favor, ingrese un número de comprobante válido",
+                    icon: "error"
+                });
+                return; // Detener la ejecución si el campo está vacío
+            }
+
+            // Solicitud POST
+            fetch(`/Confirma/${idHistoricoDeclaraciones}`, {        
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCSRFToken() 
+                },
+                // empaca datos para el server 
+                body: JSON.stringify({
+                    numero_comprobante: otroDato,
+                    fecha_cierre: fechaCierre,
+                    correo: correo
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error: No se pudo confirmar la declaración');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // indica que el dato llego bien     si es response es ok 
+                Swal.fire({
+                    title: "¡Actualizado !",
+                    text: "Su registro fue actualizado.",
+                    icon: "success"
+                });
+                // recarga la pagina 
+                location.reload();  
+            })
+            .catch(error => {
+                console.error('Error al confirmar la declaración:', error);
+            });
+        }
+    });       
+}
+
+
+
+
+// Función para obtener el token CSRF
+function getCSRFToken() {
+    const csrfTokenElement = document.getElementsByName('csrfmiddlewaretoken')[0];
+    return csrfTokenElement ? csrfTokenElement.value : null;
 }

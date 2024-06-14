@@ -44,14 +44,13 @@ urlpatterns = [
     path('ActivaDeclaracion_b/<int:idd>',views.vsActivaDeclaracion, name='ActivaDeclaracion_b'),
     path('CierraDeclaracion/<int:idd>',views.vsCierraDeclaracion, name='CierraDeclaracion'),
     path('SuspendeDeclaracion/<int:idd>',views.vsSuspendeDeclaracion, name='SuspendeDeclaracion'),
-    path('salir/',views.exit_confirmation,name='salir'),
-    path('exit/',views.exit_app, name='exit_app'),
     path('StatusDeclaracion/',views.VstatusDeclaracion, name='StatusDeclaracion'),
     path('VerDeclaracion/',views.VsEstatusDeclaracion, name='VerDeclaracion'),
     path('ActivaSuspendida/<int:idd>',views.VsActivaSuspendida,name ='ActivaSuspendida'),
     path('calendario/',views.VsCalendario,name ='calendario'),
     path('ConfirmaDeclaracion/',views.VsConfirmaDeclaracion,name ='ConfirmaDeclaracion'),
-     path('VerDeclaracionHistoricas/',views.VsEstatusDeclaracionHistoricas, name='VerDeclaracionHistoricas'),
+    path('VerDeclaracionHistoricas/',views.VsEstatusDeclaracionHistoricas, name='VerDeclaracionHistoricas'),    
+    path('Confirma/<int:idd>',views.VsConfirma, name='Confirma'),    
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     

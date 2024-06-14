@@ -8,10 +8,12 @@ from django.forms import ValidationError
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404, render, redirect
-from .models import Asignacion, Declaracion_Clientes, Historico_Declaraciones, declaracion, planillas_planilla_funcionarios,cliente_proveedor_cliente_proveedor
+from .models import Asignacion, Declaracion_Clientes, Historico_Declaraciones, declaracion, planillas_planilla_funcionarios,cliente_proveedor_cliente_proveedor,Historico_Declaraciones
 from django.core.serializers import serialize
 from django.core import serializers
-from django.db.models import F
+from django.db.models import F,Q   
+# la clase F funciona para filtrar productos mayores ejemplo productos = Producto.objects.filter(precio__gt=F('descuento'))
+# la clase Q funciona para generar consultas correctas 
 
 
 # carga el diseño del formulario 
@@ -477,7 +479,7 @@ def vsCierraDeclaracion(request, idd):
                     Iniciada=asignacion.Iniciada,
                     Suspendida=asignacion.Suspendida,
                     Usuario_Cierre='S/A',  
-                    Numero_Comprobante='S/A',
+                    Numero_Comprobante='',
                     Fecha_Final=None,
                     IDClientes_Proveedores=asignacion.IDClientes_Proveedores,
                     IDPlanilla_Funcionarios=asignacion.IDPlanilla_Funcionarios,
@@ -497,11 +499,6 @@ def vsCierraDeclaracion(request, idd):
             return JsonResponse({'success': False, 'error': str(e)})         
     else:         
         return JsonResponse({'success': False, 'error': 'No se Guardaron los datos'})
-
- 
- 
- 
- 
        
 
 # suspende declaracion 
@@ -522,20 +519,29 @@ def vsSuspendeDeclaracion(request,idd):
         return JsonResponse({'success': False,'error': 'No se Guardaron los datos'})   
        
 # salir de la aplicacion
-def exit_confirmation(request):    
-    if request.method == 'POST':
+#def exit_confirmation(request):    
+    #if request.method == 'POST':
     # salida confirmada solicitud POST 
-        return HttpResponseRedirect('/salir-confirmado/')  # Redirecciona a una página de confirmación 
-    else:        
-        return render(request, 'formas/salir.html')
+    #    return HttpResponseRedirect('/salir-confirmado/')  # Redirecciona a una página de confirmación 
+    #else:        
+    #    return render(request, 'formas/salir.html')
+
+# cierra la aplicacion     
+#def cerrar_aplicacion():
+    # Detener el servidor de desarrollo de React
     
-def exit_app(request):
-    # Cierra conexion de SQlSErver
-    conn = pyodbc.connect(DATABASE)
-    conn.close()
-    
-    
-    return render(request, 'Declaraciones/libreria/templates/formas/salir.html')
+   # subprocess.run(["pkill", "-f", "react-scripts"])
+
+    # Detener el servidor de desarrollo de Django
+   # subprocess.run(["pkill", "-f", "runserver"])
+
+    #if __name__ == "__main__":
+    # Aquí iría tu código para iniciar la aplicación Django
+    # Por ejemplo, podrías iniciar el servidor de desarrollo de Django y el servidor de desarrollo de React
+    # Luego, cuando necesites cerrar la aplicación, llamas a la función cerrar_aplicacion()
+    #return render(request, 'Declaraciones/libreria/templates/formas/salir.html')
+
+
 
 # ve el Status de las declaraciones        
 def VstatusDeclaracion(request):       
@@ -595,15 +601,16 @@ def VsCalendario(request):
 def VsConfirmaDeclaracion(request): 
     return render(request,'formas/Confirma_Declaraciones.html')    
 
-
-
-# Ver Status de Declaracion - muestra todos los datos de las declaraciones  
+# Ver Status de Declaracion - muestra todos los datos de las declaraciones filtra si el numero de comprobante
+# es vacio o nulo
 def VsEstatusDeclaracionHistoricas(request): 
     Total_Declaraciones = Historico_Declaraciones.objects.select_related(
         'IDClientes_Proveedores', 
         'IDPlanilla_Funcionarios', 
         'IDDeclaracion'
-    ).all().order_by("Fecha_Cierre")
+    ).filter(
+        Q(Numero_Comprobante__isnull=True) | Q(Numero_Comprobante='')
+    ).order_by("Fecha_Cierre")
              
   
     
@@ -621,3 +628,32 @@ def VsEstatusDeclaracionHistoricas(request):
     ))
 
     return JsonResponse(datadeclaracion, safe=False)
+
+# Confirma las declaraciones cerradas y presentadas para archivo          
+def VsConfirma(request, idd): 
+    print('llegue',idd)     
+    if request.method == 'POST':
+        try:
+            # se obtiene el objeto historico 
+            historico_declaracion = Historico_Declaraciones.objects.get(pk=idd)
+            # ver los datos recidos en el json 
+            data =json.loads(request.body.decode('utf-8'))
+            #print('datos recibido',data )
+            print('idd',idd)
+            # se obtienen los datos                                
+            correo = data.get('correo')           
+                        
+            # Actualizar los campos en el objeto historico_declaracion
+            historico_declaracion.Numero_Comprobante = data.get('numero_comprobante')  
+            historico_declaracion.Fecha_Final = data.get('fecha_cierre')
+            historico_declaracion.correo = True if correo =='Si' else False
+    
+            # Guardar los cambios en la base de datos
+            historico_declaracion.save()
+
+            return JsonResponse({'success': True})
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+    else:
+        return JsonResponse({'success': False, 'error': 'La solicitud no es de tipo POST'})
+       
