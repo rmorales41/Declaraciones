@@ -1,4 +1,6 @@
-// JS
+//Js
+import moment from 'moment';
+
 document.addEventListener("DOMContentLoaded", function() {
     StListaclientes(); // Llama a la función para cargar el combo al cargar la página por primera vez  
 });
@@ -474,19 +476,19 @@ function StLista_Declaraciones() {
         select.innerHTML = '';
         // Hace la consulta al url para ejecutar la vista 
         fetch('buscadeclaraciondatos/')
-        .then(response => {
+        .then(response => {                     
             if (!response.ok) {
                 throw new Error('Error en la respuesta de la red: ' + response.statusText);
             }
             // convierte la respuesta en json 
             return response.json();
         })
-        .then(data => {              
+        .then(data => {                          
             // Verifica si 'ldeclaraciones' existe en los datos devueltos y lo verifica
             if (data.hasOwnProperty('ldeclaraciones') && Array.isArray(data.ldeclaraciones)) {
-                const ldeclaraciones = data.ldeclaraciones;
-    
+                const ldeclaraciones = data.ldeclaraciones;                
                 if (data.ldeclaraciones.length > 0) {
+                    select.innerHTML = ''; 
                         ldeclaraciones.forEach(item => {
                         const option = document.createElement("option");
                         option.value = item.IDDeclaracion;
@@ -549,16 +551,20 @@ function StLista_Declaraciones_datos() {
 }
 
 // Función para formatear la fecha en dd/mm/yyyy
-function formatDate(dateString) {
-    const date = new Date(dateString);
-    const day = date.getDate();
-    const month = date.getMonth() + 1;
-    const year = date.getFullYear();
+function formatDate(dateString) {  
+    // Extrae el día, mes y año
+    console.log(dateString)
+    const date = moment(dateString); 
 
-    // Asegurarse de que los valores tengan dos dígitos
+    const day = date.date();
+    const month = date.month() + 1; // getMonth devuelve 0 para enero, por eso se suma 1
+    const year = date.year();
+
+    // Asegura dos digitos 
     const formattedDay = day < 10 ? '0' + day : day;
     const formattedMonth = month < 10 ? '0' + month : month;
 
+    // Retorna la fecha formateada en formato dd/mm/yyyy
     return `${formattedDay}/${formattedMonth}/${year}`;
 }
 
@@ -836,20 +842,23 @@ function StStatusDeclaraciones() {
 }
 
 // Muestra todas las declaraciones del sistema 
-function StCalendario_Tributario() {               
+function StCalendario_Tributario_old() { 
+                  
+   //  Limpia cualquier opción existente
+   // select.innerHTML = '';
     // Obtén el elemento <select> por su ID
     let select = document.getElementById("lcalendario");
-   //  Limpia cualquier opción existente
     select.innerHTML = '';
   // Hace la consulta al url para ejecutar la vista 
-    fetch('buscadeclaraciondatos')
-    .then(response => {
+    fetch(`/buscadeclaraciondatos/`)     
+    .then(response => {        
        if (!response.ok) {
            throw new Error('Error en la respuesta de la red: ' + response.statusText);
-       }
-        // convierte la respuesta en json 
+       }       
+        // convierte la respuesta en json         
         return response.json();
         console.log('aqui estoy')
+        
     })
     .then(data => {              
     // Verifica si 'ldeclaraciones' existe en los datos devueltos y lo verifica
@@ -864,39 +873,208 @@ function StCalendario_Tributario() {
                 select.appendChild(option);
               });
            }
+         
        } else {
            console.error("No se encontró el array 'ldeclaraciones' en los datos devueltos.");
-        }
-    })
+        } 
+    }) 
   //  .catch(error => {
    //     console.error("Error en StLista_Declaraciones:", error);
    // });
 } 
 
+
+// aqui estoy 
+function StCalendario_Tributario() {
+    // Obtén el elemento <select> por su ID
+    let select = document.getElementById("lcalendario");
+    let tbody = document.getElementById("tbody_id");
+    select.innerHTML = '';           
+    // Hace la consulta al URL para ejecutar la vista     
+    fetch(`/buscadeclaraciondatos/`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error en la respuesta de la red: ' + response.statusText);
+            }
+            // Convierte la respuesta en JSON            
+            return response.json();
+        })
+        .then(data => {
+            // Verifica si 'ldeclaraciones' existe en los datos devueltos y lo verifica
+            if (data.hasOwnProperty('ldeclaraciones') && Array.isArray(data.ldeclaraciones)) {
+                const ldeclaraciones = data.ldeclaraciones;
+
+                if (ldeclaraciones.length > 0) {
+                    ldeclaraciones.forEach(item => {
+                        const option = document.createElement("option");
+                        option.value = item.IDDeclaracion;
+                        option.textContent = `${item.codigo} - ${item.detalle}`;
+                        select.appendChild(option);
+                    });                    
+                } else {
+                    console.error("El array 'ldeclaraciones' está vacío.");
+                }
+            } else {
+                console.error("No se encontró el array 'ldeclaraciones' en los datos devueltos.");
+            }
+        })
+        .catch(error => {
+            console.error("Error en StCalendario_Tributario:", error);
+        });
+}
+
+
+/// ojo arriba 
+
+
 // Confirmacion de declaraciones cerradas 
-function StStatushistoricoDeclaraciones() {      
-    fetch(`/VerDeclaracionHistoricas/`) 
-    .then(response => {       
+function StStatushistoricoDeclaraciones() {
+    fetch(`/VerDeclaracionHistoricas/`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error: No se pueden mostrar los datos');
+            }
+            return response.json();
+        })
+        .then(datadeclaracion => {
+            const tbody = document.querySelector("tbody");
+            tbody.innerHTML = '';
+
+            datadeclaracion.forEach(item => {
+                const row = document.createElement("tr");
+                const fechaProxima = new Date(item.Fecha_Presenta);
+                const fechaAsignada = new Date(item.Fecha_Asigna);
+                const fechaActual = new Date(); // fecha actual
+                const diffTiempo = fechaProxima.getTime() - fechaActual.getTime();
+                const diffDias = Math.ceil(diffTiempo / (1000 * 60 * 60 * 24));
+
+                let diasRestantesHTML = `<td>${diffDias} días</td>`; // Calcula días restantes                                                          
+  
+                row.innerHTML = `
+                    <td>${item.IDHistorico_Declaraciones}</td>
+                    <td>${item.IDDeclaracion__codigo}</td>                
+                    <td>${item.IDClientes_Proveedores__IDClientes_Proveedores}</td>
+                    <td>${item.IDClientes_Proveedores__Descripcion}</td>
+                    <td>${formatDate(item.Fecha_Asigna)}</td>
+                    <td>${formatDate(item.Fecha_Presenta)}</td>
+                    <td>${formatDate(item.Fecha_Cierre)}</td>                          
+                    <td>${item.IDPlanilla_Funcionarios__Nombre}</td>              
+                    <td>${item.IDDeclaracion__estado ? "A" : "I"}</td>  
+                    <td>
+                        <select id="correo_${item.IDHistorico_Declaraciones}" name='correo'>
+                            <option value ='Si' selected>Si</option>
+                            <option value ='No'>No</option>
+                        </select>
+                    </td>      
+                    <td><input type="text" id="numero_comprabante_${item.IDHistorico_Declaraciones}" name="numero_comprobante" value="" placeholder='Comprobante'></td>                
+                    <td><input type="date" id="fecha_cierre_${item.IDHistorico_Declaraciones}" name="fecha_cierre"></td>                      
+                    <td><a name="" id="" class="btn btn-warning" href="#" onclick="StConfirma(${item.IDHistorico_Declaraciones})">Confirma</a></td>`;
+              
+                tbody.appendChild(row);
+
+                // Agregar un listener para detectar cuando se selecciona la fecha en el input
+                const inputFecha = document.getElementById(`fecha_cierre_${item.IDHistorico_Declaraciones}`);
+                inputFecha.addEventListener("focus", function() {
+                // Obtener la fecha actual
+                const fechaActual = new Date();
+                // Formatear la fecha actual para que sea compatible con el formato del input de fecha
+                const formattedFechaActual = fechaActual.toISOString().split("T")[0];
+                // Establecer el valor del input de fecha como la fecha actual
+                inputFecha.value = formattedFechaActual;
+                });
+            });       
+        })
+        .catch(error => {
+            console.error('Error al obtener los datos:', error);
+        });
+}
+
+
+
+
+// valida los datos para cerrar la confirmacion de declaraciones realizadas
+function StConfirma(idHistoricoDeclaraciones) {    
+    var Numero_C = document.getElementById('numero_comprabante_'+idHistoricoDeclaraciones.toString()).value;
+    var Fecha_C = document.getElementById('fecha_cierre_'+idHistoricoDeclaraciones.toString()).value;
+    var Correo_C = document.getElementById('correo_'+idHistoricoDeclaraciones.toString()).value;
+    console.log(idHistoricoDeclaraciones,Numero_C,Fecha_C,Correo_C)
+    Swal.fire({
+        title: "Confirmador de Declaraciones",
+        text: "¿Desea continuar con la confirmación de esta línea?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Sí, proceder"
+    }).then((result) => {
+        if (result.isConfirmed) {            
+            // Solicitud POST                        
+            fetch(`/Confirma/${idHistoricoDeclaraciones}`, {        
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCSRFToken() 
+                },
+                // empaca datos para el server                                                             
+                body: JSON.stringify({
+                    numero_comprobante: Numero_C,
+                    fecha_cierre: Fecha_C,
+                    correo: Correo_C
+                })        
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error: No se pudo confirmar la declaración');
+                }                
+                return response.json();
+            })
+            .then(data => {
+                // indica que el dato llego bien     si es response es ok 
+                Swal.fire({
+                    title: "¡Actualizado !",
+                    text: "Su registro fue actualizado.",
+                    icon: "success"
+                });
+                // recarga la pagina 
+                location.reload();  
+            })
+            .catch(error => {
+                console.error('Error al confirmar la declaración:', error);
+            });
+        }
+    });       
+}
+
+// Función para obtener el token CSRF
+function getCSRFToken() {
+    const csrfTokenElement = document.getElementsByName('csrfmiddlewaretoken')[0];
+    return csrfTokenElement ? csrfTokenElement.value : null;
+}
+
+// Visor de las declaraciones Confirmadas Cerradas y en historico carga de datos 
+function StDeclaracionesConfirmadasCerradasHistoricas(){
+    fetch(`/VerDeclaracionHistoricasCerradas/`)
+    .then(response => {
         if (!response.ok) {
             throw new Error('Error: No se pueden mostrar los datos');
-        }       
-       return response.json();        
+        }
+        return response.json();
     })
     .then(datadeclaracion => {
-        const tbody = document.querySelector("tbody"); 
-        tbody.innerHTML = '';                                 
-            
-        datadeclaracion.forEach(item => {                    
+        const tbody = document.querySelector("tbody");
+        tbody.innerHTML = '';
+
+        datadeclaracion.forEach(item => {
             const row = document.createElement("tr");
             const fechaProxima = new Date(item.Fecha_Presenta);
             const fechaAsignada = new Date(item.Fecha_Asigna);
             const fechaActual = new Date(); // fecha actual
             const diffTiempo = fechaProxima.getTime() - fechaActual.getTime();
             const diffDias = Math.ceil(diffTiempo / (1000 * 60 * 60 * 24));
-            
+
             let diasRestantesHTML = `<td>${diffDias} días</td>`; // Calcula días restantes                                                          
 
-          row.innerHTML = `
+            row.innerHTML = `
                 <td>${item.IDHistorico_Declaraciones}</td>
                 <td>${item.IDDeclaracion__codigo}</td>                
                 <td>${item.IDClientes_Proveedores__IDClientes_Proveedores}</td>
@@ -906,163 +1084,37 @@ function StStatushistoricoDeclaraciones() {
                 <td>${formatDate(item.Fecha_Cierre)}</td>                          
                 <td>${item.IDPlanilla_Funcionarios__Nombre}</td>              
                 <td>${item.IDDeclaracion__estado ? "A" : "I"}</td>  
-                <td>
-                    <select name='correo'>
-                    <option value ='Si' selected>Si</option>
-                    <option value ='No' selected>No</option>
-                    </select>
-                </td>      
-                <td><input type="text" name="numero_comprobante" value="" placeholder='Comprobante'></td>                
-                <td><input type="date" id="fecha_cierre" name="fecha_cierre"></td>                      
-                <td><a name="" id="" class="btn btn-warning" href="#" onclick="StConfirma(${item.IDHistorico_Declaraciones})"  role="button">Confirma</a></td>`                   
-
+                <td>${item.correo ? "Si" : "No"}</td>                        
+                <td>${item.Numero_Comprobante}</td>                
+                <td>${formatDate(item.Fecha_Cierre)}</td> `
+          
             tbody.appendChild(row);
-        });
+
+        });       
     })
     .catch(error => {
         console.error('Error al obtener los datos:', error);
     });
 }
 
-// Confirma la declaracion para el historico 
-function StConfirm_old(idHistoricoDeclaraciones) {   
-  
-    Swal.fire({
-        title: "Confirmador de Declaraciones",
-        text: "¿Desea continuar con la confirmación de esta línea?",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Sí, proceder"
-    }).then((result) => {
-        if (result.isConfirmed) {
-            console.log(idHistoricoDeclaraciones)
-            // Obtener los datos del formulario 
-            const otroDato = document.querySelector(`input[name="numero_comprobante"]`).value;
-            console.log('ver',otroDato)
-            const fechaCierre = document.querySelector(`input[name="fecha_cierre"]`).value;
-            const correo = document.querySelector(`select[name="correo"]`).value;
-            console.log('fecha',fechaCierre)            
-            console.log('correo',correo)
-            console.log('otro',otroDato)
-            // Validar si el campo del comprobante está vacío
-            if (otroDato.trim() === "") {
-                Swal.fire({
-                    title: "Error",
-                    text: "Por favor, ingrese un número de comprobante válido",
-                    icon: "error"
-                });
-                return; // Detener la ejecución si el campo está vacío
-            }
+// busca la fecha seleccionada 
+function StbuscaporFecha(){    
+    var fechaSeleccionada = document.getElementById("fecha").value;
+    console.log('aqui va la fecha')
+    console.log(fechaSeleccionada) 
 
-            // Solicitud POST
-            fetch(`/Confirma/${idHistoricoDeclaraciones}`, {        
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': getCSRFToken() 
-                },
-                // empaca datos para el server 
-                body: JSON.stringify({
-                    numero_comprobante: otroDato,
-                    fecha_cierre: fechaCierre,
-                    correo: correo
-                })
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Error: No se pudo confirmar la declaración');
-                }
-                return response.json();
-            })
-            .then(data => {
-                // indica que el dato llego bien     si es response es ok 
-                Swal.fire({
-                    title: "¡Actualizado !",
-                    text: "Su registro fue actualizado.",
-                    icon: "success"
-                });
-                // recarga la pagina 
-                location.reload();  
-            })
-            .catch(error => {
-                console.error('Error al confirmar la declaración:', error);
-            });
+    fetch(`/Buscaporfecha/${fechaSeleccionada}`)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
         }
-    });       
-}
-
-
-function StConfirma(idHistoricoDeclaraciones) {   
-    Swal.fire({
-        title: "Confirmador de Declaraciones",
-        text: "¿Desea continuar con la confirmación de esta línea?",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Sí, proceder"
-    }).then((result) => {
-        if (result.isConfirmed) {
-            console.log(idHistoricoDeclaraciones);
-            // Obtener los datos del formulario 
-            const otroDato = document.querySelector(`#fila-${idHistoricoDeclaraciones} input[name="numero_comprobante"]`).value;
-            const fechaCierre = document.querySelector(`#fila-${idHistoricoDeclaraciones} input[name="fecha_cierre"]`).value;
-            const correo = document.querySelector(`#fila-${idHistoricoDeclaraciones} select[name="correo"]`).value;
-
-            // Validar si el campo del comprobante está vacío
-            if (otroDato.trim() === "") {
-                Swal.fire({
-                    title: "Error",
-                    text: "Por favor, ingrese un número de comprobante válido",
-                    icon: "error"
-                });
-                return; // Detener la ejecución si el campo está vacío
-            }
-
-            // Solicitud POST
-            fetch(`/Confirma/${idHistoricoDeclaraciones}`, {        
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': getCSRFToken() 
-                },
-                // empaca datos para el server 
-                body: JSON.stringify({
-                    numero_comprobante: otroDato,
-                    fecha_cierre: fechaCierre,
-                    correo: correo
-                })
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Error: No se pudo confirmar la declaración');
-                }
-                return response.json();
-            })
-            .then(data => {
-                // indica que el dato llego bien     si es response es ok 
-                Swal.fire({
-                    title: "¡Actualizado !",
-                    text: "Su registro fue actualizado.",
-                    icon: "success"
-                });
-                // recarga la pagina 
-                location.reload();  
-            })
-            .catch(error => {
-                console.error('Error al confirmar la declaración:', error);
-            });
-        }
-    });       
-}
-
-
-
-
-// Función para obtener el token CSRF
-function getCSRFToken() {
-    const csrfTokenElement = document.getElementsByName('csrfmiddlewaretoken')[0];
-    return csrfTokenElement ? csrfTokenElement.value : null;
-}
+        return response.json(); // o response.text() si esperas otro tipo de respuesta
+      })
+      .then(data => {
+        //  respuesta optenida 
+        console.log(data);
+      })
+      .catch(error => {
+        console.error('Fetch error:', error);
+      });
+    }

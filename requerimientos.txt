@@ -104,4 +104,5 @@ instalar jquery
 npm install jquery 
 
 
-
+instalador para convertir fechas 
+npm isntall moment 

@@ -8,7 +8,7 @@ from django.forms import ValidationError
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404, render, redirect
-from .models import Asignacion, Declaracion_Clientes, Historico_Declaraciones, declaracion, planillas_planilla_funcionarios,cliente_proveedor_cliente_proveedor,Historico_Declaraciones
+from .models import Asignacion, Declaracion_Clientes, Historico_Declaraciones, calendario_tributario, declaracion, planillas_planilla_funcionarios,cliente_proveedor_cliente_proveedor,Historico_Declaraciones
 from django.core.serializers import serialize
 from django.core import serializers
 from django.db.models import F,Q   
@@ -208,9 +208,6 @@ def vsDeclaraciones_Cliente(request,IDD):
         })
                                  
     return JsonResponse(data, safe=False)
-
-
-
 
 
 # guarda los datos en la tabla asigna 
@@ -592,7 +589,6 @@ def VsActivaSuspendida(request,idd):
     else:
            return JsonResponse({'success': False,'error': 'No se Guardaron los datos'})  
        
-
 # carga el calendario tributario        
 def VsCalendario(request): 
     return render(request,'formas/calendario.html')    
@@ -610,9 +606,7 @@ def VsEstatusDeclaracionHistoricas(request):
         'IDDeclaracion'
     ).filter(
         Q(Numero_Comprobante__isnull=True) | Q(Numero_Comprobante='')
-    ).order_by("Fecha_Cierre")
-             
-  
+    ).order_by("Fecha_Cierre")             
     
     datadeclaracion = list(Total_Declaraciones.values(
         'IDHistorico_Declaraciones',  # Acceder al ID de la declaración relacionada
@@ -630,24 +624,22 @@ def VsEstatusDeclaracionHistoricas(request):
     return JsonResponse(datadeclaracion, safe=False)
 
 # Confirma las declaraciones cerradas y presentadas para archivo          
-def VsConfirma(request, idd): 
-    print('llegue',idd)     
+def VsConfirma(request, idd):     
     if request.method == 'POST':
         try:
             # se obtiene el objeto historico 
             historico_declaracion = Historico_Declaraciones.objects.get(pk=idd)
             # ver los datos recidos en el json 
             data =json.loads(request.body.decode('utf-8'))
-            #print('datos recibido',data )
-            print('idd',idd)
+            #print('datos recibido',data )            
             # se obtienen los datos                                
             correo = data.get('correo')           
                         
             # Actualizar los campos en el objeto historico_declaracion
             historico_declaracion.Numero_Comprobante = data.get('numero_comprobante')  
             historico_declaracion.Fecha_Final = data.get('fecha_cierre')
-            historico_declaracion.correo = True if correo =='Si' else False
-    
+            historico_declaracion.correo = True if correo =='Si' else False 
+                                          
             # Guardar los cambios en la base de datos
             historico_declaracion.save()
 
@@ -656,4 +648,93 @@ def VsConfirma(request, idd):
             return JsonResponse({'success': False, 'error': str(e)})
     else:
         return JsonResponse({'success': False, 'error': 'La solicitud no es de tipo POST'})
-       
+
+# levanta el formulario para la declaracion historico cerrada 
+def VsDeclaracionesConfirmadasCerradas(request):       
+        return render(request,'formas/Declaraciones_Confirmadas.html')   
+    
+# Muestra las declaraciones cerradas y archivadas     
+def VsDeclaracionesConfirmadasCerradasAplicadas(request):        
+    Total_Declaraciones = Historico_Declaraciones.objects.select_related(
+        'IDClientes_Proveedores', 
+        'IDPlanilla_Funcionarios', 
+        'IDDeclaracion'
+    ).filter(
+        Q(Numero_Comprobante__isnull = False) & ~Q(Numero_Comprobante='')
+    ).order_by("-Fecha_Cierre")
+    
+               
+    
+    datadeclaracion = list(Total_Declaraciones.values(
+        'IDHistorico_Declaraciones',  # Acceder al ID de la declaración relacionada
+        'IDDeclaracion__codigo',
+        'IDDeclaracion__detalle',
+        'IDClientes_Proveedores__IDClientes_Proveedores',
+        'IDClientes_Proveedores__Descripcion',
+        'Fecha_Asigna',
+        'Fecha_Presenta',
+        'Fecha_Cierre',
+        'IDPlanilla_Funcionarios__Nombre',  # Acceder al nombre del funcionario
+        'IDDeclaracion__estado',
+        'correo',
+        'Numero_Comprobante',
+        'Fecha_Final'                
+    ))
+    print('Detalle Encontrado',Total_Declaraciones)
+    return JsonResponse(datadeclaracion, safe=False)
+
+
+# busca la fecha donde se quieren sacar las declaraciones 
+def VsBuscaporfecha(request, fecha):
+    try:                
+        Total_Declaracion = calendario_tributario.objects.filter(Fecha_Presenta=fecha).order_by("-Fecha_Presenta")
+        
+        datadeclaracion = list(Total_Declaracion.values(
+            'IDCalendario_tributario',            
+            'IDDeclaracion__codigo',
+            'IDDeclaracion__detalle',
+            'IDDeclaracion__tiempo',
+            'IDDeclaracion__observaciones'
+        ))
+        
+        return JsonResponse(datadeclaracion, safe=False)
+    
+    except Exception as e:
+        # Manejo genérico de errores, imprime el error en la consola del servidor
+        print('Error en consulta:', e)
+        return JsonResponse({'error': str(e)}, status=500)
+    
+def VsAgregaDeclaracionCalendario(request):
+    if request.method == 'POST':
+        data = json.loads(request.body.decode('utf-8'))                                
+            
+        print('LLegue a la vista',data)        
+        
+        fecha = data.get('Fecha_Presenta', None)
+
+        print("fecha",fecha)
+        
+        declaracion_id = data.get('IDDeclaracion', None)     
+        observaciones = data.get('Observaciones',None)                           
+        print('LLegue a la vista',fecha)
+        try:
+            fecha_asigna = datetime.strptime(data['fecha'], '%d/%m/%Y').strftime('%Y-%m-%d')
+            print("Fecha",fecha_asigna)
+            # controla si viene vacio
+            if not fecha or not declaracion_id:
+                return JsonResponse({'error': 'Datos incompletos'}, status=400)
+            
+            
+            nueva_declaracion_calendario = calendario_tributario.objects.create(
+                Fecha_Presenta=fecha_asigna,                
+                Observaciones=observaciones,
+                IDDeclaracion=declaracion_id,
+            )     
+                                           
+            return JsonResponse({'message': 'Declaración incluida'}, status=201)
+        except Exception as e:  
+            print('Error:', str(e))          
+            return JsonResponse({'error': 'Error al crear al asignar la declaración '}, status=500)
+    else:
+        return JsonResponse({'error': 'Método no permitido'}, status=405)
+    

@@ -2,6 +2,8 @@
 {% load static %}
 {% block titulo %} Calendario Tributario {% endblock %}
 {% block contenido %}
+{% csrf_token %}  <!-- llave de formulario de Django--> 
+
 <!-- busca los script para todos los clientes-->
 <script src="{% static 'js/index.js' %}"></script> 
 
@@ -15,34 +17,34 @@
         <div class="row mt-3">
             <div class="col text-right">
               <a href="{% url 'visor' %}" class="btn btn-primary"><i class="fa fa-reply"> Volver al menú </i></a>                                              
+              <input type="date" onclick="StbuscaporFecha()" class="btn btn-primary" id="fecha" name="fecha" value="" style="float: right;">
             </div>
         </div>                  
     
     <!-- Muestra el combo de las declaraciones del sistema -->
-    <div class="container-fluid">
-        <div class="row justify-content-end">
-          <div class="col-md-16"> <!-- Define el tamaño del combo -->
-                <a><label class="text-primary">Escoja Declaración activas </label></a>
-                <select class="form-select" onclick="" id ="lcalendario" ></select>
-          </div>
-          </br>
-        </div>
-    </div>  
-
-      <div class="card-body">        
+    <div class="col-md-16 d-flex justify-content-between align-items-center"> <!-- Define el tamaño del combo y alinea elementos -->
+      <div> <!-- Añade un div para agrupar elementos -->
+          <a><label class="text-primary">Escoja Declaración activas </label></a>
+          <select class="form-select" onchange="" id="lcalendario"></select>
+      </div>
+      <button class="btn btn-info" type="button" onclick="Stagrega_Declaracion()">Agregar</button>
+  </div>
+     
+    <div class="card-body">        
         <table class="table">
                 <thead>
                     <tr>
-                        <th scope="col">ID</th>                        
-                        <th scope="col">Codigo</th>                        
-                        <th scope="col">Detalle</th>                                                
-                        <th scope="col">Presenta</th>
-                        <th scope="col">Estado</th>                        
+                        <th scope="col">ID</th>   
+                        <th scope="col">Codigo</th>                                             
+                        <th scope="col">Detalle</th>
+                        <th scope="col">Tiempo</th>
+                        <th scope="col">Descripción</th>
+                        <th score="col">Acción</th>
                     </tr>
                 </thead>
-                <tbody>       
-                                
-                </tbody>         
+                <tbody id="declaracionesTabla">   
+
+                </tbody>           
          </table>     
     </div>
     <div class="card-footer text-muted">Fechas de presentación</div>

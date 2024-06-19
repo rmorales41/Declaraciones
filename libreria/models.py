@@ -73,10 +73,7 @@ class calendario_tributario(models.Model):
      
      # llaves foraneas 
     IDDeclaracion = models.ForeignKey(declaracion, null=False, blank=False,  on_delete=models.CASCADE)           
-    IDClientes_Proveedores = models.ForeignKey(cliente_proveedor_cliente_proveedor, on_delete=models.CASCADE)      
-    IDPlanilla_Funcionarios = models.ForeignKey(planillas_planilla_funcionarios, on_delete=models.CASCADE)  
-          
-    
+                  
     def __str__(self):
         fila = "Fecha: " + self.Fecha_Presenta 
         return fila 

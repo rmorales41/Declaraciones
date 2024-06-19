@@ -51,6 +51,12 @@ urlpatterns = [
     path('ConfirmaDeclaracion/',views.VsConfirmaDeclaracion,name ='ConfirmaDeclaracion'),
     path('VerDeclaracionHistoricas/',views.VsEstatusDeclaracionHistoricas, name='VerDeclaracionHistoricas'),    
     path('Confirma/<int:idd>',views.VsConfirma, name='Confirma'),    
+    path('DeclaracionesConfirmadas/',views.VsDeclaracionesConfirmadasCerradas, name='DeclaracionesConfirmadas'),    
+    path('VerDeclaracionHistoricasCerradas/',views.VsDeclaracionesConfirmadasCerradasAplicadas, name='VerDeclaracionHistoricasCerradas'),            
+    path('BuscaporfechaD/<str:fecha>/',views.VsBuscaporfecha, name='BuscaporfechaD'),
+    path('AgregaDeclaracionCalendario/',views.VsAgregaDeclaracionCalendario, name='AgregaDeclaracionCalendario')
+    
+   
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     
