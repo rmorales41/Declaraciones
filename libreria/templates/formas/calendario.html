@@ -1,6 +1,6 @@
 {% extends "paginas/base.html" %}
 {% load static %}
-{% block titulo %} Calendario Tributario {% endblock %}
+{% block titulo %} Calendarización {% endblock %}
 {% block contenido %}
 {% csrf_token %}  <!-- llave de formulario de Django--> 
 
@@ -12,12 +12,12 @@
 
 <div class="card">    
     <div class="card-body">
-        <h4 class="card-title" style="text-align: center;">Calendario Tributario</h4>   
+        <h4 class="card-title" style="text-align: center;">Calendarzación Tributaria</h4>   
          <!-- Botón al final de la fila -->
         <div class="row mt-3">
             <div class="col text-right">
               <a href="{% url 'visor' %}" class="btn btn-primary"><i class="fa fa-reply"> Volver al menú </i></a>                                              
-              <input type="date" onclick="StbuscaporFecha()" class="btn btn-primary" id="fecha" name="fecha" value="" style="float: right;">
+              <input type="date" onclick="StBuscaporfecha()" class="btn btn-primary" id="fecha" name="fecha" value="" style="float: right;">
             </div>
         </div>                  
     
@@ -49,6 +49,40 @@
     </div>
     <div class="card-footer text-muted">Fechas de presentación</div>
  </div>
+
+
+ <script>
+    $(document).ready(function() {
+        // Función para ordenar los datos al hacer clic en el encabezado de la columna
+        $('th').click(function() {
+            var table = $(this).parents('table').eq(0);
+            var rows = table.find('tr:gt(0)').toArray().sort(comparar($(this).index()));
+  
+            this.asc = !this.asc;
+            if (!this.asc) {
+                rows = rows.reverse();
+            }
+            for (var i = 0; i < rows.length; i++) {
+                table.append(rows[i]);
+            }
+        });
+        
+        // Función para comparar los valores y ordenarlos
+        function comparar(index) {
+            return function(a, b) {
+                var valA = getCellValue(a, index);
+                var valB = getCellValue(b, index);
+                return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.localeCompare(valB);
+            };
+        }
+  
+        // Función para obtener el valor de la celda
+        function getCellValue(row, index) {
+            return $(row).children('td').eq(index).text();
+        }
+    });
+  </script>
+
 {% endblock %}
 
 

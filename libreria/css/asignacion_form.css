@@ -2,3 +2,17 @@
 label{
     color:blue ;
 }
+
+.dropdown-menu {
+    background-color: #fff; /* Color de fondo del menú desplegable */
+    border: 1px solid #ccc; /* Borde del menú desplegable */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra del menú desplegable */
+}
+
+.dropdown-menu a {
+    color: #333; /* Color de texto para las opciones del menú */
+}
+
+.dropdown-menu a:hover {
+    background-color: #f0f0f0; /* Color de fondo al pasar el mouse sobre las opciones */
+}

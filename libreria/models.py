@@ -75,8 +75,8 @@ class calendario_tributario(models.Model):
     IDDeclaracion = models.ForeignKey(declaracion, null=False, blank=False,  on_delete=models.CASCADE)           
                   
     def __str__(self):
-        fila = "Fecha: " + self.Fecha_Presenta 
-        return fila 
+        return f"Fecha Presentación: {self.Fecha_Presenta}, ID: {self.IDCalendario_tributario}"
+        
 
 class Historico_Declaraciones(models.Model):
     IDHistorico_Declaraciones = models.AutoField(primary_key=True)

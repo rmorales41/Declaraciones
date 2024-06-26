@@ -1,0 +1,69 @@
+{% extends "paginas/base.html" %}
+{% load static %}
+{% block titulo %} Calendario Tributario Reasignación {% endblock %}
+{% block contenido %}
+{% csrf_token %}  <!-- llave de formulario de Django--> 
+
+<!-- busca los script para todos los clientes-->
+<script src="{% static 'js/Calendario_Tributario_Reasigna.js' %}"></script> 
+
+<!-- Incluye los archivos de flatpickr (puedes ajustar las versiones y URLs según corresponda) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"> 
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<!-- <body onload="StCalendario_Tributario()"> -->
+
+    <div class="row mt-3">
+        <div class="col text-right">
+            <a href="{% url 'visor' %}" class="btn btn-primary"><i class="fa fa-reply"></i> Volver al menú </a>
+            <input type="text" id="selector-a" placeholder="Seleccionar mm/aaaa" class="btn btn-info" onchange="StbuscaDeclaracionesCalendarioanual(this.value) " style="float: right; color: white;">            
+        </div>
+    </div>
+    
+    <div class="card">    
+    <div class="card-body">
+        <h4 class="card-title" style="text-align: center;">Calendario Tributario Reasigna</h4>                    
+    <div class="card-body">        
+        <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">ID</th>   
+                        <th scope="col">Codigo</th>                                             
+                        <th scope="col">Detalle</th>
+                        <th scope="col">Fecha Calendario</th>                        
+                        
+                    </tr>
+                </thead>
+                <tbody id="declaracionesTabla">   
+
+                </tbody>           
+         </table>     
+    </div>
+    <div class="card-footer text-muted">Fechas de presentación</div>
+ </div>
+
+</body>
+
+
+<script>
+    // Configura flatpickr para mostrar solo años
+    flatpickr("#selector-a", {
+        dateFormat: "Y",  // Formato de fecha: solo año
+        minDate: "2000",   // Año mínimo permitido
+        maxDate: "today",  // Hasta el año actual
+        yearRange: "2000:today",  // Rango de años permitido
+        onChange: function(selectedDates, dateStr, instance) {
+            // Aquí podrías añadir lógica adicional al cambiar la fecha, si es necesario
+        }
+    });
+
+    function buscarPorAno() {
+        // Función para manejar la búsqueda por año
+        var selectedYear = document.getElementById("selector-ano").value;
+        // Aquí puedes implementar la lógica para buscar usando el año seleccionado
+        console.log("Buscar por año:", selectedYear);
+    }
+</script>
+
+{% endblock %}
+
+

@@ -80,10 +80,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'mssql',
         'NAME':'Declaraciones',
-        'HOST':'127.0.0.1',
+        'HOST':'192.168.10.100',
         'PORT':'1433',
-        'USER':'sa',
-        'PASSWORD':'0026',
+        'USER':'Usuario05',
+        'PASSWORD':'Usuario05',
         'ATOMIC_REQUESTS': True,
         
         'OPTIONS':{

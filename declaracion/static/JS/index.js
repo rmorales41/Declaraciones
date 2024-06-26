@@ -1,5 +1,4 @@
-//Js
-import moment from 'moment';
+//JavaScrip 
 
 document.addEventListener("DOMContentLoaded", function() {
     StListaclientes(); // Llama a la función para cargar el combo al cargar la página por primera vez  
@@ -61,33 +60,8 @@ async function llenarpendienteasigna() {
        console.error("Error en la solicitud:", error);
    }
 }
-// Busca los clientes asignados al funcionario 
-async function Carga_ClienteFuncionario_old(idd) {    
-    // limpia select     
-    Clientfunc.innerHTML="";
-   // console.log("Carga clientes funcionario:",idd); 
-    
-    try {
-        const response = await fetch(`/asignaciones/${idd}`);
-        const data = await response.json();           
-     //   console.log(data)
-        if (data && data.data && data.data.length > 0) {
-            const select = document.getElementById("Clientfunc");
-            
-            data.data.forEach(item => {
-                const option = document.createElement("option");
-                option.value = item.IDClientes_Proveedores_id;
-                option.textContent = item.Descripcion;
-                select.appendChild(option);           
-            });
-        } else {
-            console.error("Error al obtener los datos.");
-        }
-    } catch (error) {
-        console.error("Error en la solicitud:", error);
-   }
-}
 
+// Busca los clientes asignados al funcionario 
 async function Carga_ClienteFuncionario(idd) {
     // Limpia el select
     Clientfunc.innerHTML = "";
@@ -119,7 +93,6 @@ async function Carga_ClienteFuncionario(idd) {
         console.error("Error en la solicitud:", error);
     }
 }
-
 
 
 // se encarga de cargar las declaraciones que tiene cada cliente segun su funcionario
@@ -565,7 +538,7 @@ function formatDate(dateString) {
     const formattedMonth = month < 10 ? '0' + month : month;
 
     // Retorna la fecha formateada en formato dd/mm/yyyy
-    return `${formattedDay}/${formattedMonth}/${year}`;
+    return `${formattedDay}-${formattedMonth}-${year}`;
 }
 
 
@@ -1098,23 +1071,170 @@ function StDeclaracionesConfirmadasCerradasHistoricas(){
 }
 
 // busca la fecha seleccionada 
-function StbuscaporFecha(){    
+function StBuscaporfecha(){       
     var fechaSeleccionada = document.getElementById("fecha").value;
-    console.log('aqui va la fecha')
-    console.log(fechaSeleccionada) 
-
+    fechaf=formatDate(fechaSeleccionada)
     fetch(`/Buscaporfecha/${fechaSeleccionada}`)
       .then(response => {
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error('No se encuentran datos correctos ');
         }
         return response.json(); // o response.text() si esperas otro tipo de respuesta
-      })
-      .then(data => {
-        //  respuesta optenida 
+      })      
+        .then(datadeclaracion => {
+            const tbody = document.querySelector("tbody");
+            tbody.innerHTML = '';
+    
+            datadeclaracion.forEach(item => {
+                const row = document.createElement("tr");                            
+                row.innerHTML = `
+                    <td>${item.IDCalendario_tributario}</td>
+                    <td>${item.IDDeclaracion__codigo}</td>                
+                    <td>${item.IDDeclaracion__detalle}</td>
+                    <td>${item.IDDeclaracion__tiempo}</td>
+                    <td>${item.IDDeclaracion__observaciones}</td>                    
+                    <td><a name="" id="" class="btn btn-danger"  href="#" onclick="Stborralineacalendario(${item.IDCalendario_tributario})" role="button">Eliminar</a></td>  `
+
+                tbody.appendChild(row);
+            });               
+
         console.log(data);
       })
       .catch(error => {
         console.error('Fetch error:', error);
       });
     }
+
+
+// Este es el boton de Calendario Tributario que agrega las declaraciones a la fecha especifica
+function Stagrega_Declaracion(){
+    // obtiene la declaracion seleccionada 
+    var declaracion_seleccionada = document.getElementById('lcalendario').value;
+    // obtiene la fecha seleccionada 
+    var fecha_selecionada = document.getElementById('fecha').value;    
+
+    //const formato_fecha_seleccionada = formatDate(fecha_selecionada);
+    
+    const data = {
+        fecha_Presenta: fecha_selecionada ,
+        Observaciones : 'N/A',
+        IDDeclaracion: declaracion_seleccionada,
+     };       
+
+    fetch(`/AgregaDeclaracionCalendario/${fecha_selecionada}`, {            
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCSRFToken()           
+        },
+        body: JSON.stringify(data),
+    })    
+    .then(response => {        
+        if (response.ok) {
+            swal.fire("Excelente!", "Nueva declaración Agregada.", "success");            
+            // Recarga datos    
+            //location.reload();     
+            StBuscaporfecha();
+        } else {
+            swal.fire("Oops!", "Nueva declaración no incluida. Verifique si ya la agrego y esta tratando de agregarla nuevamente.", "error");             
+        }
+    })
+    .catch(error => {
+        swal.fire("Oops!", "Posiblemente ya este incluida la declaración.", "error");               
+    });
+} 
+
+
+//elimina una linea asignada al calendario tributario 
+function Stborralineacalendario(id){       
+     fetch(`/BorraCalendarioLinea/${id}`,{            
+         method: 'POST',
+         headers: {
+             'Content-Type': 'application/json',
+             'X-CSRFToken': getCSRFToken()           
+         },        
+     })         
+     .then(response => {             
+         if (!response.ok) {
+            swal.fire("Error!", "No se puedo eliminar la linea de declaración.", "error");                          
+         } 
+         return response.json();
+     })
+     .then(data=> {
+        swal.fire("Excelente!","Elimando correctamente.","success");
+        StBuscaporfecha();
+     })
+     .catch(error => {
+             swal.fire("Oops!", "No se puedo eliminar la linea de declaración2.", "error");                   
+     });
+} 
+
+// Función para mostrar u ocultar el calendario
+function toggleCalendar() {
+    var calendar = document.getElementById('calendar');
+    calendar.style.display = (calendar.style.display === 'block') ? 'none' : 'block';
+}
+
+// Función para generar el calendario de meses y años
+function generateCalendar() {
+    var calendar = document.getElementById('calendar');
+    calendar.innerHTML = ''; // Limpiar contenido anterior
+
+    // Array de meses (puedes personalizarlos según tus necesidades)
+    var months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+
+    // Año actual y años pasados y futuros
+    var currentYear = new Date().getFullYear();
+    var yearsToShow = 10; // Mostrar 10 años hacia atrás y 10 años hacia adelante
+
+    // Generar botones para cada mes y año
+    for (var i = currentYear - yearsToShow; i <= currentYear + yearsToShow; i++) {
+        months.forEach(function(month, index) {
+            var monthButton = document.createElement('button');
+            monthButton.textContent = month + ' ' + i;
+            monthButton.classList.add('month-button');
+            monthButton.addEventListener('click', function() {
+                // Aquí puedes manejar la selección del mes y año
+                var selectedDate = (index + 1) + '/' + i; // Formato MM/YYYY
+                document.getElementById('fecha').value = selectedDate;
+                toggleCalendar(); // Ocultar el calendario después de seleccionar
+            });
+            calendar.appendChild(monthButton);
+        });
+    }
+
+    // Puedes agregar más personalización o lógica según tus necesidades
+}
+
+// Muestra solo años se esta utilizando en Calendario Tributario
+
+function StbuscaDeclaracionesCalendarioanual(anSeleccionada){
+  // var anSeleccionada = document.getElementById("selector-a").value;  
+    fetch(`/Buscadeclaracionxan/${anSeleccionada}/`)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('No se encuentran datos correctos ');
+        }        
+        return response.json(); // 
+      })      
+        .then(datadeclaracion => {
+            const tbody = document.querySelector("tbody");
+            tbody.innerHTML = '';
+    
+            datadeclaracion.forEach(item => {
+                const row = document.createElement("tr");                            
+                row.innerHTML = `
+                    <td>${item.IDCalendario_tributario}</td>
+                    <td>${item.IDDeclaracion__codigo}</td>                
+                    <td>${item.IDDeclaracion__detalle}</td>                    
+                    <td>${item.Fecha_Presenta}</td>`
+                          
+
+                tbody.appendChild(row);
+            });               
+      })
+      .catch(error => {
+        console.error('Fetch error:', error);
+      });
+
+}

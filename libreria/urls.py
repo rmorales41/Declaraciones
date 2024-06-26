@@ -5,10 +5,11 @@ from . import views
 # asi con estos dos se maneja eel inventario
 from django.conf import settings
 from django.contrib.staticfiles.urls import static
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
-    path('',views.visor, name = 'visor'),
-    path('nosotros/',views.nosotros, name='nosotros'),
+      
+    path('',views.visor, name = 'visor'),       
     path('clientes/',views.clientes, name= 'clientes'),
     path('base',views.base, name= 'base'),
     path('visor',views.visor,name='visor'),
@@ -53,10 +54,18 @@ urlpatterns = [
     path('Confirma/<int:idd>',views.VsConfirma, name='Confirma'),    
     path('DeclaracionesConfirmadas/',views.VsDeclaracionesConfirmadasCerradas, name='DeclaracionesConfirmadas'),    
     path('VerDeclaracionHistoricasCerradas/',views.VsDeclaracionesConfirmadasCerradasAplicadas, name='VerDeclaracionHistoricasCerradas'),            
-    path('BuscaporfechaD/<str:fecha>/',views.VsBuscaporfecha, name='BuscaporfechaD'),
-    path('AgregaDeclaracionCalendario/',views.VsAgregaDeclaracionCalendario, name='AgregaDeclaracionCalendario')
-    
-   
+    path('Buscaporfecha/<str:fecha>',views.VsBuscaporfecha, name='Buscaporfecha'),
+    path('AgregaDeclaracionCalendario/<str:fch>',views.VsAgregaDeclaracionCalendario, name='AgregaDeclaracionCalendario'),
+    path('BorraCalendarioLinea/<int:linea>',views.VsCalendario_Tributario_lineaBorra, name='BorraCalendarioLinea'),
+    path('calendariotributario',views.VsCalendarioTributario, name='calendariotributario'),
+    path('Buscadeclaracionxan/<str:anSeleccionada>/',views.VsBuscadeclaracionxan, name='Buscadeclaracionxan'),   
+    path('reasignacalendario/',views.VsReasignadeclaracion, name='reasignacalendario'),   
+
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-    
+
+
+
+
+# path('Salida/',views.VsSalirSistema, name='Salida'),
+#    path('Finalizar/', views.exit_application, name='Finalizar')    

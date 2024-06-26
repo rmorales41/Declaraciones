@@ -1,0 +1,34 @@
+{% extends "paginas/base.html" %}
+{% block titulo %} Salir de la Aplicación {% endblock %}
+{% block contenido %}
+{% load static %}
+{% csrf_token %}    
+
+<script src="{% static 'js/sweetalert.min.js' %}"></script>
+<script src="{% static 'js/index.js' %}"></script> 
+<!--<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script> --> 
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js" onerror="alert('Error al cargar sweetalert.min.js');"></script>
+
+      <script>
+        // Función para mostrar el mensaje de confirmación    
+            swal({
+                title: "¿Estás seguro?",
+                text: "¿Deseas salir de la aplicación?",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Salir del Sistema!"
+            })
+            .then((willExit) => {
+                if (willExit) {
+                    // Redirigir a la página de salida
+
+                    window.location.href = "/exit";
+                }
+            });
+    </script>
+
+{% endblock %}
+

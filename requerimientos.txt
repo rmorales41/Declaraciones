@@ -106,3 +106,6 @@ npm install jquery
 
 instalador para convertir fechas 
 npm isntall moment 
+
+para cerrar el servidor se utiliza psutil el trae la funcion para cerrar 
+pip install psutil

@@ -1,6 +1,11 @@
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import logout
+from django.shortcuts import redirect
+from ctypes import util
 from datetime import date, timedelta
 from datetime import datetime
 import json
+import subprocess
 from typing import Self
 from urllib import request
 from django.contrib import messages
@@ -8,12 +13,28 @@ from django.forms import ValidationError
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404, render, redirect
+import psutil
 from .models import Asignacion, Declaracion_Clientes, Historico_Declaraciones, calendario_tributario, declaracion, planillas_planilla_funcionarios,cliente_proveedor_cliente_proveedor,Historico_Declaraciones
 from django.core.serializers import serialize
 from django.core import serializers
 from django.db.models import F,Q   
 # la clase F funciona para filtrar productos mayores ejemplo productos = Producto.objects.filter(precio__gt=F('descuento'))
 # la clase Q funciona para generar consultas correctas 
+
+
+def login_user(request):
+    if request.method=='POST':
+        username = request.POST['uname']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('/')
+        else:
+            messages.warning(request,'Invalid Credentials')
+            return redirect('login')
+    return render(request,'login.html')
+
 
 
 # carga el diseño del formulario 
@@ -686,6 +707,7 @@ def VsDeclaracionesConfirmadasCerradasAplicadas(request):
 
 # busca la fecha donde se quieren sacar las declaraciones 
 def VsBuscaporfecha(request, fecha):
+  
     try:                
         Total_Declaracion = calendario_tributario.objects.filter(Fecha_Presenta=fecha).order_by("-Fecha_Presenta")
         
@@ -696,41 +718,44 @@ def VsBuscaporfecha(request, fecha):
             'IDDeclaracion__tiempo',
             'IDDeclaracion__observaciones'
         ))
-        
+     
         return JsonResponse(datadeclaracion, safe=False)
     
     except Exception as e:
         # Manejo genérico de errores, imprime el error en la consola del servidor
         print('Error en consulta:', e)
         return JsonResponse({'error': str(e)}, status=500)
-    
-def VsAgregaDeclaracionCalendario(request):
-    if request.method == 'POST':
-        data = json.loads(request.body.decode('utf-8'))                                
-            
-        print('LLegue a la vista',data)        
-        
-        fecha = data.get('Fecha_Presenta', None)
 
-        print("fecha",fecha)
+# realiza la inclusion de la nueva declaracion al calendario de declaraciones     
+def VsAgregaDeclaracionCalendario(request,fch):
+    if request.method == 'POST':     
+           
+        data = json.loads(request.body.decode('utf-8')) 
+        #print('Fecha recibida',fch,data)                                                                                                    
+        #declaracion_obj = declaracion.objects.get(id=declaracion_id)        
+        declaracion_id = data.get('IDDeclaracion', None)                 
+        observaciones = data.get('Observaciones',None)                                   
         
-        declaracion_id = data.get('IDDeclaracion', None)     
-        observaciones = data.get('Observaciones',None)                           
-        print('LLegue a la vista',fecha)
         try:
-            fecha_asigna = datetime.strptime(data['fecha'], '%d/%m/%Y').strftime('%Y-%m-%d')
-            print("Fecha",fecha_asigna)
-            # controla si viene vacio
-            if not fecha or not declaracion_id:
-                return JsonResponse({'error': 'Datos incompletos'}, status=400)
-            
+            print("Entre al Try")
+            # Verificar si existe una instancia válida de declaracion con el ID proporcionado            
+            declaracion_instance = declaracion.objects.get(IDDeclaracion=declaracion_id)
+            print('declaracion',declaracion_instance)
+            # Verificar si ya existe una entrada en calendario_tributario con esta declaración
+            if calendario_tributario.objects.filter(
+                IDDeclaracion=declaracion_instance,
+                Fecha_Presenta = fch).exists():
+                return JsonResponse({'error': 'Esta declaración ya está incluida en el calendario'}, status=400)                      
+    
             
             nueva_declaracion_calendario = calendario_tributario.objects.create(
-                Fecha_Presenta=fecha_asigna,                
+                Fecha_Presenta=fch,                
                 Observaciones=observaciones,
-                IDDeclaracion=declaracion_id,
+                IDDeclaracion=declaracion_instance,
             )     
-                                           
+            
+            print('datos',nueva_declaracion_calendario)                              
+            
             return JsonResponse({'message': 'Declaración incluida'}, status=201)
         except Exception as e:  
             print('Error:', str(e))          
@@ -738,3 +763,125 @@ def VsAgregaDeclaracionCalendario(request):
     else:
         return JsonResponse({'error': 'Método no permitido'}, status=405)
     
+# elimina la declaracion del calendario tributario
+def VsCalendario_Tributario_lineaBorra(request,linea):  
+    try:                       
+        decla= calendario_tributario.objects.get(IDCalendario_tributario=linea)    
+        decla.delete()    
+        return JsonResponse({'message': 'Eliminado correctamente'}, status=200)
+    except calendario_tributario.DoesNotExist:
+        return JsonResponse({'error': 'El objeto no existe'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)   
+    
+# levanta el formulario para el calendario tributario ve todo lo calendarizado por año y mes 
+def VsCalendarioTributario(request):
+    print('llego finaliza')
+    return render(request,'formas/Calendario_Tributario.html')       
+ 
+# busca las declaraciones del año solicitado 
+def VsBuscadeclaracionxan(request, anSeleccionada):
+   # an_Selecionado = int(anSeleccionada) # convierte el año        
+    try:                  
+        an = int(anSeleccionada) 
+                         
+        
+        Total_Declaraciones = calendario_tributario.objects.filter(Fecha_Presenta__year = an
+        ).order_by("-Fecha_Presenta")  
+          
+        print('total',Total_Declaraciones) 
+        
+            
+        datadeclaracion = list(Total_Declaraciones.values(
+            'IDCalendario_tributario',            
+            'IDDeclaracion__codigo',
+            'IDDeclaracion__detalle',
+            'Fecha_Presenta'            
+        ))
+     
+             
+        return JsonResponse(datadeclaracion, safe=False)        
+                                        
+    except calendario_tributario.DoesNotExist:
+        return JsonResponse({'error': 'El objeto no existe'}, status=404)
+    except ValueError:
+        return JsonResponse({'error': 'El año proporcionado no es válido'}, status=400)
+    except Exception as e:
+        print(f"Error: {e}")  # Imprime el error en la consola
+        return JsonResponse({'error': str(e)}, status=500)   
+    
+# Salir del Sistema 
+#def VsSalirSistema(request): 
+    return render(request, 'formas/Salida.html')
+
+
+
+# cierra todos los procesos abiertos 
+#def exit_application_old(request):   
+    try:
+        # Obtener todos los procesos que contienen "runserver"
+        for proc in util.process_iter(['pid', 'name']):
+            if 'runserver' in proc.info['name']:
+                proc.kill()
+                print(f"Servidor con PID {proc.info['pid']} cerrado correctamente.")
+        
+        print("Servidor(es) cerrado(s) correctamente.")
+    except Exception as e:
+        print(f"Error al cerrar el servidor: {e}")
+
+    return redirect('/')
+
+# cierra solo este proceso 
+#def exit_application_old1(request):   
+    try:
+        # Iterar sobre todos los procesos
+        for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
+            if 'python' in proc.info['name'].lower() and 'runserver' in proc.cmdline():
+                # Verificar que sea el proceso correcto
+                if '--noreload' in proc.cmdline() or '--nothreading' in proc.cmdline():
+                    proc.kill()
+                    subprocess.run(["pkill", "-f", "runserver"])
+                    print(f"Servidor con PID {proc.info['pid']} cerrado correctamente.")
+                    break  # Salir del bucle después de cerrar el proceso
+        
+        print("Servidor cerrado correctamente.")
+    except Exception as e:
+        print(f"Error al cerrar el servidor: {e}")
+
+    return redirect('/')
+
+#def exit_application_old1(request):   
+    try:
+        # Iterar sobre todos los procesos
+        for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
+            if 'python' in proc.info['name'].lower() and 'runserver' in proc.cmdline():
+                # Verificar que sea el proceso correcto
+                if '--noreload' in proc.cmdline() or '--nothreading' in proc.cmdline():
+                    proc.kill()
+                    subprocess.run(["pkill", "-f", "runserver"])
+                    print(f"Servidor con PID {proc.info['pid']} cerrado correctamente.")
+                    break  # Salir del bucle después de cerrar el proceso
+        
+        print("Servidor cerrado correctamente.")
+    except Exception as e:
+        print(f"Error al cerrar el servidor: {e}")
+
+    return redirect('/')
+
+#def exit_application(request):   
+
+
+    logout(request)    
+    return redirect('/')
+
+#@login_required
+#def perfil(request):
+    # Vista de ejemplo protegida, solo accesible por usuarios autenticados
+    return render(request, 'perfil.html')
+
+
+
+# busca las declaraciones del año solicitado 
+def VsReasignadeclaracion(request):    
+     return render(request,'formas/Calendario_Tributario_Reasigna.html')       
+ 
