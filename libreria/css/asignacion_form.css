@@ -16,3 +16,9 @@ label{
 .dropdown-menu a:hover {
     background-color: #f0f0f0; /* Color de fondo al pasar el mouse sobre las opciones */
 }
+.custom-dropdown-menu {
+    max-height: 300px; /* Ajusta esta altura según tus necesidades */
+    overflow-y: auto; /* Permite desplazamiento vertical si el menú desplegable es más alto */
+  }
+
+  

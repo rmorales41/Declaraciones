@@ -109,3 +109,6 @@ npm isntall moment
 
 para cerrar el servidor se utiliza psutil el trae la funcion para cerrar 
 pip install psutil
+
+politicas cors 
+pip install django-cors-headers

@@ -90,13 +90,12 @@ class Historico_Declaraciones(models.Model):
     Suspendida = models.BooleanField(default=False)
     Usuario_Cierre = models.CharField(max_length=100)  
     Numero_Comprobante = models.CharField(max_length=50)  
-    Fecha_Final = models.DateTimeField(blank=True, null=True, verbose_name='Fecha_Final') 
-       
+    Fecha_Final = models.DateTimeField(blank=True, null=True, verbose_name='Fecha_Final')        
     
     # llaves foraneas 
     IDClientes_Proveedores = models.ForeignKey(cliente_proveedor_cliente_proveedor, on_delete=models.CASCADE) 
     IDPlanilla_Funcionarios = models.ForeignKey(planillas_planilla_funcionarios, on_delete=models.CASCADE)
-    IDDeclaracion = models.ForeignKey(declaracion, null=False, blank=False,  on_delete=models.CASCADE)           
+    IDDeclaracion = models.ForeignKey(declaracion, null=False, blank=False,  on_delete=models.CASCADE)              
     
     def __str__(self):
         return "{}".format(self.Fecha_Presenta)

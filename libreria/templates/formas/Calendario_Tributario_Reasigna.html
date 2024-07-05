@@ -14,14 +14,14 @@
 
     <div class="row mt-3">
         <div class="col text-right">
-            <a href="{% url 'visor' %}" class="btn btn-primary"><i class="fa fa-reply"></i> Volver al menú </a>
-            <input type="text" id="selector-a" placeholder="Seleccionar mm/aaaa" class="btn btn-info" onchange="StbuscaDeclaracionesCalendarioanual(this.value) " style="float: right; color: white;">            
+            <a href="{% url 'visor' %}" class="btn btn-primary"><i class="fa fa-reply"></i> Volver al menú </a>           
+            <input type="text" id="selector-a" placeholder="Seleccionar mm/aaaa" class="btn btn-info" onchange="StbuscaDeclaracionesCalendariomensual(selectedYear,selectedMonth) " style="float: right; color: white;">            
         </div>
     </div>
     
     <div class="card">    
     <div class="card-body">
-        <h4 class="card-title" style="text-align: center;">Calendario Tributario Reasigna</h4>                    
+        <h4 class="card-title" style="text-align: center;">Calendario Tributario Reasignación</h4>                    
     <div class="card-body">        
         <table class="table">
                 <thead>
@@ -30,15 +30,19 @@
                         <th scope="col">Codigo</th>                                             
                         <th scope="col">Detalle</th>
                         <th scope="col">Fecha Calendario</th>                        
+                        <th scope="col">Nueva Fecha</th>    
                         
                     </tr>
                 </thead>
                 <tbody id="declaracionesTabla">   
 
-                </tbody>           
+                </tbody> 
+                
          </table>     
-    </div>
-    <div class="card-footer text-muted">Fechas de presentación</div>
+    </div>     
+    <input name="" id="Guarda" class="btn btn-success" type="submit" onclick="StguardaReasignacion()" value="Enviar Datos"/>  
+    
+    <div class="card-footer text-muted">Reasignaciones </div>
  </div>
 
 </body>
@@ -47,22 +51,20 @@
 <script>
     // Configura flatpickr para mostrar solo años
     flatpickr("#selector-a", {
-        dateFormat: "Y",  // Formato de fecha: solo año
-        minDate: "2000",   // Año mínimo permitido
-        maxDate: "today",  // Hasta el año actual
+        dateFormat: "Y-m",  // Formato de fecha: solo año
+        minDate: "2000-01",   // Año mínimo permitido
+        maxDate: "today+10",  // Hasta el año actual + 10 
         yearRange: "2000:today",  // Rango de años permitido
         onChange: function(selectedDates, dateStr, instance) {
-            // Aquí podrías añadir lógica adicional al cambiar la fecha, si es necesario
+            var selectedYear = parseInt(dateStr.split('-')[0]);
+            var selectedMonth = parseInt(dateStr.split('-')[1]);
+            document.getElementById("selector-a").setAttribute("onchange", `StbuscaDeclaracionesCalendariomensual(${selectedYear},${selectedMonth})`);
         }
     });
-
-    function buscarPorAno() {
-        // Función para manejar la búsqueda por año
-        var selectedYear = document.getElementById("selector-ano").value;
-        // Aquí puedes implementar la lógica para buscar usando el año seleccionado
-        console.log("Buscar por año:", selectedYear);
-    }
 </script>
+
+
+
 
 {% endblock %}
 

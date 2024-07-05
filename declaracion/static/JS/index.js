@@ -830,7 +830,7 @@ function StCalendario_Tributario_old() {
        }       
         // convierte la respuesta en json         
         return response.json();
-        console.log('aqui estoy')
+     
         
     })
     .then(data => {              
@@ -895,9 +895,6 @@ function StCalendario_Tributario() {
             console.error("Error en StCalendario_Tributario:", error);
         });
 }
-
-
-/// ojo arriba 
 
 
 // Confirmacion de declaraciones cerradas 

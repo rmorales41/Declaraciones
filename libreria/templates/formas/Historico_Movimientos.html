@@ -1,0 +1,80 @@
+{% extends "paginas/base.html" %}
+{% load static %}
+{% block titulo %} Historico de Movimientos {% endblock %}
+{% block contenido %}
+<!-- Bootstrap -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
+<!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.11.4/css/dataTables.bootstrap5.min.css">
+
+<!-- jQuery primero, luego DataTables y Bootstrap Bundle -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.4/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"></script>
+
+<!-- Flatpickr -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<!-- Scripts personalizados -->
+<script src="{% static 'js/historico_movimientos.js' %}"></script>
+
+<h4 class="card-title" style="text-align: center;">Histórico de Movimientos</h4>
+
+<div class="row mt-3">
+    <div class="col text-right">
+        <a href="{% url 'visor' %}" class="btn btn-primary"><i class="fa fa-reply"></i> Volver al menú </a>
+        <input type="text" id="selector-a" placeholder="Seleccionar mm/aaaa" class="btn btn-info"
+               onchange="StCalendariomensual(selectedYear,selectedMonth)" style="float: right; color: white;">
+    </div>
+</div>
+
+<table id="declaracionesTabla" class="table table-striped" style="width:100%">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Codigo</th>
+            <th>Declaracion</th>            
+            <th>Nombre</th>
+            <th>Ult/Mov</th>
+            <th>Fch/Presenta</th>
+            <th>Fch/Hacienda</th>
+            <th>Acuse</th>
+            <th>Funcionario</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Aquí puedes incluir tus filas de datos dinámicamente desde Django si lo deseas -->
+    </tbody>
+</table>
+
+<!-- Script para configurar Flatpickr -->
+<script>
+    flatpickr("#selector-a", {
+        dateFormat: "Y-m", // Formato de fecha: solo año y mes
+        minDate: "2000-01", // Año y mes mínimo permitido
+        maxDate: new Date().fp_incr(9999), // Hasta el año y mes actual + 10 años
+        yearRange: "2000:today", // Rango de años permitido
+        onChange: function (selectedDates, dateStr, instance) {
+            var selectedYear = parseInt(dateStr.split('-')[0]);
+            var selectedMonth = parseInt(dateStr.split('-')[1]);
+            document.getElementById("selector-a").setAttribute("onchange", `StCalendariomensual(${selectedYear},${selectedMonth})`);
+        }
+    });
+</script>
+<script> 
+    // Inicializar DataTable
+    $(document).ready(function () {
+        $('#declaracionesTabla').DataTable({
+            "language": {
+                "url": "{% static 'json/Spanish.json' %}" 
+            },
+            "searching": true,  // Habilitar búsqueda global
+            "ordering": true    // Habilitar ordenamiento de columnas
+        });
+    });
+</script>
+<!-- //cdn.datatables.net/plug-ins/1.11.4/i18n/Spanish.json"  // Opcional: idioma español-->
+{% endblock %}

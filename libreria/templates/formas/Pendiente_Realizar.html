@@ -1,0 +1,90 @@
+<!-- Clientes - Pendientes de Realizar -->
+{% extends "paginas/base.html" %}
+{% load static %}
+{% block titulo %} Declaraciones Pendientes por Realizar {% endblock %}
+{% block contenido %}
+{% csrf_token %} <!-- Llave de formulario de Django -->
+
+<!-- Cargar jQuery primero -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Scripts personalizados -->
+<script src="{% static 'js/Pendiente_Realizar.js' %}"></script>
+
+
+<!-- Bootstrap y otros estilos y scripts -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+<!-- Flatpickr -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<!-- DataTables -->
+<link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.bootstrap5.min.css">
+<script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap5.js"></script>
+
+
+
+<!-- Script para inicializar DataTables -->
+<script>
+    $(document).ready(function () {
+        $('#declaracionesTabla').DataTable({
+            "language": {
+                "url": "{% static 'json/Spanish.json' %}"
+            }
+        });
+    });
+    </script>
+    
+
+
+<h4 class="card-title" style="text-align: center;">Clientes Pendientes por Realizar</h4>
+
+<div class="row mt-3">
+    <div class="col text-right">
+        <a href="{% url 'visor' %}" class="btn btn-primary"><i class="fa fa-reply"></i> Volver al menú </a>
+        <input type="text" id="selector-a" placeholder="Seleccionar mm/aaaa" class="btn btn-info"
+               onchange="StCalendariomensual(selectedYear,selectedMonth)" style="float: right; color: white;">
+    </div>
+</div>
+<!-- Datatable -->
+<table class="table table-striped" id="declaracionesTabla" style="width:100%">
+    <thead>
+        <tr>
+            <th style="width: 5%">ID</th>
+            <th style="width: 5%">Codigo</th>
+            <th style="width: 25%">Declaracion</th>
+            <th style="width: 10%">Codigo</th>
+            <th style="width: 15%">Nombre</th>
+            <th style="width: 10%">Ult/Mov</th>
+            <th style="width: 15%">Fch/Presenta</th>
+            <th style="width: 20%">Funcionario</th>
+            
+        </tr>
+    </thead>
+    <tbody>
+
+    </tbody>    
+</table>
+
+<input name="" id="Guarda" class="btn btn-success" type="submit" onclick="StguardaReasignacion()" value="Enviar Datos"/>
+<div class="card-footer text-muted">Pendientes de Clientes por Realizar</div>
+
+<!-- Script para configurar Flatpickr -->
+<script>
+    flatpickr("#selector-a", {
+        dateFormat: "Y-m", // Formato de fecha: solo año y mes
+        minDate: "2000-01", // Año y mes mínimo permitido
+        maxDate: new Date().fp_incr(9999), // Hasta el año y mes actual + 10 años
+        yearRange: "2000:today", // Rango de años permitido
+        onChange: function (selectedDates, dateStr, instance) {
+            var selectedYear = parseInt(dateStr.split('-')[0]);
+            var selectedMonth = parseInt(dateStr.split('-')[1]);
+            document.getElementById("selector-a").setAttribute("onchange", `StCalendariomensual(${selectedYear},${selectedMonth})`);
+        }
+    });
+</script>
+
+
+{% endblock %}

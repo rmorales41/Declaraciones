@@ -1,6 +1,7 @@
 
 from django.urls import path
 from . import views
+from .Vistas import Views_BuscaDeclaracionxm,Views_pendiente_realizar,Views_Historico_Movimientos,Views_Funcionarios
  
 # asi con estos dos se maneja eel inventario
 from django.conf import settings
@@ -60,12 +61,18 @@ urlpatterns = [
     path('calendariotributario',views.VsCalendarioTributario, name='calendariotributario'),
     path('Buscadeclaracionxan/<str:anSeleccionada>/',views.VsBuscadeclaracionxan, name='Buscadeclaracionxan'),   
     path('reasignacalendario/',views.VsReasignadeclaracion, name='reasignacalendario'),   
-
-    
+    path('Buscadeclaracionxm/<int:selectedYear>,<int:selectedMonth>/',Views_BuscaDeclaracionxm.VsBuscadeclaracionxm, name='Buscadeclaracionxm'),   
+    path('ReasignaDeclaracionCalendario/<str:fecha_propuesta>',Views_BuscaDeclaracionxm.VsReasignaDeclaracionCalendario, name='ReasignaDeclaracionCalendario'),   
+    path('pendiente_realizar/',Views_pendiente_realizar.VsPendiente_realizar, name='pendiente_realizar'),   
+    path('Realizar_consulta/<str:selectedYear>,<str:selectedMonth>/',Views_pendiente_realizar.VsPendiente_realizar_consultas, name='Realizar_consulta'),
+    path('historico_movimientos/',Views_Historico_Movimientos.VsHistorico_Movimientos, name='historico_movimientos'),
+    path('Realizar_consulta_Historica/<str:selectedYear>,<str:selectedMonth>/',Views_Historico_Movimientos.VsMovimiento_Historico, name='Realizar_consulta_Historica'),
+    path('Funcionarios/',Views_Funcionarios.VsCargaformula, name='Funcionarios'),
+  
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
 
 
 # path('Salida/',views.VsSalirSistema, name='Salida'),
-#    path('Finalizar/', views.exit_application, name='Finalizar')    
+#    path('Finalizar/', views.exit_application, name='Finalizar')   // <str:fecha_propuesta> 

@@ -736,11 +736,9 @@ def VsAgregaDeclaracionCalendario(request,fch):
         declaracion_id = data.get('IDDeclaracion', None)                 
         observaciones = data.get('Observaciones',None)                                   
         
-        try:
-            print("Entre al Try")
+        try:       
             # Verificar si existe una instancia válida de declaracion con el ID proporcionado            
             declaracion_instance = declaracion.objects.get(IDDeclaracion=declaracion_id)
-            print('declaracion',declaracion_instance)
             # Verificar si ya existe una entrada en calendario_tributario con esta declaración
             if calendario_tributario.objects.filter(
                 IDDeclaracion=declaracion_instance,
@@ -753,8 +751,7 @@ def VsAgregaDeclaracionCalendario(request,fch):
                 Observaciones=observaciones,
                 IDDeclaracion=declaracion_instance,
             )     
-            
-            print('datos',nueva_declaracion_calendario)                              
+                                                   
             
             return JsonResponse({'message': 'Declaración incluida'}, status=201)
         except Exception as e:  
@@ -775,8 +772,7 @@ def VsCalendario_Tributario_lineaBorra(request,linea):
         return JsonResponse({'error': str(e)}, status=500)   
     
 # levanta el formulario para el calendario tributario ve todo lo calendarizado por año y mes 
-def VsCalendarioTributario(request):
-    print('llego finaliza')
+def VsCalendarioTributario(request):    
     return render(request,'formas/Calendario_Tributario.html')       
  
 # busca las declaraciones del año solicitado 
@@ -884,4 +880,7 @@ def VsBuscadeclaracionxan(request, anSeleccionada):
 # busca las declaraciones del año solicitado 
 def VsReasignadeclaracion(request):    
      return render(request,'formas/Calendario_Tributario_Reasigna.html')       
+ 
+ 
+ 
  
