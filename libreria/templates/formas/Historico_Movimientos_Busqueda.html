@@ -1,6 +1,6 @@
 {% extends "paginas/base.html" %}
 {% load static %}
-{% block titulo %} Historico de Movimientos {% endblock %}
+{% block titulo %} Historico de Movimientos Búsqueda {% endblock %}
 {% block contenido %}
 <!-- Bootstrap -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
@@ -19,15 +19,14 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 <!-- Scripts personalizados -->
-<script src="{% static 'js/historico_movimientos.js' %}"></script>
+<script src="{% static 'js/historico_movimientos_busqueda.js' %}"></script>
 
-<h4 class="card-title" style="text-align: center;">Histórico de Movimientos</h4>
+<body onload="StMovimientohistorico()"></body>
 
 <div class="row mt-3">
-    <div class="col text-right">
-        <a href="{% url 'visor' %}" class="btn btn-primary"><i class="fa fa-reply"></i> Volver al menú </a>
-        <input type="text" id="selector-a" placeholder="Seleccionar mm/aaaa" class="btn btn-info"
-               onchange="StCalendariomensual(selectedYear,selectedMonth)" style="float: right; color: white;">
+    <div class="col d-flex align-items-center">
+        <a href="{% url 'visor' %}" class="btn btn-primary mr-auto"><i class="fa fa-reply"></i> Volver al menú</a>
+        <h4 class="card-title text-center mb-0 flex-grow-1">Histórico de Movimientos Búsqueda</h4>
     </div>
 </div>
 

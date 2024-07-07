@@ -1,4 +1,3 @@
-//JavaScrip 
 
 document.addEventListener("DOMContentLoaded", function() {
     StListaclientes(); // Llama a la función para cargar el combo al cargar la página por primera vez  

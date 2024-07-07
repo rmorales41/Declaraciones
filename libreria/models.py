@@ -30,7 +30,8 @@ class cliente_proveedor_cliente_proveedor(models.Model):
     Direccion = models.TextField(null=True)
     Email =  models.CharField(max_length=250, null = True) 
     Fecha_Ult_Movimiento = models.DateTimeField(null=True)  
-    Estado = models.BooleanField(default=True)
+    Estado = models.BooleanField(default=True) # activo , inactivo 
+    Tipo   = models.BooleanField(default=True) # true cliente , false proveedor 
     
     def __str__(self):
         return "{}".format(self.Descripcion)
@@ -57,7 +58,8 @@ class Declaracion_Clientes(models.Model):
     IDDeclaracion_Clientes = models.AutoField(primary_key=True)
     Fecha_Asigna = models.DateField(blank=True,null=True, verbose_name='Fecha_Asigna')
     Estado = models.BooleanField(default=False)
-    Observacion = models.CharField(max_length=180)   
+    Observacion = models.CharField(max_length=180)  
+     
     # llaves foraneas 
     IDClientes_Proveedores = models.ForeignKey(cliente_proveedor_cliente_proveedor, on_delete=models.CASCADE)     
     IDDeclaracion = models.ForeignKey(declaracion, null=False, blank=False,  on_delete=models.CASCADE)           
@@ -90,12 +92,35 @@ class Historico_Declaraciones(models.Model):
     Suspendida = models.BooleanField(default=False)
     Usuario_Cierre = models.CharField(max_length=100)  
     Numero_Comprobante = models.CharField(max_length=50)  
-    Fecha_Final = models.DateTimeField(blank=True, null=True, verbose_name='Fecha_Final')        
+    Fecha_Final = models.DateField(blank=True, null=True, verbose_name='Fecha_Final')        
+    Fecha_Sistema = models.DateTimeField(blank=True, null=True, verbose_name='Fecha_Sistema')        
     
     # llaves foraneas 
     IDClientes_Proveedores = models.ForeignKey(cliente_proveedor_cliente_proveedor, on_delete=models.CASCADE) 
     IDPlanilla_Funcionarios = models.ForeignKey(planillas_planilla_funcionarios, on_delete=models.CASCADE)
     IDDeclaracion = models.ForeignKey(declaracion, null=False, blank=False,  on_delete=models.CASCADE)              
+      
+        
+# Control de pymes y Exoneraciones 
+class Declaraciones_Tipo_Cliente(models.Model):
+    IDDeclaraciones_Tipo_Cliente = models.AutoField(primary_key=True) 
+    Condicion = models.IntegerField(blank=True,null=False, verbose_name='Condicion') # Pymes o Exonerada         
+    Fch_Solicitud = models.DateField(blank=True,null=True, verbose_name='Fch_Solicitud')
+    Numero_Solicitud =  models.CharField(max_length=50)
+    Fch_Autorizacion = models.DateField(blank=True,null=True,verbose_name='Fch_Autorizacion')
+    Numero_Autoriza  = models.CharField(max_length=50) # numero de exoneracion o DIGEypme
+    NombreAdcional = models.CharField(max_length=100)
+    Legal = models.CharField(max_length=100)
+    Tarifa = models.IntegerField(blank=True,null=False, verbose_name='Tarifa')
+    Fch_Vence = models.DateField(blank=True,null=True,verbose_name='Fch_Vence')
+    tramitado = models.CharField(max_length=100)
+    Fch_Sistema = models.DateTimeField(auto_now_add=True)
+    Ubicacion_Archivo = models.CharField(max_length=255)
+    
+    #llave foranea
+    IDClientes_Proveedores = models.ForeignKey(cliente_proveedor_cliente_proveedor, on_delete=models.CASCADE) 
     
     def __str__(self):
-        return "{}".format(self.Fecha_Presenta)
+        return f"Fecha Presentación: {self.Fch_Sistema}, ID: {self.tramitado}"
+    
+    

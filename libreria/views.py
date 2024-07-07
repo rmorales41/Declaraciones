@@ -126,7 +126,7 @@ def pendiente(request):
                 IDClientes_Proveedores=OuterRef('IDClientes_Proveedores')
                 )
             )
-        ).filter(tiene_asignacion=False,Estado = True)             
+        ).filter(tiene_asignacion=False,Estado = True,Tipo = True)             
     
     # es el listado general y la cantidad por pagina 
     paginator = Paginator(clientes_pendientes,8)  
@@ -161,22 +161,23 @@ def Clientes_pendientes(request):
         tiene_asignacion=Exists(
             Asignacion.objects.filter(
                 IDClientes_Proveedores=OuterRef('IDClientes_Proveedores')
+                
                 )
             )
-        ).filter(tiene_asignacion=False,Estado = True)
+        ).filter(tiene_asignacion=False,Estado = True,Tipo = True)
               
     return JsonResponse({'data':list(clientes_pendientes.values())}) 
 
 
 # vista para buscar los clientes que tiene asignado el funcionario       
 def Clientes_Funcionario(request,IDD):
-    
+    print("entre")
     clientes_funcionario = Asignacion.objects.filter(
         IDPlanilla_Funcionarios_id=IDD  # busca al funcionario
     ).annotate(
         tiene_asignacion=Exists(
             cliente_proveedor_cliente_proveedor.objects.filter(
-                IDClientes_Proveedores=OuterRef('IDClientes_Proveedores_id')
+                IDClientes_Proveedores=OuterRef('IDClientes_Proveedores_id')        
             )
         ),
         Descripcion=Subquery(
@@ -263,9 +264,12 @@ def VsListaclientes(request):
    return render(request,'formas/declaracion_clientes.html') 
 
 # muestra todos los cliente en el combo donde su estado este true 
-def VsListaclientesdatos(request):    
-    todos_clientes=list(cliente_proveedor_cliente_proveedor.objects.values().filter(Estado=True).order_by('Descripcion'))          
-    return JsonResponse({'data': list(todos_clientes)})  
+def VsListaclientesdatosa(request):
+    try:
+        todos_clientes = cliente_proveedor_cliente_proveedor.objects.filter(Estado=True, Tipo=True).order_by('Descripcion').values()
+        return JsonResponse({'data': list(todos_clientes)})
+    except Exception as e:
+        return JsonResponse({'error': 'Error al obtener los datos de clientes'}, status=500) 
 
 # debe de mostrar los clientes que no tienen asignada una declaracion 
 def VsClientessindeclaraciones(request):     
@@ -275,7 +279,7 @@ def VsClientessindeclaraciones(request):
                 IDClientes_Proveedores=OuterRef('IDClientes_Proveedores')
                 )
             )
-        ).filter(tiene_asignacion=False,Estado = True).order_by('Descripcion')
+        ).filter(tiene_asignacion=False,Estado = True,Tipo = True).order_by('Descripcion')
               
     return JsonResponse({'data':list(clientes_sin_declaraciones.values())}) 
 
@@ -342,21 +346,33 @@ def vagregarunadeclaracion(request):
     
 # asigna las declaraciones al funcionario 
 def clienteafuncionario(request):
+    print("aqui estoy ")
     if request.method == 'POST':  
-        try:                             
+        try:         
+            print("aqui estoy ")                    
             data = json.loads(request.body)            
-            clientepend_id = data.get('IDClientes_Proveedores', None)
-            cliente_proveedor_instance = cliente_proveedor_cliente_proveedor.objects.get(pk=clientepend_id) 
+            #clientepend_id = data.get('IDClientes_Proveedores', None) 
+
+            # Validar la presencia de datos importantes
+            if 'IDClientes_Proveedores' not in data or 'IDPlanilla_Funcionarios' not in data or 'Fecha_Asigna' not in data:
+                return JsonResponse({'error': 'Campos requeridos faltantes'}, status=400)
+            
+            #clientepend_id  = list(cliente_proveedor_cliente_proveedor.objects.values().filter(Tipo=True).order_by('Descripcion') 
+            
+            clientepend_id=list(declaracion.objects.values().filter(estado=True).order_by('codigo')) 
+      
+
+            cliente_proveedor_instance = cliente_proveedor_cliente_proveedor.objects.filter(Tipo=0).get(pk=clientepend_id) 
+            print('Clientes',cliente_proveedor_instance)
             funcionario_id = data.get('IDPlanilla_Funcionarios', None)
             funcionario_instance = planillas_planilla_funcionarios.objects.get(pk=funcionario_id)  
             if clientepend_id is None or funcionario_id is None:
                 return JsonResponse({'error': 'IDs de cliente o funcionario faltantes'}, status=400)
 
-            
             fecha = datetime.strptime(data['Fecha_Asigna'], '%d/%m/%Y').strftime('%Y-%m-%d')
                     
             # Obtener todas las declaraciones del cliente
-            declaraciones_cliente = Declaracion_Clientes.objects.filter(IDClientes_Proveedores=cliente_proveedor_instance)
+            declaraciones_cliente = Declaracion_Clientes.objects.values().filter(IDClientes_Proveedores=cliente_proveedor_instance)
               
             # Crear las asignaciones con las declaraciones del cliente
             for declaracion in declaraciones_cliente:
@@ -371,12 +387,22 @@ def clienteafuncionario(request):
                 )  
             
             return JsonResponse({'message': 'Asignacion a funcionario creada correctamente'}, status=201)
+        except KeyError as e:
+            return JsonResponse({'error': f'Campo requerido faltante: {e}'}, status=400)
+        
+        except cliente_proveedor_cliente_proveedor.DoesNotExist:
+            return JsonResponse({'error': 'Cliente o proveedor no encontrado'}, status=404)
+        
+        except planillas_planilla_funcionarios.DoesNotExist:
+            return JsonResponse({'error': 'Funcionario no encontrado'}, status=404)
+        
         except Exception as e:
             print('Error al crear la asignación a funcionario:', str(e))
-            return JsonResponse({'error': 'Error al crear la asignación a funcionario'}, status=500)
+            return JsonResponse({'error': 'Error interno al procesar la solicitud'}, status=500)
     else:
         return JsonResponse({'error': 'Método no permitido'}, status=405)
     
+
 
 # desasigna cliente a funcionario  quita los clientes a un funcionario  
 def vsdesasignaclienteafuncionario(request, IDD):    

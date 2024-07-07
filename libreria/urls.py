@@ -2,6 +2,8 @@
 from django.urls import path
 from . import views
 from .Vistas import Views_BuscaDeclaracionxm,Views_pendiente_realizar,Views_Historico_Movimientos,Views_Funcionarios
+from .Vistas import Views_Historico_Movimientos_Busqueda
+
  
 # asi con estos dos se maneja eel inventario
 from django.conf import settings
@@ -27,7 +29,7 @@ urlpatterns = [
     path('asigna_declaracion/<int:cliente_id>/<int:colaborador_id>',views.Asigna_Declaracion, name='asigna_declaracion'),
     path('clientes_declaraciones/',views.VsListaclientes,name ='clientes_declaraciones'),  
     path('Carga_Clientes_Sin_Declaracion/',views.VsClientessindeclaraciones,name='Carga_Clientes_Sin_Declaracion'),
-    path('VsListaclientesdatos/',views.VsListaclientesdatos,name ='VsListaclientesdatos'),
+    path('VsListaclientesdatos/',views.VsListaclientesdatosa,name ='VsListaclientesdatos'),
     path('BuscarDeclaracionxCliente/<int:IDD>',views.VDeclaracion_Cliente_asignacion,name ='BuscarDeclaracionxCliente'),
     path('elimina_declaracion_cliente/<int:IDD>',views.velimina_declaracion_cliente,name='elimina_declaracion_cliente'),  
     path('busca_declaraciones_xclientessinasignar/<int:IDD>',views.vdeclaraciones_sin_asignar_al_cliente,name='busca_declaraciones_xclientessinasignar'),  
@@ -68,6 +70,11 @@ urlpatterns = [
     path('historico_movimientos/',Views_Historico_Movimientos.VsHistorico_Movimientos, name='historico_movimientos'),
     path('Realizar_consulta_Historica/<str:selectedYear>,<str:selectedMonth>/',Views_Historico_Movimientos.VsMovimiento_Historico, name='Realizar_consulta_Historica'),
     path('Funcionarios/',Views_Funcionarios.VsCargaformula, name='Funcionarios'),
+    path('VisorFuncionario/',Views_Funcionarios.VsVisor_Funcionarios, name='VisorFuncionario'),
+    path('busqueda_historico_movimientos/',Views_Historico_Movimientos_Busqueda.VsHistorico_Movimientos, name='busqueda_historico_movimientos'),
+    path('Historicomovimientosbuscar/',Views_Historico_Movimientos_Busqueda.VsMovimiento_Historicobusqueda, name='Historicomovimientosbuscar'),
+  
+  
   
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
