@@ -4,11 +4,25 @@
 {% load static %}
 {% csrf_token %}  <!-- llave de formulario de Django--> 
 
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<!--<script src="{% static 'node_modules/moment/moment.js' %}" type="module"></script> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
 <script src="{% static 'js/index.js' %}"></script> 
-<!-- Declaraciones Confirmadas Cerradas-->
 
 
+<!-- Script para inicializar DataTables -->
+<script>
+    $(document).ready(function () {
+        $('#declaracionesTabla').DataTable({
+            "language": {
+                "url": "{% static 'json/Spanish.json' %}"
+            }
+        });
+    });
+</script>
+
+<!-- Declaraciones Confirmadas Cerradas -->
 <body onload="StDeclaracionesConfirmadasCerradasHistoricas()">
 
 <div class="row mt-3">

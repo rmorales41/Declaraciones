@@ -523,14 +523,20 @@ function StLista_Declaraciones_datos() {
 }
 
 // Función para formatear la fecha en dd/mm/yyyy
-function formatDate(dateString) {  
+
+function formatDate(dateString) {             
+   // moment().format();         
     // Extrae el día, mes y año
     console.log(dateString)
-    const date = moment(dateString); 
-
+    const date = moment(dateString);     
     const day = date.date();
     const month = date.month() + 1; // getMonth devuelve 0 para enero, por eso se suma 1
-    const year = date.year();
+    const year  = date.year();
+   // const day   = fecha.date();
+
+   // fecha = datetime.strptime(fecha, '%d-%m-%y').date()
+   // const fecha_dia = day < 10 ? '0' + day : day;
+   // const fecha_mes = month < 10 ? '0' + month : month;
 
     // Asegura dos digitos 
     const formattedDay = day < 10 ? '0' + day : day;
@@ -538,6 +544,7 @@ function formatDate(dateString) {
 
     // Retorna la fecha formateada en formato dd/mm/yyyy
     return `${formattedDay}-${formattedMonth}-${year}`;
+    //return `${fecha_dia}-${fecha_mes}-${year}`;
 }
 
 
@@ -1055,7 +1062,7 @@ function StDeclaracionesConfirmadasCerradasHistoricas(){
                 <td>${item.IDDeclaracion__estado ? "A" : "I"}</td>  
                 <td>${item.correo ? "Si" : "No"}</td>                        
                 <td>${item.Numero_Comprobante}</td>                
-                <td>${formatDate(item.Fecha_Cierre)}</td> `
+                <td>${item.Fecha_Final}</td> `
           
             tbody.appendChild(row);
 

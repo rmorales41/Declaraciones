@@ -1,0 +1,75 @@
+<!-- Asignadas a Funcionario muestra las que cada funcionario tiene asignadas -->
+{% extends "paginas/base.html" %}
+{% load static %}
+{% block titulo %} Asignaciones por Funcionarios activo {% endblock %}
+{% block contenido %}
+
+<!-- Bootstrap -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
+<!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.11.4/css/dataTables.bootstrap5.min.css">
+
+<!-- jQuery primero, luego DataTables y Bootstrap Bundle -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.4/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"></script>
+
+<!-- Scripts personalizados -->
+<script src="{% static 'js/visor_funcionarios.js' %}"></script>
+
+<body onload="StListacolaboradores()"></body>
+
+<body> 
+    <div class="card-body">
+        <input type="button" onclick="history.back()" class="btn btn-primary" name="volver atrás" value="volver atrás" style="float: left;">
+        <h4 class="card-title" style="text-align: center;">Funcionarios y sus asignados</h4>                   
+    </div>   
+
+        
+    <!-- Indica los funcionarios  de la empresa    -->    
+    <div class="container-fluid">
+      <div class="row justify-content-end">
+        <div class="col-md-16"> <!-- Define el tamaño del combo -->
+              <a><label class="text-primary">Funcionarios</label></a>
+              <select class="form-select" onclick="Stbuscaclientesasignados(this.value)" id ="funcionarios" >                          
+            </select>
+        </div>
+        </br>
+      </div>
+    </div>
+     
+
+  <table id="visorasginados" class="table table-striped" style="width:100%">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>                     
+            <th>Dirección</th>
+            <th>Ult/Mov</th>
+            
+        </tr>
+    </thead>
+    <tbody>        
+    </tbody>
+</table>
+
+<script> 
+    // Inicializar DataTable
+    $(document).ready(function () {
+        $('#visorasginados').DataTable({
+            "language": {
+                "url": "{% static 'json/Spanish.json' %}" 
+            },
+            "searching": true,  // Habilitar búsqueda global
+            "ordering": true    // Habilitar ordenamiento de columnas
+        });
+    });
+</script>
+
+{% endblock %}
+<!--   {% for campo in datos %}    
+                  <option id="{{ campo.IDPlanilla_Funcionarios_id }}"   value ="{{campo.IDPlanilla_Funcionarios}}">{{campo.IDPlanilla_Funcionarios}} - {{campo.Nombre}} </option>          
+              {% endfor %}
+              -->

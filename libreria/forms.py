@@ -1,5 +1,5 @@
 from django import forms 
-from .models import Asignacion, declaracion, planillas_planilla_funcionarios
+from .models import Asignacion, declaracion, planillas_planilla_funcionarios,Declaraciones_Tipo
 
 # se declara la estructura del formulario 
 class DeclaraForm(forms.ModelForm):
@@ -23,3 +23,10 @@ class AsignaDeclaraciones(forms.ModelForm):
         model = Asignacion
         fields = '__all__'
     
+
+# se declara la estructura del formulario  de tipos
+class TipoForm(forms.ModelForm):
+    class Meta:
+        db_table ="tipo"
+        model = Declaraciones_Tipo
+        fields = '__all__'

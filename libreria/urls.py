@@ -2,7 +2,7 @@
 from django.urls import path
 from . import views
 from .Vistas import Views_BuscaDeclaracionxm,Views_pendiente_realizar,Views_Historico_Movimientos,Views_Funcionarios
-from .Vistas import Views_Historico_Movimientos_Busqueda
+from .Vistas import Views_Historico_Movimientos_Busqueda,Views_Beneficios
 
  
 # asi con estos dos se maneja eel inventario
@@ -73,13 +73,19 @@ urlpatterns = [
     path('VisorFuncionario/',Views_Funcionarios.VsVisor_Funcionarios, name='VisorFuncionario'),
     path('busqueda_historico_movimientos/',Views_Historico_Movimientos_Busqueda.VsHistorico_Movimientos, name='busqueda_historico_movimientos'),
     path('Historicomovimientosbuscar/',Views_Historico_Movimientos_Busqueda.VsMovimiento_Historicobusqueda, name='Historicomovimientosbuscar'),
-  
-  
-  
+    path('asignadasafuncionario/',Views_Funcionarios.Vsasignadasafuncionario, name='asignadasafuncionario'),
+    path('ListaColaboradores/',Views_Funcionarios.VsListaColaboradores, name='ListaColaboradores'),  
+    path('DetalleColaborador/<int:IDD>/', Views_Funcionarios.VsListaColaboradoresyclientes, name='DetalleColaborador'),
+    path('clienteyfuncionario/', Views_Funcionarios.Vsclienteyfuncionario, name='clienteyfuncionario'),
+    path('DetalleClienteColaborador/', Views_Funcionarios.VsDetalleClienteColaborador, name='DetalleClienteColaborador'),
+    path('Declara_Tipo/', Views_Beneficios.Vspyme, name='Declara_Tipo'),
+    path('clientesactivos/', Views_Beneficios.VsClientesActivos, name='clientesactivos'),
+    path('VisorClientes/', Views_Beneficios.VsVisorClientes, name='VisorClientes'),
+    path('VisorTipos/', Views_Beneficios.VsVisorTipos, name='VisorClientes'),   
+    path('elimina_tipo/<int:IDD>',Views_Beneficios.elimina,name='elimina'),  
+    path('Tipoformulario/',Views_Beneficios.NuevoTipo,name='Tipoformulario'),  
+    path('editar_tipo/<int:idTipo>',Views_Beneficios.editartipo,name='editar_tipo'), 
+
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-
-
-
-# path('Salida/',views.VsSalirSistema, name='Salida'),
-#    path('Finalizar/', views.exit_application, name='Finalizar')   // <str:fecha_propuesta> 

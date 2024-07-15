@@ -170,8 +170,7 @@ def Clientes_pendientes(request):
 
 
 # vista para buscar los clientes que tiene asignado el funcionario       
-def Clientes_Funcionario(request,IDD):
-    print("entre")
+def Clientes_Funcionario(request,IDD):    
     clientes_funcionario = Asignacion.objects.filter(
         IDPlanilla_Funcionarios_id=IDD  # busca al funcionario
     ).annotate(
@@ -345,8 +344,7 @@ def vagregarunadeclaracion(request):
         return JsonResponse({'error': 'Método no permitido'}, status=405)
     
 # asigna las declaraciones al funcionario 
-def clienteafuncionario(request):
-    print("aqui estoy ")
+def clienteafuncionario(request):    
     if request.method == 'POST':  
         try:         
             print("aqui estoy ")                    
@@ -362,8 +360,7 @@ def clienteafuncionario(request):
             clientepend_id=list(declaracion.objects.values().filter(estado=True).order_by('codigo')) 
       
 
-            cliente_proveedor_instance = cliente_proveedor_cliente_proveedor.objects.filter(Tipo=0).get(pk=clientepend_id) 
-            print('Clientes',cliente_proveedor_instance)
+            cliente_proveedor_instance = cliente_proveedor_cliente_proveedor.objects.filter(Tipo=0).get(pk=clientepend_id)             
             funcionario_id = data.get('IDPlanilla_Funcionarios', None)
             funcionario_instance = planillas_planilla_funcionarios.objects.get(pk=funcionario_id)  
             if clientepend_id is None or funcionario_id is None:
@@ -709,8 +706,7 @@ def VsDeclaracionesConfirmadasCerradasAplicadas(request):
     ).filter(
         Q(Numero_Comprobante__isnull = False) & ~Q(Numero_Comprobante='')
     ).order_by("-Fecha_Cierre")
-    
-               
+                   
     
     datadeclaracion = list(Total_Declaraciones.values(
         'IDHistorico_Declaraciones',  # Acceder al ID de la declaración relacionada

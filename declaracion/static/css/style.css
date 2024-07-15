@@ -1,0 +1,22 @@
+/*Formulario Base */ 
+/* Cambia el color del texto y del icono al mismo tiempo  formulario base */
+.dropdown-toggle.facturacion {
+    color: #0099cc; /* Color azul letra menu */
+}
+
+/* Cambia solo el color del icono */
+.dropdown-toggle.beneficios .bi {
+    color: #ff6600; /* Color naranja */
+}
+/* Cambia solo el color del icono Declaracion */
+.dropdown-toggle.declaracion .fa {
+    color: #3d0ee7; /* Color naranja */
+}
+
+.dropdown-toggle.clientes .fa {
+    color: #df41af; /* Color naranja */
+}    
+
+.dropdown-toggle.funcionarios .fa {
+    color: #077697; /* Color celeste icono menu  */
+}
