@@ -131,3 +131,28 @@ class Declaraciones_Tipo_Cliente(models.Model):
     
     def __str__(self):
         return f"Fecha Presentación: {self.Fch_Sistema}, ID: {self.tramitado}"
+
+# detale de tipos de beneficio 
+class Detalle_Declaracion_Tipo(models.Model):
+    IDDetalle_Declaracion_Tipo = models.AutoField(primary_key=True) 
+    Detalle = models.CharField(max_length=255)
+    Fecha_solicitud = models.DateField(blank=True,null=True, verbose_name="Fecha_Emision")
+    Numero_solicitud = models.CharField(max_length=55)
+    Fecha_autorizacion = models.DateField(blank=True, null=True, verbose_name="Fecha_autorizacion")
+    Numero_autorizado = models.CharField(max_length=60)
+    Fecha_vencimiento = models.DateField(blank=True, null=True, verbose_name="Fecha_vencimiento")
+    Fundamento_Legal = models.CharField(max_length=150)                   
+    observaciones = models.CharField(max_length=255)
+    Otorgadopor = models.CharField(max_length=100)
+    Recordar_antes =models.IntegerField(blank = True, null=False, verbose_name="Recordar_antes")
+    Recordar_cada  = models.IntegerField(blank=True, null=False )
+    Estado = models.BooleanField(default=True) 
+    Correo_Notificar = models.CharField(max_length=255)
+    Responsable = models.CharField(max_length=200)
+    Porcentaje  = models.CharField(max_length=100)
+    Informa     = models.IntegerField(null=True,default= 0)
+    imagen = models.ImageField(upload_to='imagenes/', null=True, verbose_name='Imagen')
+    
+    #llave foraneas
+    IDClientes_Proveedores = models.ForeignKey(cliente_proveedor_cliente_proveedor, on_delete=models.CASCADE) 
+    IDDeclaraciones_Tipo = models.ForeignKey(Declaraciones_Tipo,on_delete=models.CASCADE)

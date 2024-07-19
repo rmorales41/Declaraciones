@@ -1,32 +1,3 @@
-// Muesta la lista de los tipos de declaraciones pyme, etc Uso con datatable
-/* function StVisorMantenimiento_old(){
-    fetch(`/VisorTipos/`)
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('No se logró la consulta : ' + response.statusText);
-        }
-        return response.json();
-    })
-    .then(datos  => {
-      // limpiar la tabla Datatables
-        var table = $('#visormantenimiento').DataTable();
-        table.clear().draw();
-        // Iterar sobre los datos obtenidos y agregar filas a DataTables
-        datos .forEach(item => {                                     
-          table.row.add([
-              item.IDDeclaraciones_Tipo,
-              item.Descripcion ,
-              item.Institucion,
-              item.Observacion,
-            `<td>${item.Estado ? "Activo" : "Inactivo"}</td>`,            
-          ]).draw(false); // draw(false) para evitar renderizado repetido
-      });
-  })
-  .catch(error => {
-      console.error('Fetch error:', error);
-  });
-} */
-
 // Tipos de Declaracion con visor normal 
 function StVisorMantenimiento() {
     fetch(`/VisorTipos/`)
@@ -89,7 +60,73 @@ function eliminatipo(IDD) {
 
 // Función para editar tipo
 function editar(idTipo) {      
-    // Redirigir o hacer lo que necesites con la URL    
+    // Redirigir 
     window.location.href = "/editar_tipo/" + idTipo;
 }
- 
+
+// boton guarda registro tipo 
+function StguardaRegistro() {        
+    window.location.href = "/guarda_tipo/" ;
+}
+
+// busca todos los beneficios que tiene el cliente 
+function StBuscaBeneficios(IDD){        
+        fetch(`/busca_beneficios/${IDD}`)
+        .then(response => {
+         if (!response.ok) {
+                throw new Error('No se logró la consulta : ' + response.statusText);
+                      }
+            return response.json();
+        })
+
+        .then(datos => {        
+        // limpiar la tabla Datatables        
+        var table = $('#visortipos').DataTable();
+        table.clear().draw();
+
+            // Iterar sobre los datos obtenidos y agregar filas a DataTables
+            datos.forEach(item => {
+                const fechaMov = formatearFecha(item.Fecha_vencimiento);   
+                
+                 // Crear el elemento con ambos botones
+                const acciones = `
+                    <div class="acciones" role="group">
+                        <button type="button" class="btn btn-primary btn-editar" data-id="${item.IDDetalle_Declaracion_Tipo}">
+                            <i class="bi bi-pencil"></i></button>
+                    
+                         <button type="button" class="btn btn-danger btn-eliminar" data-id="${item.IDDetalle_Declaracion_Tipo}">
+                            <i class="bi bi-trash"></i></button>
+                    </div>
+                            `;             
+                
+                table.row.add([
+                    item.IDDetalle_Declaracion_Tipo,
+                    item.IDDeclaraciones_Tipo__Descripcion,
+                    item.Detalle,
+                    item.Numero_solicitud,
+                    item.Numero_autorizado,
+                    fechaMov ,
+                    item.Estado ? "Si" : "No" ,                    
+                    acciones                    
+                ]).draw(false); // draw(false) para evitar renderizado repetido
+            });
+            })
+  .catch(error => {
+      console.error('Fetch error:', error);
+  });
+}
+
+
+// formatear fecha 
+function formatearFecha(fechaCompleta) {
+const fecha = new Date(fechaCompleta);
+const dia = fecha.getDate();
+const mes = fecha.getMonth() + 1;
+const anio = fecha.getFullYear();
+
+// Formato deseado: dd/mm/yyyy
+const fechaFormateada = `${dia}/${mes}/${anio}`;
+
+return fechaFormateada;
+}
+

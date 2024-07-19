@@ -1,0 +1,276 @@
+
+{% extends "paginas/base.html" %}
+{% load static %}
+{% block titulo %} Asigna Tipos a Clientes {% endblock %}
+{% block contenido %}
+
+<!-- Bootstrap -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
+<!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.11.4/css/dataTables.bootstrap5.min.css">
+
+<!-- jQuery primero, luego DataTables y Bootstrap Bundle -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.4/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"></script>
+
+<!-- SweetAlert CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css">
+
+<!-- SweetAlert JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
+
+
+<!-- Flatpickr -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<!-- Personalizados -->
+<script src="{% static 'js/Beneficios.js' %}"></script>  
+
+
+<form id="formularioDatos" action="Stguarda_tipo" method="post"  enctype="multipart/form-data">
+{% csrf_token %}  <!-- llave de formulario de Django--> 
+<div class="container-xl">
+  <div class="row justify-content-left">
+    <div class="col-md-5">
+     
+      <div class="d-flex mb-0 align-items-center">
+        <a href="{% url 'visor' %}" class="btn btn-primary"><i class="fa fa-reply"></i>  </a>
+        <label for="clientes" class="me-2">Cliente:</label>
+        <select class="form-select flex-grow-1" onchange="StBuscaBeneficios(this.value)" id="clientes" name = "clientes_id" style="color: rgb(36, 55, 226);">
+          {% for campo in var_clientes %}
+           <option id="{{ campo.IDClientes_Proveedores}}" value="{{ campo.IDClientes_Proveedores }}">{{ campo.IDClientes_Proveedores }} - {{ campo.Descripcion }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <div class="col-md-5">      
+      <div class="d-flex mb-0 align-items-center">
+        <label for="tipos" class="me-2">Tipo:</label>
+        <select class="form-select flex-grow-1" onclick="" id="tipos" name ="tipos_id" style="background-color: #9dd2f1;">  
+        {% for ccampo in var_tipos %}
+          <option id="{{ ccampo.IDDeclaraciones_Tipo}}" value="{{ ccampo.IDDeclaraciones_Tipo }}">{{ ccampo.IDDeclaraciones_Tipo}} - {{ ccampo.Descripcion }}</option>
+        {% endfor %}
+        </select>     
+      </div>    
+    </div>
+  </div>
+</div>
+
+<!-- Descripcion </br><div class="input-group mt-1">-->
+  <hr>    
+<div class="input-group input-group-sm mb-3">  
+    <div class="input-group-prepend">
+      <span class="input-group-text" id="inputGroup-sizing-sm">Detalle  </span>
+    </div>
+    <input type="text" class="form-control" aria-label="Default" id="detalle" name="detalle" aria-describedby="inputGroup-sizing-default" maxlength="255">
+</div>
+  
+  <div class="input-group mt1">
+    <div class="input-group mb-3">
+      <span class="input-group-text" id="inputGroup-sizing-default"># Solicitud:</span>      
+      <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" id="numero"  name="numero" style="max-width: 150px">
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="inputGroup-sizing-default">Fecha:</span>
+      </div>      
+      <input type="date" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" id="fechasol" name="fechasol" style="max-width: 150px">      
+      <span class="input-group-text" id="inputGroup-sizing-default"># Autorizado:</span>      
+      <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" id="numeroauto" name="numeroauto" style="max-width: 150px">
+      <span class="input-group-text" id="inputGroup-sizing-default">Fecha:</span> 
+      <input type="date" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" id="fechaauto" name="fechaauto" style="max-width: 150px">
+      <span class="input-group-text" id="inputGroup-sizing-default">Vence:</span> 
+      <input type="date" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" id="fechavence" name="fechavence" style="max-width: 150px">
+      <!-- Estado -->       
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="True" id="defaultCheck1" name="defaultCheck1"  checked>
+        <label class="form-check-label" for="defaultCheck1">
+          Activo
+        </label>
+      </div>
+    </div>
+</div>
+<!-- Fundamento Legal-->
+<div class="input-group mt-1">
+  <div class="input-group-prepend">
+    <span class="input-group-text" id="inputGroup-sizing-default">Fundamento legal:</span>
+  </div>
+  <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" id="legal" name = "legal" style="max-width: 1150px">  
+</div>
+<!-- Observaciones  otorgado-->
+<div class="input-group mt-1">
+  <span class="input-group-text" id="inputGroup-sizing-default">Observaciones:</span>
+  <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" id="observaciones" name = "observaciones" style="max-width: 1255px">
+  <span class="input-group-text" id="inputGroup-sizing-default">Otorgado:</span>
+  <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" id="otorgado" name = "otorgado" style="max-width: 255px">
+</div>
+
+<!-- Recordar -->
+<div class="input-group mt-1">
+  <span class="input-group-text" id="inputGroup-sizing-default">Recordar mes antes:</span>
+  <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" id="recuerda" name = "recuerda" style="max-width: 50px" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+  <span class="input-group-text" id="inputGroup-sizing-default">Informa dias:</span>
+  <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" id="cada"  name = "cada" style="max-width: 50px" oninput="this.value = this.value.replace(/[^0-9]/g, '')">       
+  <span class="input-group-text" id="basic-addon1">@</span>
+  <input type="text" class="form-control" placeholder="Usuario a quien notificar" id="usert" name = "usert" aria-label="Username" aria-describedby="basic-addon1">
+</div>
+<!-- Responsable -->
+<div class="input-group mt-1"> 
+  <span class="input-group-text" id="inputGroup-sizing-default">Responsable:</span>
+  <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" id="responsable" name = "responsable" style="max-width: 300px">
+  <span class="input-group-text" id="inputGroup-sizing-default">%:</span>
+  <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" id="porce" name = "porce" style="max-width: 80px">
+  <span class="input-group-text" id="inputGroup-sizing-default">Notificado:</span>
+  <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" id="informa" name = "informa" style="max-width: 50px" oninput="this.value = this.value.replace(/[^0-9]/g, '')" readonly >     
+  <!-- Botones <button type="button" class="btn btn-success btn-sm btn-sm" onclick="StguardaRegistro()" style="margin-left: auto;"><i class="bi bi-floppy"> Grabar Registro</i></button>-->
+  <input name="" id="" class="btn btn-success" type="submit" value="Enviar Datos" style="margin-left: auto;"/> 
+  
+</div>
+<!-- Imagen  --> 
+  <div class="input-group mb-3">
+    <label class="input-group-text" for="inputGroupFile01">Upload</label>
+    <input type="file" class="form-control" id="inputGroupFile01" name="inputGroupFile01">
+  </div> 
+
+<body> 
+  <!--- Detalle de Tipos por cliente  -->                                         
+  <hr>  
+    <table id="visortipos" class="table table-striped" style="width:100%">    
+      <thead>
+          <tr>
+              <th scope="col">ID</th>
+              <th scope="col">Descripción</th>                          
+              <th scope="col">Detalle</th>
+              <th scope="col">Solicitud</th>
+              <th scope="col">Autorizado</th>
+              <th scope="col">Vence</th>
+              <th scope="col">Activo</th>               
+              <th scope="col">Accion</th>                                                         
+          </tr>
+      </thead>
+      <tbody id="">                                                                                      
+      </tbody>              
+    </table>      
+ 
+<script>
+    // Inicializar DataTable
+    $(document).ready(function () {
+        $('#visortipos').DataTable({
+            "language": {
+                "url": "{% static 'json/Spanish.json' %}" 
+            },
+            "searching": true,  // Habilitar búsqueda global
+            "ordering": true ,   // Habilitar ordenamiento de columnas
+            "responsive": true,  // Habilitar funcionalidad Responsive
+            "columnDefs": [
+            { "width": "7%", "targets": [0] },
+            { "width": "25%", "targets": [1] },
+            { "width": "25%", "targets": [2] },
+            { "width": "7%", "targets": [3] },
+            { "width": "7%", "targets": [4] },
+            { "width": "7%", "targets": [5] },
+            // Define anchos iniciales, Responsive manejará los ajustes
+            ]
+        });
+    });
+
+
+    // modifica registro 
+    
+   // Función para manejar clic en botón de editar
+   $('#visortipos').on('click', '.btn-editar', function() {
+    const id = $(this).data('id');
+    
+    // Realizar solicitud AJAX para obtener los datos del registro
+    $.ajax({
+        url: `/obtener_datos_registro/${id}/`, // URL de tu vista Django que retorna JSON
+        type: 'GET',
+        dataType: 'json',
+        success: function(response) {            
+            try {
+                // Acceder a los campos correctamente parse los cambia para poderlos manejar 
+                var datos = JSON.parse(response);                
+                if (Array.isArray(datos) && datos.length > 0 && datos[0].hasOwnProperty('fields')) {                    
+                  var fields = datos[0].fields;                    
+                    // Llenar el formulario con los datos obtenidos
+                    $('#detalle').val(fields.Detalle);
+                    $('#fechasol').val(fields.Fecha_solicitud);
+                    $('#numero').val(fields.Numero_solicitud);
+                    $('#tipos').val(fields.IDDeclaraciones_Tipo); // Ajustar según el ID del tipo
+                    $('#fechaauto').val(fields.Fecha_autorizacion);
+                    $('#numeroauto').val(fields.Numero_autorizado);
+                    $('#fechavence').val(fields.Fecha_vencimiento);
+                    $('#legal').val(fields.Fundamento_Legal);
+                    $('#observaciones').val(fields.observaciones); // Asegúrate de usar minúscula en 'observaciones'
+                    $('#otorgado').val(fields.Otorgadopor);
+                    $('#recuerda').val(fields.Recordar_antes);
+                    $('#cada').val(fields.Recordar_cada);
+                    $('#defaultCheck1').prop('checked', fields.Estado);
+                    $('#usert').val(fields.Correo_Notificar);
+                    $('#responsable').val(fields.Responsable);
+                    $('#porce').val(fields.Porcentaje);
+                    $('#informa').val(fields.Informa);
+                    
+                    // Mostrar el formulario para editar
+                    $('#formularioDatos').show();
+                } else {
+                    console.error('Los datos recibidos no tienen la estructura esperada.');
+                }
+            } catch (error) {
+                console.error('Error al procesar los datos:', error);
+            }
+        },
+        error: function(xhr, textStatus, errorThrown) {
+            console.error('Error en la solicitud AJAX:', textStatus, errorThrown);
+        }
+    });
+});
+
+
+
+
+
+ // elimina registro    
+ $('#visortipos').on('click', '.btn-eliminar', function() {
+        const id = $(this).data('id');
+        // Lógica para manejar la acción de eliminar        
+        Swal.fire({
+            title: "Desea Eliminar este Beneficio",
+            text: "¿Está seguro que desea eliminar este registro?",
+            icon: "warning",
+            showCancelButton: true,
+            cancelButtonText: "No, Cancelar",
+            confirmButtonText: "Si, Eliminar",
+            reverseButtons: true,
+            confirmButtonColor: "#dc3545",
+            backdrop: true,
+            showLoaderOnConfirm: true,
+        }).then(function(result) {
+            if (result.isConfirmed) {
+                window.location.href = "/elimina_tipo_g/" + id;
+            }
+        });
+    });
+
+</script>
+
+ <script>
+    // Obtener la fecha actual en formato YYYY-MM-DD
+    var today = new Date();
+    var dd = String(today.getDate()).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0'); // Enero es 0!
+    var yyyy = today.getFullYear();
+    var formattedDate = yyyy + '-' + mm + '-' + dd;
+
+    // Establecer el valor del input de fecha
+    document.getElementById('fechasol').value = formattedDate;
+</script>
+
+
+
+</body>
+</form> 
+
+{% endblock %}

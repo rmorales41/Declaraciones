@@ -17,7 +17,6 @@
     
     <!-- Estilos personalizados css-->
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    
 </head>
 <body>      
 
@@ -85,12 +84,11 @@
                         <a class="nav-link dropdown-toggle beneficios" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="bi bi-card-checklist"></i> Beneficios</a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{% url 'Declara_Tipo' %}">Mantenimiento de Tipos</a></li>
-                            <li><a class="dropdown-item" href="#">Visor Condicional</a></li>
-                            <li><a class="dropdown-item" href="#">Visor Movimientos por Tipo y Cliente</a></li>
-                            <li><a class="dropdown-item" href="#">Exoneraciones Exonet</a></li>
-                            <li><a class="dropdown-item" href="#">Otras Exoneraciones</a></li>
+                            <li><a class="dropdown-item" href="{% url 'Declara_Tipo' %}"><i class="bi bi-ui-checks-grid"></i> Mantenimiento de Tipos</a></li>
+                            <li><a class="dropdown-item" href="{% url 'Asigna_tipo' %}" >Asignación de Tipos</a></li>
+                            <li><a class="dropdown-item" href="#">Visor Movimientos por Tipo y Cliente</a></li>                                            
                             <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#">Notificaciones </a></li>
                         </ul>
                     </li>
 
@@ -149,7 +147,6 @@
             });
         }
     </script>
-
 
     <!-- Control de mensajes -->
     {% if messages %}
