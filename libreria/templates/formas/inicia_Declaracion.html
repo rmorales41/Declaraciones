@@ -2,7 +2,7 @@
 {% load static %}
 {% block titulo %} Inicia Declaracion  {% endblock %}
 {% block contenido %}
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
 <script src="{% static 'js/index.js' %}"></script> 
 <!-- Carga la lista de funcionarios del sistema activos  <body onload="Stlistarfuncionario()"></body>--> 
 
@@ -20,7 +20,7 @@
       <div class="row justify-content-end">
         <div class="col-md-16"> <!-- Define el tamaño del combo -->
               <a><label class="text-primary me-3">Colaboradores</label></a>
-              <select class="form-select me-2" onchange ="BuscaClienteFuncionario()" id ="funcionarios"></select> 
+              <select class="form-select me-2" onclick ="BuscaClienteFuncionario()" id ="funcionarios"></select> 
         </div>
         </br>
       </div>

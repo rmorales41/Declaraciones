@@ -1,4 +1,5 @@
 
+
 document.addEventListener("DOMContentLoaded", function() {
     StListaclientes(); // Llama a la función para cargar el combo al cargar la página por primera vez  
 });
@@ -446,7 +447,8 @@ function StLista_Declaraciones() {
         let select = document.getElementById("ldeclaraciones");
         // Limpia cualquier opción existente
         select.innerHTML = '';
-        // Hace la consulta al url para ejecutar la vista 
+        // Hace la consulta al url para ejecutar la vista buscadeclaraciondatosclientes
+        //buscadeclaraciondatos
         fetch('buscadeclaraciondatos/')
         .then(response => {                     
             if (!response.ok) {
@@ -599,8 +601,7 @@ function Stlistarfuncionario(){
         let idd2 = proveeId.options[proveeId.selectedIndex].value;        
             
         let funcionarioId = document.getElementById('funcionarios');
-        let idd = funcionarioId.options[funcionarioId.selectedIndex].value;   
-    
+        let idd = funcionarioId.options[funcionarioId.selectedIndex].value;           
         fetch(`/funcionarioinicia/${idd2}/${idd}/`)   
             .then(response => {
                 if (!response.ok) {
@@ -609,6 +610,7 @@ function Stlistarfuncionario(){
                 return response.json();        
             })
             .then(datadeclaracion => {
+                console.log(datadeclaracion)
                 const tbody = document.querySelector("tbody"); 
                 tbody.innerHTML = '';                                 
                     
@@ -1077,6 +1079,7 @@ function StDeclaracionesConfirmadasCerradasHistoricas(){
 function StBuscaporfecha(){       
     var fechaSeleccionada = document.getElementById("fecha").value;
     fechaf=formatDate(fechaSeleccionada)
+    console.log('fecha',fechaSeleccionada)
     fetch(`/Buscaporfecha/${fechaSeleccionada}`)
       .then(response => {
         if (!response.ok) {
@@ -1099,9 +1102,7 @@ function StBuscaporfecha(){
                     <td><a name="" id="" class="btn btn-danger"  href="#" onclick="Stborralineacalendario(${item.IDCalendario_tributario})" role="button">Eliminar</a></td>  `
 
                 tbody.appendChild(row);
-            });               
-
-        console.log(data);
+            });                       
       })
       .catch(error => {
         console.error('Fetch error:', error);
@@ -1131,9 +1132,11 @@ function Stagrega_Declaracion(){
             'X-CSRFToken': getCSRFToken()           
         },
         body: JSON.stringify(data),
-    })    
-    .then(response => {        
-        if (response.ok) {
+    })        
+    .then(response => {      
+      
+        if (data) {
+            console.log('respuesta',response)  
             swal.fire("Excelente!", "Nueva declaración Agregada.", "success");            
             // Recarga datos    
             //location.reload();     

@@ -13,7 +13,7 @@
       <div class="row justify-content-end">
         <div class="col-md-16"> <!-- Define el tamaño del combo -->
               <a><label class="text-primary">Colaboradores Registrados </label></a>
-              <select class="form-select" onchange="listarfuncionarios()" id ="funcionarios" >
+              <select class="form-select" onclick="listarfuncionarios()" id ="funcionarios" >
               {% for campo in var_Funcionarios %}    
                   <option id="{{ campo.IDPlanilla_Funcionarios_id }}"   value ="{{campo.IDPlanilla_Funcionarios}}">{{campo.IDPlanilla_Funcionarios}} - {{campo.Nombre}} </option>          
               {% endfor %}

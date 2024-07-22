@@ -1,26 +1,32 @@
 {% extends "paginas/base.html" %}
-
 {% load static %}
-
 {% block titulo %} Asigna Declaraciones  {% endblock %}
-
 {% block contenido %}
+
 <!-- Combo -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="{% static 'js/index.js' %}"></script> 
  
 <div class="card">
-    <div class="card-header" >Asigna Declaraciones</div>
     <div class="card-body">
-        <h4 class="card-title" style="text-align: center;">Asigna Clientes a Funcionarios</h4>   
-         <!-- Botón al final de la fila -->
-        <div class="row mt-3">
-            <div class="col text-right">
-              <a href="{% url 'visor' %}" class="btn btn-primary"><i class="fa fa-reply"> Volver al menú </i></a>                                    
-          <!--   <input type="button" onclick="history.back()" class="btn btn-primary" name="volver atrás" value="volver atrás" style="float: left;"> -->
+        
+        <div class="row mt-1">
+            <div class="col-12"> <!-- Utiliza col-6 para que ocupen la mitad del ancho cada elemento -->
+                <h4 class="card-title text-center">Asigna Clientes a Funcionarios</h4>
+            </div>
+            <div class="col-2 text-left "> <!-- Utiliza col-6 y text-right para alinear a la derecha -->
+                <a href="{% url 'visor' %}" class="btn btn-primary"><i class="fa fa-reply"></i> Volver al menú </a>
             </div>
         </div>
-                
+
+        <!--         <div class="row mt-3">           
+            <div class="col text-right">        
+              <a href="{% url 'visor' %}" class="btn btn-primary"><i class="fa fa-reply"> Volver al menú </i></a>                                    
+              <h4 class="card-title" style="text-align: center;">Asigna Clientes a Funcionarios</h4>                      
+            </div>
+        </div>
+        -->     
+        
         <div class="row">
             <div class="col-md-26">
               <form action ="" method="POST">
@@ -30,7 +36,7 @@
             </div> 
         </div>                           
     </div>
-    <div class="card-footer text-muted">Asigna</div>
+   
  </div>
 
 

@@ -152,10 +152,10 @@ def Vsasigna_tipo(request):
 # guarda el tipo de beneficio por cliente 
 def Vsguarda_tipo(request):
     if request.method == 'POST':
-        
+    
         # Obtener el ID del registro a actualizar si está presente en la solicitud        
-        detalle_id = request.POST.get('datos.IDDetalle_Declaracion_Tipo', None)
-        print(detalle_id)
+        detalle_id = request.POST.get('IDDetalle_Declaracion_Tipo', None)
+        print('muestra el id',detalle_id)
         # Si detalle_id existe, intenta encontrar el detalle existente en la base de datos
         detalle_existente = None
         if detalle_id:
@@ -313,7 +313,7 @@ def Vsbusca_beneficios(request,IDD):
             ).order_by('Fecha_vencimiento')
         
         datos = list(lista_beneficios)
-
+        print(datos)
         # Retornar los datos como JsonResponse
         return JsonResponse(datos, safe=False)
 

@@ -4,7 +4,7 @@
 {% block contenido %}
 <!-- busca los script para todos los clientes-->
 <script src="{% static 'js/index.js' %}"></script> 
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
 <body onload="StLista_Declaraciones()">
    
 
@@ -24,7 +24,7 @@
         <div class="row justify-content-end">
           <div class="col-md-16"> <!-- Define el tamaño del combo -->
                 <a><label class="text-primary">Escoja Declaración activas </label></a>
-                <select class="form-select" onchange="StLista_Declaraciones_datos()" id ="ldeclaraciones" ></select>
+                <select class="form-select" onclick="StLista_Declaraciones_datos()" id ="ldeclaraciones" ></select>
           </div>
           </br>
         </div>

@@ -6,28 +6,29 @@
 
 <!-- busca los script para todos los clientes-->
 <script src="{% static 'js/index.js' %}"></script> 
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
 <body onload="StCalendario_Tributario()">
    
 
 <div class="card">    
     <div class="card-body">
-        <h4 class="card-title" style="text-align: center;">Calendarzación Tributaria</h4>   
+        <h4 class="card-title" style="text-align: center;">Calendarización Tributaria</h4>   
          <!-- Botón al final de la fila -->
         <div class="row mt-3">
             <div class="col text-right">
               <a href="{% url 'visor' %}" class="btn btn-primary"><i class="fa fa-reply"> Volver al menú </i></a>                                              
-              <input type="date" onclick="StBuscaporfecha()" class="btn btn-primary" id="fecha" name="fecha" value="" style="float: right;">
+              
+              <input type="date" onclick="StBuscaporfecha()" class="btn btn-primary" id="fecha" title="Selecciona una fecha y oprima el click"   name="fecha" value="" style="float: right;">
             </div>
         </div>                  
-    
+
     <!-- Muestra el combo de las declaraciones del sistema -->
     <div class="col-md-16 d-flex justify-content-between align-items-center"> <!-- Define el tamaño del combo y alinea elementos -->
       <div> <!-- Añade un div para agrupar elementos -->
           <a><label class="text-primary">Escoja Declaración activas </label></a>
           <select class="form-select" onchange="" id="lcalendario"></select>
       </div>
-      <button class="btn btn-info" type="button" onclick="Stagrega_Declaracion()">Agregar</button>
+      <button class="btn btn-info" type="button" title="Oprima para agregar"  onclick="Stagrega_Declaracion()">Agregar</button>
   </div>
      
     <div class="card-body">        

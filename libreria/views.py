@@ -346,10 +346,9 @@ def vagregarunadeclaracion(request):
 # asigna las declaraciones al funcionario 
 def clienteafuncionario(request):    
     if request.method == 'POST':  
-        try:         
-            print("aqui estoy ")                    
-            data = json.loads(request.body)            
-            #clientepend_id = data.get('IDClientes_Proveedores', None) 
+        try:                          
+            data = json.loads(request.body)                                   
+            clientepend_id = data.get('IDClientes_Proveedores', None) 
 
             # Validar la presencia de datos importantes
             if 'IDClientes_Proveedores' not in data or 'IDPlanilla_Funcionarios' not in data or 'Fecha_Asigna' not in data:
@@ -357,22 +356,33 @@ def clienteafuncionario(request):
             
             #clientepend_id  = list(cliente_proveedor_cliente_proveedor.objects.values().filter(Tipo=True).order_by('Descripcion') 
             
-            clientepend_id=list(declaracion.objects.values().filter(estado=True).order_by('codigo')) 
-      
+            #clientepend_id=list(cliente_proveedor_cliente_proveedor.objects.values().filter(estado=True).order_by('codigo')) 
+            
+            print('declaracion',clientepend_id)
 
-            cliente_proveedor_instance = cliente_proveedor_cliente_proveedor.objects.filter(Tipo=0).get(pk=clientepend_id)             
+            cliente_proveedor_instance = cliente_proveedor_cliente_proveedor.objects.filter(Tipo=1).get(pk=clientepend_id)             
+            
+            print('cliente',cliente_proveedor_instance)
             funcionario_id = data.get('IDPlanilla_Funcionarios', None)
-            funcionario_instance = planillas_planilla_funcionarios.objects.get(pk=funcionario_id)  
+            print('funcionario',funcionario_id)
+            funcionario_instance = planillas_planilla_funcionarios.objects.get(pk=funcionario_id) 
+             
+            print(clientepend_id,funcionario_id)
             if clientepend_id is None or funcionario_id is None:
                 return JsonResponse({'error': 'IDs de cliente o funcionario faltantes'}, status=400)
 
             fecha = datetime.strptime(data['Fecha_Asigna'], '%d/%m/%Y').strftime('%Y-%m-%d')
                     
-            # Obtener todas las declaraciones del cliente
-            declaraciones_cliente = Declaracion_Clientes.objects.values().filter(IDClientes_Proveedores=cliente_proveedor_instance)
-              
+            # Obtener todas las declaraciones del cliente cliente_proveedor_instance
+            print("Cliente instancia",cliente_proveedor_instance)
+            
+            #Declaraciones_cliente = Declaracion_Clientes.objects.values().filter(IDClientes_Proveedores=clientepend_id)
+            declaraciones_cliente = Declaracion_Clientes.objects.filter(IDClientes_Proveedores=clientepend_id)
+            
+            print('asignado',declaraciones_cliente)  
             # Crear las asignaciones con las declaraciones del cliente
             for declaracion in declaraciones_cliente:
+                print(declaracion)
                 Asignacion.objects.create(
                     Fecha_Presenta=fecha,
                     Fecha_Asigna=fecha,
@@ -388,7 +398,7 @@ def clienteafuncionario(request):
             return JsonResponse({'error': f'Campo requerido faltante: {e}'}, status=400)
         
         except cliente_proveedor_cliente_proveedor.DoesNotExist:
-            return JsonResponse({'error': 'Cliente o proveedor no encontrado'}, status=404)
+            return JsonResponse({'error': 'Cliente  no encontrado'}, status=404)
         
         except planillas_planilla_funcionarios.DoesNotExist:
             return JsonResponse({'error': 'Funcionario no encontrado'}, status=404)
@@ -427,7 +437,7 @@ def vsdesasignaclienteafuncionario(request, IDD):
 def vbuscadeclaracion(request):
     return render(request,'formas/Busca_Declaracion_Clientes.html')
 
-# abre el formulario de busqueda de declaracion 
+# abre el formulario de busqueda de declaracion --- revisar muestra todas las declaraciones -- 
 def vbuscadeclaraciondatos(request):
     todas_declaraciones=list(declaracion.objects.values().filter(estado=True).order_by('codigo'))       
     return JsonResponse({'ldeclaraciones': list(todas_declaraciones)})  
@@ -761,10 +771,12 @@ def VsAgregaDeclaracionCalendario(request,fch):
         try:       
             # Verificar si existe una instancia válida de declaracion con el ID proporcionado            
             declaracion_instance = declaracion.objects.get(IDDeclaracion=declaracion_id)
+            print('ver',declaracion_instance)
             # Verificar si ya existe una entrada en calendario_tributario con esta declaración
             if calendario_tributario.objects.filter(
                 IDDeclaracion=declaracion_instance,
                 Fecha_Presenta = fch).exists():
+                                
                 return JsonResponse({'error': 'Esta declaración ya está incluida en el calendario'}, status=400)                      
     
             

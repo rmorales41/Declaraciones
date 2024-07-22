@@ -75,8 +75,8 @@
                         <td>
                             <img src="{{ a.imagen.url }}" height ="50" />      
                         </td>                    
-                        <td><a name="" id="" class="btn btn-primary" href="{% url 'editar' a.IDDeclaracion %}"  role="button">Editar</a>
-                            <a name="" id="" class="btn btn-danger"  href="#" onclick="eliminadecla({{a.IDDeclaracion}})"  role="button">Borrar</a>
+                        <td><a name="" id="" class="btn btn-primary" href="{% url 'editar' a.IDDeclaracion %}"  role="button"><i class="bi bi-pencil"></i></a>
+                            <a name="" id="" class="btn btn-danger"  href="#" onclick="eliminadecla({{a.IDDeclaracion}})"  role="button"><i class="bi bi-trash"></i></a>
                         </td>
                     {% endfor %}    
 

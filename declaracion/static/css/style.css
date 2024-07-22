@@ -20,3 +20,8 @@
 .dropdown-toggle.funcionarios .fa {
     color: #077697; /* Color celeste icono menu  */
 }
+
+/* tamaño de las tablas */
+.table th, .table td {
+    font-size: smaller;
+}
