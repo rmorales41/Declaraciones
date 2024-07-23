@@ -151,7 +151,7 @@ class Detalle_Declaracion_Tipo(models.Model):
     Responsable = models.CharField(max_length=200)
     Porcentaje  = models.CharField(max_length=100)
     Informa     = models.IntegerField(null=True,default= 0)
-    imagen = models.ImageField(upload_to='imagenes/', null=True, verbose_name='Imagen')
+    Imagen = models.ImageField(upload_to='imagenes/', null=True, verbose_name='Imagen')
     
     #llave foraneas
     IDClientes_Proveedores = models.ForeignKey(cliente_proveedor_cliente_proveedor, on_delete=models.CASCADE) 

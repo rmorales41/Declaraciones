@@ -124,16 +124,19 @@
   <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" id="porce" name = "porce" style="max-width: 80px">
   <span class="input-group-text" id="inputGroup-sizing-default">Notificado:</span>
   <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" id="informa" name = "informa" style="max-width: 50px" oninput="this.value = this.value.replace(/[^0-9]/g, '')" readonly >     
+  <span class="input-group-text" id="inputGroup-sizing-default">Registro ID:</span>
+  <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" id="IDDetalleDeclaracionTipo" name = "IDDetalleDeclaracionTipo" style="max-width: 50px" oninput="this.value = this.value.replace(/[^0-9]/g, '')" readonly >     
+
   <!-- Botones <button type="button" class="btn btn-success btn-sm btn-sm" onclick="StguardaRegistro()" style="margin-left: auto;"><i class="bi bi-floppy"> Grabar Registro</i></button>-->
-  <input name="IDDetalle_Declaracion_Tipo" id="IDDetalle_Declaracion_Tipo" class="btn btn-success" type="submit" value="Enviar Datos" style="margin-left: auto;"/> 
+  
+  <input class="btn btn-success" type="submit" value="Enviar Datos" style="margin-left: auto;"/> 
   
 </div>
 <!-- Imagen  --> 
-  <div class="input-group mb-3">
-    <label class="input-group-text" for="inputGroupFile01">Upload</label>
+ <div>
+    <label for="inputGroupFile01">Seleccionar archivo:</label>
     <input type="file" class="form-control" id="inputGroupFile01" name="inputGroupFile01">
-  </div> 
-
+</div>
 <body> 
   <!--- Detalle de Tipos por cliente  -->                                         
   <hr>  
@@ -167,7 +170,7 @@
             "columnDefs": [
             { "width": "7%", "targets": [0] },
             { "width": "20%", "targets": [1] },
-            { "width": "20%", "targets": [2] },
+            { "width": "30%", "targets": [2] },
             { "width": "4%", "targets": [3] },
             { "width": "4%", "targets": [4] },
             { "width": "3%", "targets": [5] },
@@ -177,24 +180,24 @@
     });
 
 
-    // modifica registro 
+   
     
    // Función para manejar clic en botón de editar
    $('#visortipos').on('click', '.btn-editar', function() {
-    const id = $(this).data('id');
-    
+    const id = $(this).data('id');    
     // Realizar solicitud AJAX para obtener los datos del registro
     $.ajax({
         url: `/obtener_datos_registro/${id}/`, // URL de tu vista Django que retorna JSON
         type: 'GET',
         dataType: 'json',
         success: function(response) {            
-            try {
+            try {             
                 // Acceder a los campos correctamente parse los cambia para poderlos manejar 
                 var datos = JSON.parse(response);                
                 if (Array.isArray(datos) && datos.length > 0 && datos[0].hasOwnProperty('fields')) {                    
-                  var fields = datos[0].fields;    
-                                   
+                    var fields = datos[0].fields;    
+                   console.log('Datos',datos)
+
                     // Llenar el formulario con los datos obtenidos   $('#tipos').val(fields.IDDeclaraciones_Tipo); // Ajustar según el ID del tipo
                     $('#detalle').val(fields.Detalle);
                     $('#fechasol').val(fields.Fecha_solicitud);
@@ -212,12 +215,21 @@
                     $('#responsable').val(fields.Responsable);
                     $('#porce').val(fields.Porcentaje);
                     $('#informa').val(fields.Informa);
-                    
+                    $('#IDDetalleDeclaracionTipo').val(id);                                       
+
                     // Mostrar el formulario para editar
                     $('#formularioDatos').show();
+
+                    // Manejar la imagen
+                    if (fields.Imagen) {
+                      $('#previewImagen').attr('src', fields.Imagen); // Asigna la URL de la imagen a un elemento img
+                    } else {
+                      $('#previewImagen').attr('src', ''); // Limpiar el elemento img si no hay imagen
+                    }
+                
                 } else {
                     console.error('Los datos recibidos no tienen la estructura esperada.');
-                }
+                 }
             } catch (error) {
                 console.error('Error al procesar los datos:', error);
             }

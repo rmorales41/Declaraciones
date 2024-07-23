@@ -1,8 +1,10 @@
 
 from django.urls import path
+
 from . import views
 from .Vistas import Views_BuscaDeclaracionxm,Views_pendiente_realizar,Views_Historico_Movimientos,Views_Funcionarios
-from .Vistas import Views_Historico_Movimientos_Busqueda,Views_Beneficios
+from .Vistas import Views_Historico_Movimientos_Busqueda,Views_Beneficios,Views_Utilitarios 
+
 
  
 # asi con estos dos se maneja eel inventario
@@ -90,6 +92,8 @@ urlpatterns = [
     path('busca_beneficios/<int:IDD>',Views_Beneficios.Vsbusca_beneficios,name='busca_beneficios'), 
     path('elimina_tipo_g/<int:id>',Views_Beneficios.Vseliminabeneficio,name='elimina_tipo_g'), 
     path('obtener_datos_registro/<int:id>/',Views_Beneficios.Vsobtener_datos_registro,name='obtener_datos_registro'), 
+    path('Visor_Beneficios/',Views_Beneficios.VsBeneficios_Visor,name='Visor_Beneficios'), 
+    path('GParametros/',Views_Utilitarios.VsParametros,name='GParametros'), 
 
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

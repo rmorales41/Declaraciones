@@ -86,8 +86,7 @@ function StBuscaBeneficios(IDD){
 
             // Iterar sobre los datos obtenidos y agregar filas a DataTables
             datos.forEach(item => {
-                const fechaMov = formatearFecha(item.Fecha_vencimiento);   
-                console.log(item)
+                const fechaMov = formatearFecha(item.Fecha_vencimiento);                   
                  // Crear el elemento con ambos botones
                 const acciones = `
                     <div class="acciones" role="group">

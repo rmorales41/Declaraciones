@@ -25,3 +25,8 @@
 .table th, .table td {
     font-size: smaller;
 }
+
+/* Cambia solo el color del icono seguridad */
+.dropdown-toggle.seguridad .bi {
+    color: #6076d8; /* Color naranja */
+}

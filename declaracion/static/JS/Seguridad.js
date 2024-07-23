@@ -1,0 +1,4 @@
+// Seguridad
+function abc(){
+    
+}
