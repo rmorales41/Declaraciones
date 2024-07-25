@@ -42,6 +42,7 @@
                             <li><a class="dropdown-item" href="{% url 'buscadeclaracion' %}"><i class="fas fa-asterisk"></i> Buscar Declaración a Clientes</a></li>
                             <li><a class="dropdown-item" href="{% url 'iniciadeclaracion' %}"><i class="bi bi-cone"></i> Iniciar o Finalizar Declaración por Cliente</a></li>
                             <li><a class="dropdown-item" href="{% url 'StatusDeclaracion' %}"><i class="bi bi-chat-left-text"></i> Status de las Declaraciones</a></li>
+                            <li><a class="dropdown-item" href="{% url 'VisionDeclaracion' %}"><i class="bi bi-cookie"></i> Visión Global de las Declaraciones</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="#">Generador de Borradores Fase 3</a></li>
                             <li><hr class="dropdown-divider"></li>
@@ -86,7 +87,8 @@
                             <li><a class="dropdown-item" href="{% url 'Asigna_tipo' %}" ><i class="bi bi-bounding-box"></i> Asignación de Tipos</a></li>
                             <li><a class="dropdown-item" href="{% url 'Visor_Beneficios' %}"><i class="bi bi-file-richtext-fill"></i> Visor Movimientos por Tipo y Cliente</a></li>                                                                        
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#">Notificaciones </a></li>
+                            <li><a class="dropdown-item" href="{% url 'BNotificar' %}"><i class="bi bi-calendar-check-fill"></i> Notificaciones </a></li>
+                            <li><a class="dropdown-item" href="{% url 'BNotificar2' %}"><i class="bi bi-calendar-check-fill"></i> Notificaciones automática </a></li>
                         </ul>
                     </li>
 
@@ -99,6 +101,7 @@
                             <li><a class="dropdown-item" href="#">Visor Pendiente Fase 3</a></li>
                             <li><a class="dropdown-item" href="#">Facturar Fase 3</a></li>
                             <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#">Bitácora de Eventos</a></li>
                         </ul>
                     </li>
                      <!-- Menú desplegable "Facturación" -->

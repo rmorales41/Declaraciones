@@ -141,6 +141,20 @@ STATICFILES_DIRS = [
 MEDIA_ROOT = os.path.join(BASE_DIR,'')
 MEDIA_URL = '/'
 
+# Configuración para enviar correos electrónicos
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # Backend para enviar correos SMTP
+
+
+# Configuración del servidor SMTP
+EMAIL_HOST = 'SMTP.SIPAVINT.COM'                    # Host del servidor SMTP
+EMAIL_PORT = 25                                     # Puerto del servidor SMTP (normalmente 587 para TLS/STARTTLS)
+EMAIL_USE_TLS = False                                 # Usar TLS para cifrado de conexión
+EMAIL_HOST_USER = 'facturas227@sipavint.com'        # Dirección de correo electrónico desde la cual enviar los correos
+EMAIL_HOST_PASSWORD = 'SipavBelen'                  # Contraseña de la cuenta de correo electrónico
+DEFAULT_FROM_EMAIL = 'coordinador.ti@sipavint.com'  # Dirección de correo por defecto para los correos enviados
+
+
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 

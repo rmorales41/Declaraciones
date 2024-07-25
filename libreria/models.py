@@ -93,7 +93,8 @@ class Historico_Declaraciones(models.Model):
     Usuario_Cierre = models.CharField(max_length=100)  
     Numero_Comprobante = models.CharField(max_length=50)  
     Fecha_Final = models.DateField(blank=True, null=True, verbose_name='Fecha_Final')        
-    Fecha_Sistema = models.DateTimeField(blank=True, null=True, verbose_name='Fecha_Sistema')        
+    Fecha_Sistema = models.DateTimeField(auto_now_add=True, verbose_name='Fecha_Sistema')
+ 
     
     # llaves foraneas 
     IDClientes_Proveedores = models.ForeignKey(cliente_proveedor_cliente_proveedor, on_delete=models.CASCADE) 
@@ -152,6 +153,7 @@ class Detalle_Declaracion_Tipo(models.Model):
     Porcentaje  = models.CharField(max_length=100)
     Informa     = models.IntegerField(null=True,default= 0)
     Imagen = models.ImageField(upload_to='imagenes/', null=True, verbose_name='Imagen')
+    Fecha_Recordatorio = models.DateField(blank=True, null=True, verbose_name="Fecha_Recordatorio")
     
     #llave foraneas
     IDClientes_Proveedores = models.ForeignKey(cliente_proveedor_cliente_proveedor, on_delete=models.CASCADE) 

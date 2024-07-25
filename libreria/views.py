@@ -622,10 +622,40 @@ def VsEstatusDeclaracion(request):
 
     return JsonResponse(datadeclaracion, safe=False)
 
+
+# ver la condicion global de las declaraciones actuales mas detallado  --- vision global 
+def VsVisionDeclaracion(request):
+    Total_Declaraciones = Asignacion.objects.select_related(
+        'IDClientes_Proveedores', 
+        'IDPlanilla_Funcionarios', 
+        'IDDeclaracion'
+    ).all().order_by("Fecha_Presenta")
+    
+    datadeclaracion = list(Total_Declaraciones.values(
+        'IDDeclaracion',  # Acceder al ID de la declaración relacionada
+        'IDDeclaracion__codigo',
+        'IDDeclaracion__detalle',
+        'Fecha_Asigna',
+        'Fecha_Presenta',
+        'IDPlanilla_Funcionarios__Nombre',  # Acceder al nombre del funcionario
+        'IDDeclaracion__tiempo',
+        'IDDeclaracion__estado', 
+        'IDDeclaracion__observaciones',
+        'Iniciada',
+        'Suspendida',
+        'IDClientes_Proveedores__IDClientes_Proveedores',
+        'IDClientes_Proveedores__Descripcion',
+        'IDClientes_Proveedores__Email',
+    ))
+
+
+    return render(request,'formas/Vision_Global_Declaraciones.html',{'v_Global': datadeclaracion  })    
+    
+
+
 # suspende las declaraciones que el funcionario esta trabajando 
 def VsActivaSuspendida(request,idd):
     if request.method=='GET':
-
        try:      
          asignacion = Asignacion.objects.filter(pk=idd).first()                                                   
          declaracion_obj = declaracion.objects.filter(IDDeclaracion=asignacion.IDDeclaracion.IDDeclaracion).first()                          

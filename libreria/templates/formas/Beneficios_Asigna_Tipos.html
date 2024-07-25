@@ -133,10 +133,16 @@
   
 </div>
 <!-- Imagen  --> 
- <div>
+<div class="input-group">
+  <input type="file" class="form-control" id="inputGroupFile01" name="inputGroupFile01" onchange="previewImage(event)" >
+  
+</div>
+
+
+<!-- <div>
     <label for="inputGroupFile01">Seleccionar archivo:</label>
     <input type="file" class="form-control" id="inputGroupFile01" name="inputGroupFile01">
-</div>
+</div> -->
 <body> 
   <!--- Detalle de Tipos por cliente  -->                                         
   <hr>  
@@ -195,8 +201,7 @@
                 // Acceder a los campos correctamente parse los cambia para poderlos manejar 
                 var datos = JSON.parse(response);                
                 if (Array.isArray(datos) && datos.length > 0 && datos[0].hasOwnProperty('fields')) {                    
-                    var fields = datos[0].fields;    
-                   console.log('Datos',datos)
+                    var fields = datos[0].fields;                      
 
                     // Llenar el formulario con los datos obtenidos   $('#tipos').val(fields.IDDeclaraciones_Tipo); // Ajustar según el ID del tipo
                     $('#detalle').val(fields.Detalle);
@@ -218,14 +223,14 @@
                     $('#IDDetalleDeclaracionTipo').val(id);                                       
 
                     // Mostrar el formulario para editar
-                    $('#formularioDatos').show();
+                    $('#formularioDatos').show();           
 
-                    // Manejar la imagen
                     if (fields.Imagen) {
-                      $('#previewImagen').attr('src', fields.Imagen); // Asigna la URL de la imagen a un elemento img
+                      // Asignar la URL completa de la imagen al elemento img
+                      $('#previewImagen').attr('src', `${fields.Imagen}`); 
                     } else {
-                      $('#previewImagen').attr('src', ''); // Limpiar el elemento img si no hay imagen
-                    }
+                      // Limpiar el elemento img si no hay imagen
+                      $('#previewImagen').attr('src', ''); }                   
                 
                 } else {
                     console.error('Los datos recibidos no tienen la estructura esperada.');
@@ -280,6 +285,19 @@
     document.getElementById('fechasol').value = formattedDate;
 </script>
 
+<script>
+  function previewImage(event) {
+      var input = event.target;
+      var reader = new FileReader();
+      reader.onload = function(){
+          var dataURL = reader.result;
+          var preview = document.getElementById('preview');
+          preview.src = dataURL;
+          preview.style.display = 'block'; // Mostrar la imagen previa
+      };
+      reader.readAsDataURL(input.files[0]);
+  }
+</script>
 
 
 </body>

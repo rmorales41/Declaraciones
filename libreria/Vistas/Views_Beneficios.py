@@ -1,14 +1,20 @@
 # Vista de Beneficio 
-from  datetime import date, datetime 
+from datetime import date, datetime, timedelta
 from pyexpat.errors import messages
 from urllib import request
+from django.conf import settings
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
 from django.core import serializers
-
+from django.core.mail import send_mail
+from django.utils.timezone import now
+from django.db.models import F 
+from libreria import models
 from libreria.forms import TipoForm
 from libreria.models import Declaraciones_Tipo, Detalle_Declaracion_Tipo, cliente_proveedor_cliente_proveedor
+import datetime
+
 
 def Vspyme(request):
      return render(request,'formas/Beneficios_Mantenimiento.html') 
@@ -159,8 +165,9 @@ def Vsguarda_tipo(request):
         responsable = request.POST.get('responsable', '') 
         porcentaje = request.POST.get('porce', '')  
         informa = request.POST.get('informa', '')          
-        imageno = request.FILES.get('inputGroupFile01', None)          
+        imageno = request.FILES.get('inputGroupFile01', None)                                                                           
                 
+
         # datos del cliente 
         Clientes_id = request.POST.get('clientes_id')
         Tipos_id = request.POST.get('tipos_id')
@@ -238,7 +245,7 @@ def Vsguarda_tipo(request):
                 Responsable=responsable,
                 Porcentaje=porcentaje,
                 Informa=informa,
-                Imagen=imageno,
+                Imagen=imageno ,
                 IDClientes_Proveedores=cliente_proveedor,    
                 IDDeclaraciones_Tipo = tipos_id
             )
@@ -265,7 +272,7 @@ def Vsbusca_beneficios(request,IDD):
             'Numero_solicitud',
             'Numero_autorizado',
             'Detalle' ,            
-            'Estado',            
+            'Estado',             
             ).order_by('Fecha_vencimiento')
         
         datos = list(lista_beneficios)        
@@ -295,8 +302,7 @@ def Vsobtener_datos_registro(reqest,id):
 
 # muestra todos los registros activos para mostrar su imagen     
 def VsBeneficios_Visor(request):      
-    try:     
-       # lista_beneficios = Detalle_Declaracion_Tipo.objects.all().order_by('Fecha_vencimiento')    
+    try:            
       # Obtener Beneficios y clientes  
         lista_beneficios= Detalle_Declaracion_Tipo.objects.filter(                      
           Estado = True ,                                                                                          
@@ -307,14 +313,164 @@ def VsBeneficios_Visor(request):
                 'Detalle',
                 'Numero_autorizado',
                 'Fecha_vencimiento',    
-                'Imagen',
+                'Imagen'
         ).order_by('Fecha_vencimiento')                        
         
         # Convertir el queryset en una lista de diccionarios
         datos = list(lista_beneficios) 
-                                         
+                                            
     except Exception as e:
         error_msg = f"Error en la vista VsVisor_Beneficios: {str(e)}"        
         return JsonResponse({'error': error_msg}, status=500) 
     
     return render(request,'formas/Visor_Beneficios.html',{'var_beneficios': datos  })    
+
+# Busca las notificaciones     
+def VsNotificaciones(request):
+    hoy = now().date() # fecha de hoy 
+    dias = 30
+    try:          
+        # muestra las lineas que cumplen 
+        registros = Detalle_Declaracion_Tipo.objects.filter(
+            Fecha_vencimiento__isnull=False,
+            Estado=True                
+        ).annotate(
+            nombre_cliente = F('IDClientes_Proveedores__Descripcion')
+        )   
+        
+        # crea el argumento para incluir los que cumplen 
+        vencimientos = []
+        
+        for registro in registros:
+            
+            limite_vencimiento = registro.Fecha_vencimiento - timedelta(days=registro.Recordar_antes * dias)
+            
+            if hoy >= limite_vencimiento :    
+                # Obtener el objeto de vencimiento desde la base de datos                
+                registro.Fecha_Recordatorio = date.today()
+                registro.Informa +=1 # suma uno mas 
+                
+                # actualiza estado de clientes                 
+                registro.save()
+                                        
+                # registro para envio de correos 
+                subject = f'Notificacion de Vencimientos, Modelo Declaraciones  :  {registro.nombre_cliente} - {registro.Detalle} '
+                message = f"""                           Este es un recordatorio automático no lo responda.
+                
+                Por Favor Tome nota de cada correo es para indicarle que en nuestros registro hay movimientos 
+                de Beneficios en clientes que estan pronto a vencer o ya estan vencidos verifique para que pueda 
+                anticipar los datos con su cliente.
+                
+                El registro que le estamos indicando pertenece a  {registro.nombre_cliente} .
+                 
+                Resúmen ;
+                
+                1. Cliente en mención   : {registro.nombre_cliente} 
+                2. Fecha de Vencimiento : {registro.Fecha_vencimiento}
+                3. Autorizacion a buscar: {registro.Numero_autorizado}
+                4. Veces Recordado      : {registro.Informa}
+                5. Detalle registrado   : {registro.Detalle}
+                6. Fecha Recordatorio   : {registro.Fecha_Recordatorio}
+                
+                Gracias y saludos, 
+                Equipo de Notificaciones                
+                
+                """
+                from_email = settings.EMAIL_HOST_USER # indica el usuario para lanzar correos 
+                recipient_list = [registro.Correo_Notificar]
+                
+                # Enviar el correo electrónico
+                send_mail(subject, message, from_email, recipient_list)
+                
+                vencimientos.append(registro)  
+                
+        return render(request,'formas/Beneficios_Notificaciones.html',{'v_notificaciones': vencimientos  })    
+        
+    except Exception as e:
+        error_msg = f"Error en la vista VsNotificaciones: {str(e)}"
+        return JsonResponse({'error': error_msg}, status=500)
+    
+    
+# Busca las notificaciones controla el parametro de cada cuantas veces se debe de notificar para 
+# efectos de un proceso automatico 
+def VsNotificaciones2(request):
+    hoy = now().date() # fecha de hoy 
+    dias = 30
+    try:          
+        # muestra las lineas que cumplen 
+        registros = Detalle_Declaracion_Tipo.objects.filter(
+            Fecha_vencimiento__isnull=False,
+            Estado=True                
+        ).annotate(
+            nombre_cliente = F('IDClientes_Proveedores__Descripcion')
+        )   
+        
+        # crea el argumento para incluir los que cumplen 
+        vencimientos = []
+        
+        for registro in registros:
+            
+            limite_vencimiento = registro.Fecha_vencimiento - timedelta(days=registro.Recordar_antes * dias)
+            
+            # validar el nulo 
+            if registro.Recordar_cada is not None:
+                dias_a_sumar = registro.Recordar_cada + 1
+            else: 
+                dias_a_sumar = 1   
+            
+            # si la fecha de recordatorio es nula            
+            if registro.Fecha_Recordatorio is None:                
+                registro.Fecha_Recordatorio = hoy - timedelta(days= registro.Recordar_antes)    
+                                 
+            print('recordatorio nul',registro.Fecha_Recordatorio)
+            
+            limite_fechaRecordatorio = registro.Fecha_Recordatorio + timedelta(days=dias_a_sumar)
+            print('limite vencimiento',limite_vencimiento)
+            print('recordatorio',limite_fechaRecordatorio)
+            print('hoy',hoy)
+            
+            
+            if hoy >= limite_vencimiento and   hoy >= limite_fechaRecordatorio :  
+                    # Obtener el objeto de vencimiento desde la base de datos                
+                    registro.Fecha_Recordatorio = date.today()
+                    registro.Informa +=1 # suma uno mas 
+                
+                    # actualiza estado de clientes                 
+                    registro.save()
+                                        
+                    # registro para envio de correos 
+                    subject = f'Notificacion de Vencimientos, Modelo Declaraciones  :  {registro.nombre_cliente} - {registro.Detalle} '
+                    message = f"""                           Este es un recordatorio automático no lo responda.
+
+                    Por Favor Tome nota de cada correo es para indicarle que en nuestros registro hay movimientos 
+                    de Beneficios en clientes que estan pronto a vencer o ya estan vencidos verifique para que pueda 
+                    anticipar los datos con su cliente.
+                
+                    El registro que le estamos indicando pertenece a  {registro.nombre_cliente} .
+                 
+                    Resúmen ;
+                
+                    1. Cliente en mención   : {registro.nombre_cliente} 
+                    2. Fecha de Vencimiento : {registro.Fecha_vencimiento}
+                    3. Autorizacion a buscar: {registro.Numero_autorizado}
+                    4. Veces Recordado      : {registro.Informa}
+                    5. Detalle registrado   : {registro.Detalle}
+                    6. Fecha Recordatorio   : {registro.Fecha_Recordatorio}
+                
+                    Gracias y saludos, 
+                    Equipo de Notificaciones                
+                
+                """
+                    from_email = settings.EMAIL_HOST_USER # indica el usuario para lanzar correos 
+                    recipient_list = [registro.Correo_Notificar]
+                
+                    # Enviar el correo electrónico
+                    send_mail(subject, message, from_email, recipient_list)
+                
+                    vencimientos.append(registro)  
+                
+        return render(request,'formas/Beneficios_Notificaciones.html',{'v_notificaciones': vencimientos  })    
+        
+    except Exception as e:
+        error_msg = f"Error en la vista VsNotificaciones: {str(e)}"
+        return JsonResponse({'error': error_msg}, status=500)    

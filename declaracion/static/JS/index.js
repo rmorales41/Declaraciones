@@ -986,18 +986,20 @@ function StConfirma(idHistoricoDeclaraciones) {
         confirmButtonText: "Sí, proceder"
     }).then((result) => {
         if (result.isConfirmed) {            
-            // Solicitud POST                        
+            // Solicitud POST                                   
             fetch(`/Confirma/${idHistoricoDeclaraciones}`, {        
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRFToken': getCSRFToken() 
                 },
-                // empaca datos para el server                                                             
+                // empaca datos para el server 
+                
+
                 body: JSON.stringify({
                     numero_comprobante: Numero_C,
                     fecha_cierre: Fecha_C,
-                    correo: Correo_C
+                    correo: Correo_C,                 
                 })        
             })
             .then(response => {

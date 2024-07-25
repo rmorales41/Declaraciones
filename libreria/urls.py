@@ -1,11 +1,7 @@
-
 from django.urls import path
-
 from . import views
 from .Vistas import Views_BuscaDeclaracionxm,Views_pendiente_realizar,Views_Historico_Movimientos,Views_Funcionarios
 from .Vistas import Views_Historico_Movimientos_Busqueda,Views_Beneficios,Views_Utilitarios 
-
-
  
 # asi con estos dos se maneja eel inventario
 from django.conf import settings
@@ -51,6 +47,7 @@ urlpatterns = [
     path('CierraDeclaracion/<int:idd>',views.vsCierraDeclaracion, name='CierraDeclaracion'),
     path('SuspendeDeclaracion/<int:idd>',views.vsSuspendeDeclaracion, name='SuspendeDeclaracion'),
     path('StatusDeclaracion/',views.VstatusDeclaracion, name='StatusDeclaracion'),
+    path('VisionDeclaracion/',views.VsVisionDeclaracion, name='VisionDeclaracion'), 
     path('VerDeclaracion/',views.VsEstatusDeclaracion, name='VerDeclaracion'),
     path('ActivaSuspendida/<int:idd>',views.VsActivaSuspendida,name ='ActivaSuspendida'),
     path('calendario/',views.VsCalendario,name ='calendario'),
@@ -93,7 +90,10 @@ urlpatterns = [
     path('elimina_tipo_g/<int:id>',Views_Beneficios.Vseliminabeneficio,name='elimina_tipo_g'), 
     path('obtener_datos_registro/<int:id>/',Views_Beneficios.Vsobtener_datos_registro,name='obtener_datos_registro'), 
     path('Visor_Beneficios/',Views_Beneficios.VsBeneficios_Visor,name='Visor_Beneficios'), 
+    path('BNotificar/',Views_Beneficios.VsNotificaciones,name='BNotificar'), 
+    path('BNotificar2/',Views_Beneficios.VsNotificaciones2,name='BNotificar2'), 
     path('GParametros/',Views_Utilitarios.VsParametros,name='GParametros'), 
+    
 
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
