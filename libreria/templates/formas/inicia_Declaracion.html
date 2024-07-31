@@ -2,6 +2,11 @@
 {% load static %}
 {% block titulo %} Inicia Declaracion  {% endblock %}
 {% block contenido %}
+<form method="post">
+  <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+  <!-- Otros campos del formulario -->
+</form>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
 <script src="{% static 'js/index.js' %}"></script> 
 <!-- Carga la lista de funcionarios del sistema activos  <body onload="Stlistarfuncionario()"></body>--> 
@@ -43,17 +48,18 @@
               <table class="table">
                       <thead>
                           <tr>
-                            <th scope="col">ID</th>
-                            <th scope="col">Codigo</th>                          
-                            <th scope="col">Detalle</th>
+                            <th style="width: 4%" scope="col">ID</th>
+                            <th style="width: 5%" scope="col">Codigo</th>                          
+                            <th style="width: 15%" scope="col">Detalle</th>
                             <th scope="col">Presentada</th>
                             <th scope="col">Asignada</th>
                             <th scope="col">Dias</th>                                                        
                             <th scope="col">Maximo</th>  
                             <th scope="col">Faltan</th>  
                             <th scope="col">Estado</th>                           
-                            <th scope="col">Correo</th> 
+                            <th scope="col">Email</th> 
                             <th scope="col">Proceso</th>
+                            <th scope="col">Rectificar</th>
                             <th scope="col">Acción</th>
                           </tr>
                       </thead>

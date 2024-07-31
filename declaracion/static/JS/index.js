@@ -101,8 +101,7 @@ async function Carga_Declaracion_Cliente(idd) {
            
     try {        
            const response = await fetch(`/declaracionxcliente_asignadas/${idd}`);
-           const data = await response.json(); 
-           console.log(data)                          
+           const data = await response.json();                                      
            if (data.length > 0) {
             const tbody = document.querySelector("tbody");
             tbody.innerHTML = ""; // Limpiar tbody antes de agregar nuevas filas
@@ -146,11 +145,11 @@ async function Clientessinasignacion() {
       var select = document.getElementById("clientepend");       // obtiene el elemento del select 
       var selectedOption = select.options[select.selectedIndex]; // obtiene el indice de la opcion seleccionada            
       var selectedClientId = selectedOption.value;               // obtiene el valor                 
-      console.log('codigo cliente',selectedClientId)
+      
       var select = document.getElementById("funcionarios");          // obtiene el elemento de colaboradores  
       var selectedOption = select.options[select.selectedIndex]; // obtiene el indice de la opcion seleccionada
       var selectedColaboradorId = selectedOption.value;          // obtiene el valor del funcionario                       
-      console.log('codigo funcionario',selectedColaboradorId)
+      
    
     try {
         await fetch(asignaDeclaracionURL + selectedClientId + "/" + selectedColaboradorId);        
@@ -484,8 +483,7 @@ function StLista_Declaraciones_datos() {
     let declaracionId = document.getElementById('ldeclaraciones');
     let IDD = declaracionId.options[declaracionId.selectedIndex].value;
 
-    console.log('Buscando ',IDD)
-
+    
     fetch(`buscadeclaraciondatosclientes/${IDD}`)
         .then(response => {
             if (!response.ok) {
@@ -529,7 +527,7 @@ function StLista_Declaraciones_datos() {
 function formatDate(dateString) {             
    // moment().format();         
     // Extrae el día, mes y año
-    console.log(dateString)
+    //console.log(dateString)
     const date = moment(dateString);     
     const day = date.date();
     const month = date.month() + 1; // getMonth devuelve 0 para enero, por eso se suma 1
@@ -594,12 +592,11 @@ function Stlistarfuncionario(){
         let idd = funcionarioId.options[funcionarioId.selectedIndex].value;        
         Carga_ClienteFuncionario(idd)    
     } 
-
+    
  // busca las declaraciones del cliente asignado para iniciarlas 
     function StDeclaracion_Cliente_Inicia() {  
         let proveeId = document.getElementById('Clientfunc');     
-        let idd2 = proveeId.options[proveeId.selectedIndex].value;        
-            
+        let idd2 = proveeId.options[proveeId.selectedIndex].value;                    
         let funcionarioId = document.getElementById('funcionarios');
         let idd = funcionarioId.options[funcionarioId.selectedIndex].value;           
         fetch(`/funcionarioinicia/${idd2}/${idd}/`)   
@@ -609,8 +606,7 @@ function Stlistarfuncionario(){
                 }
                 return response.json();        
             })
-            .then(datadeclaracion => {
-                console.log(datadeclaracion)
+            .then(datadeclaracion => {                
                 const tbody = document.querySelector("tbody"); 
                 tbody.innerHTML = '';                                 
                     
@@ -620,9 +616,8 @@ function Stlistarfuncionario(){
                     const fechaActual = new Date();
                     const diffTiempo = fechaProxima.getTime() - fechaActual.getTime();
                     const diffDias = Math.ceil(diffTiempo / (1000 * 60 * 60 * 24));
-  
-                    let diasRestantesHTML = '';
-
+                    
+                    let diasRestantesHTML = '';                    
                     let botoneshtml ='' ;                
                     diasRestantesHTML = `<td>${diffDias} días</td>`; // calcula dias                                                                             
                     if (item.IDDeclaracion__estado){
@@ -639,7 +634,7 @@ function Stlistarfuncionario(){
                                 <a name="" id="" class="btn btn-danger"  href="#" onclick="StDetenerDeclaracion(${item.IDAsignacion},'${Tipo}')" role="button">${Tipo}</a>
                             </td>  `;    
                         }else {                           
-                        botoneshtml =`                         
+                            botoneshtml =`                         
                             <td>
                                 <a name="" id="" class="btn btn-primary" href="#" onclick="StIniciaDeclaracion(${item.IDAsignacion})" role="button">Iniciar</a>                                
                                 <a name="" id="" class="btn btn-danger"  href="#"  role="button">Cierra</a>
@@ -650,7 +645,7 @@ function Stlistarfuncionario(){
                                                                   
                         diasRestantesHTML = `<td>Inactiva</td>`;
                         }                                                
-                    }
+                    }                                                      
                     row.innerHTML = `
                         <td>${item.IDAsignacion}</td>
                         <td>${item.IDDeclaracion__codigo}</td>
@@ -662,11 +657,16 @@ function Stlistarfuncionario(){
                         ${diasRestantesHTML}
                         <td>${item.IDDeclaracion__estado ? "Activo" : "Inactivo"}</td>
                         <td>${item.correo ? "Sí" : "No"}</td>  
-                        <td>${item.Iniciada && item.Suspendida ? "Suspendida" : item.Iniciada ? "Iniciada" : item.Suspendida ? "Suspendida" : "Sin actividad"}</td>                                              
+                        <td>${item.Iniciada && item.Suspendida ? "Suspendida" : item.Iniciada ? "Iniciada" : item.Suspendida ? "Suspendida" : "Sin actividad"}</td>                                                                      
+                        <td><input type="checkbox" id ="checkbox-${item.IDAsignacion}" ${item.Rectificativa ? 'checked' : ''} /></td>                        
                         ${botoneshtml}`;   // pone los botones si esta activo || esto es or && esto es and 
                     tbody.appendChild(row);
 
                 });
+                   // Verifica el estado de los checkboxes
+                    document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                    console.log(`Checkbox ID: ${checkbox.id}, Checked: ${checkbox.checked}`);
+            });
             })
             .catch(error => {
                 console.error('Error al obtener los datos:', error);
@@ -674,45 +674,65 @@ function Stlistarfuncionario(){
     }
     
     // esta funcion pertenece al modelo de Asignacion para el inicio de las declaraciones
-    function StIniciaDeclaracion(asignacionId) {               
-        return Swal.fire({
-            text: "En el momento de dar por iniciada el sistema modificar la fecha de asignación con la fecha actual y ajustara la fecha Maxima de Presentación sumandole el indicador de días por declaración..",
-            icon: "warning",
-            showCancelButton: true,
-            cancelButtonText: "No, Retroceder",
-            confirmButtonText: "Si, Iniciar",
-            reverseButtons: true,
-            confirmButtonColor: "#dc3545",
-            backdrop: true,
-            showLoaderOnConfirm: true ,
-        }).then((result) => {            
-            if (result.isConfirmed) {                                                             
-              fetch(`/ActivaDeclaracion_b/${asignacionId}`)              
-              .then(response => {
+  
+// Esta función pertenece al modelo de Asignacion para el inicio de las declaraciones
+function StIniciaDeclaracion(asignacionId) { 
+    // Variables de cambio del formulario 
+    const controlck = document.getElementById('checkbox-' + asignacionId.toString());  
+    const isCheck = controlck.checked; // a ver si esta marcado     
+    // verifica estado 
+    const isChecked = isCheck;
+
+    console.log('datos g',controlck,asignacionId,isChecked)  
+
+    return Swal.fire({
+        text: "En el momento de dar por iniciada el sistema modificar la fecha de asignación con la fecha actual y ajustara la fecha Maxima de Presentación sumandole el indicador de días por declaración..",
+        icon: "warning",
+        showCancelButton: true,
+        cancelButtonText: "No, Retroceder",
+        confirmButtonText: "Si, Iniciar",
+        reverseButtons: true,
+        confirmButtonColor: "#dc3545",
+        backdrop: true,
+        showLoaderOnConfirm: true,
+    }).then((result) => {            
+        if (result.isConfirmed) {                                
+            const csrfToken = getCSRFToken(); // Llama a la función correctamente
+            console.log('Sending CSRF Token:', csrfToken); // Verifica el token enviado
+
+            return fetch(`/ActivaDeclaracion_b/${asignacionId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken // Usa el valor del token aquí
+                },
+                body: JSON.stringify({
+                    rectificativa: isChecked ? 'on' : 'off',                    
+                })
+            }).then(response => {
                 if (!response.ok) {
-                    throw new Error('Error al actualizar el registro');                    
+                    throw new Error(`Error ${response.status}: ${response.statusText}`);
                 }
                 return response.json();
-            })
-            .then(data => {
-                // Mostrar mensaje de éxito
-                Swal.fire("¡Registro actualizado!", data.message, "success")               
-                .then(() => {
-                    // Actualizar los registros cambiados
-                    location.reload();                       
-                });
-            })
-            .catch(error => {
-                // Mostrar mensaje de error
+            }).then(data => {                
+                return Swal.fire("¡Registro actualizado!", data.message, "success");              
+            }).then(() => {
+                location.reload();
+            }).catch(error => {
                 Swal.fire("Error", error.message, "error");
             });                                
-            } else if (result.dismiss === Swal.DismissReason.cancel) {
-                // Deniega 
-                console.log("El usuario canceló la acción.");
-            }            
-        });        
-    }
-    
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+            console.log("El usuario canceló la acción.");
+        }            
+    });        
+}
+
+// Función para obtener el token CSRF desde una metaetiqueta en el HTML    
+//function getCSRFToken() {
+//    return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+//}
+ 
+
 // suspende o cierra finaliza o suspende la declaracion iniciada -aqui
     function StDetenerDeclaracion(asignacionId,botontexto) {         
               
@@ -926,8 +946,7 @@ function StStatushistoricoDeclaraciones() {
                 const diffTiempo = fechaProxima.getTime() - fechaActual.getTime();
                 const diffDias = Math.ceil(diffTiempo / (1000 * 60 * 60 * 24));
 
-                let diasRestantesHTML = `<td>${diffDias} días</td>`; // Calcula días restantes                                                          
-  
+                let diasRestantesHTML = `<td>${diffDias} días</td>`; // Calcula días restantes                                                                          
                 row.innerHTML = `
                     <td>${item.IDHistorico_Declaraciones}</td>
                     <td>${item.IDDeclaracion__codigo}</td>                
@@ -937,7 +956,7 @@ function StStatushistoricoDeclaraciones() {
                     <td>${formatDate(item.Fecha_Presenta)}</td>
                     <td>${formatDate(item.Fecha_Cierre)}</td>                          
                     <td>${item.IDPlanilla_Funcionarios__Nombre}</td>              
-                    <td>${item.IDDeclaracion__estado ? "A" : "I"}</td>  
+                    <td>${item.rectificativa ? "Si" : "No"}</td>  
                     <td>
                         <select id="correo_${item.IDHistorico_Declaraciones}" name='correo'>
                             <option value ='Si' selected>Si</option>
@@ -949,7 +968,7 @@ function StStatushistoricoDeclaraciones() {
                     <td><a name="" id="" class="btn btn-warning" href="#" onclick="StConfirma(${item.IDHistorico_Declaraciones})">Confirma</a></td>`;
               
                 tbody.appendChild(row);
-
+                //<td>${item.IDDeclaracion__estado ? "A" : "I"}</td>  
                 // Agregar un listener para detectar cuando se selecciona la fecha en el input
                 const inputFecha = document.getElementById(`fecha_cierre_${item.IDHistorico_Declaraciones}`);
                 inputFecha.addEventListener("focus", function() {
@@ -969,13 +988,12 @@ function StStatushistoricoDeclaraciones() {
 
 
 
-
 // valida los datos para cerrar la confirmacion de declaraciones realizadas
 function StConfirma(idHistoricoDeclaraciones) {    
     var Numero_C = document.getElementById('numero_comprabante_'+idHistoricoDeclaraciones.toString()).value;
     var Fecha_C = document.getElementById('fecha_cierre_'+idHistoricoDeclaraciones.toString()).value;
     var Correo_C = document.getElementById('correo_'+idHistoricoDeclaraciones.toString()).value;
-    console.log(idHistoricoDeclaraciones,Numero_C,Fecha_C,Correo_C)
+   
     Swal.fire({
         title: "Confirmador de Declaraciones",
         text: "¿Desea continuar con la confirmación de esta línea?",

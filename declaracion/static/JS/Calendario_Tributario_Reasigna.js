@@ -6,7 +6,7 @@ function StbuscaDeclaracionesCalendariomensual(selectedYear,selectedMonth){
           if (!response.ok) {
             throw new Error('No se encuentran datos correctos ');
           }        
-          return response.json(); // 
+          return response.json(); 
         })        
           .then(datadeclaracion => {
               const tbody = document.querySelector("tbody");

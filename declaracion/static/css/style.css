@@ -30,3 +30,35 @@
 .dropdown-toggle.seguridad .bi {
     color: #6076d8; /* Color naranja */
 }
+
+
+/*Formulario login */ 
+body.login {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 75vh; /* Ocupa el 100% de la altura de la ventana */
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.form-container{
+    text-align: center; /* Centra el texto y el contenido del formulario */
+    border: 1px solid #ddd; /* Opcional: agrega un borde al contenedor del formulario */
+    padding: 20px;
+    border-radius: 5px; /* Opcional: agrega bordes redondeados */
+    background-color: #f9f9f9; /* Opcional: agrega un color de fondo */
+}
+
+h2 {
+  margin-bottom: 20px;
+}
+
+button {
+    margin-top: 10px; /* Espacio superior del botón */
+}
+
+p {
+    color: red;
+}

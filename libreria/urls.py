@@ -1,7 +1,11 @@
 from django.urls import path
+
 from . import views
 from .Vistas import Views_BuscaDeclaracionxm,Views_pendiente_realizar,Views_Historico_Movimientos,Views_Funcionarios
-from .Vistas import Views_Historico_Movimientos_Busqueda,Views_Beneficios,Views_Utilitarios 
+from .Vistas import Views_Historico_Movimientos_Busqueda,Views_Beneficios,Views_Utilitarios
+
+from .Vistas import Views_Statttus 
+
  
 # asi con estos dos se maneja eel inventario
 from django.conf import settings
@@ -10,10 +14,11 @@ from django.contrib.auth import views as auth_views
 
 urlpatterns = [
       
-    path('',views.visor, name = 'visor'),       
+    path('',views.login_view, name = 'login'),      
+    path('logout/',views.logout_view, name = 'login'),      
     path('clientes/',views.clientes, name= 'clientes'),
     path('base',views.base, name= 'base'),
-    path('visor',views.visor,name='visor'),
+    path('visor/',views.visor,name='visor'),
     path('crear',views.crear,name='crear'),
     path('editar/<int:IDD>',views.editar,name='editar'),
     path('elimina/<int:IDD>',views.elimina,name='elimina'),  
@@ -46,7 +51,7 @@ urlpatterns = [
     path('ActivaDeclaracion_b/<int:idd>',views.vsActivaDeclaracion, name='ActivaDeclaracion_b'),
     path('CierraDeclaracion/<int:idd>',views.vsCierraDeclaracion, name='CierraDeclaracion'),
     path('SuspendeDeclaracion/<int:idd>',views.vsSuspendeDeclaracion, name='SuspendeDeclaracion'),
-    path('StatusDeclaracion/',views.VstatusDeclaracion, name='StatusDeclaracion'),
+    path('StatusDeclaracion/',views.VstatusDeclaracion, name='StatusDeclaracion'),  
     path('VisionDeclaracion/',views.VsVisionDeclaracion, name='VisionDeclaracion'), 
     path('VerDeclaracion/',views.VsEstatusDeclaracion, name='VerDeclaracion'),
     path('ActivaSuspendida/<int:idd>',views.VsActivaSuspendida,name ='ActivaSuspendida'),
@@ -93,9 +98,10 @@ urlpatterns = [
     path('BNotificar/',Views_Beneficios.VsNotificaciones,name='BNotificar'), 
     path('BNotificar2/',Views_Beneficios.VsNotificaciones2,name='BNotificar2'), 
     path('GParametros/',Views_Utilitarios.VsParametros,name='GParametros'), 
-    
+    path('Vslevanta_Stattus/',Views_Statttus.Vslevanta_Stattus,name='Vslevanta_Stattus'),    
+    path('Buscaconcalendariog/<int:selectedYear>,<int:selectedMonth>/',Views_Statttus.VsDeclaracionesfinales,name='Buscaconcalendariog'),        
+
 
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-# path('guarda_tipo',Views_Beneficios.Vsguarda_tipo,name='guarda_tipo'), 

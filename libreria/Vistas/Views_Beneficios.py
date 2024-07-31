@@ -1,4 +1,5 @@
 # Vista de Beneficio 
+import datetime
 from datetime import date, datetime, timedelta
 from pyexpat.errors import messages
 from urllib import request
@@ -13,7 +14,7 @@ from django.db.models import F
 from libreria import models
 from libreria.forms import TipoForm
 from libreria.models import Declaraciones_Tipo, Detalle_Declaracion_Tipo, cliente_proveedor_cliente_proveedor
-import datetime
+
 
 
 def Vspyme(request):
@@ -226,8 +227,6 @@ def Vsguarda_tipo(request):
             messages.success(request, 'Actualizado correctamente')
         else:
             # Si no existe, crear una nueva instancia y guardarla
-            print('aqui da el erro ')
-            
             nuevo_detalle_tipo = Detalle_Declaracion_Tipo(
                 Detalle=detalle,
                 Fecha_solicitud=fecha_solicitud,
@@ -421,13 +420,9 @@ def VsNotificaciones2(request):
             # si la fecha de recordatorio es nula            
             if registro.Fecha_Recordatorio is None:                
                 registro.Fecha_Recordatorio = hoy - timedelta(days= registro.Recordar_antes)    
-                                 
-            print('recordatorio nul',registro.Fecha_Recordatorio)
+                                            
             
             limite_fechaRecordatorio = registro.Fecha_Recordatorio + timedelta(days=dias_a_sumar)
-            print('limite vencimiento',limite_vencimiento)
-            print('recordatorio',limite_fechaRecordatorio)
-            print('hoy',hoy)
             
             
             if hoy >= limite_vencimiento and   hoy >= limite_fechaRecordatorio :  

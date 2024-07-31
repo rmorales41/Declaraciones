@@ -1,21 +1,32 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
+{% load static %}    
+
 <head>
     <meta charset="UTF-8">
-    <title>Login</title>
+    <title>Ingreso al Sistema</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">    
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
-<body>
-    <h2>Login</h2>
-    
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Login</button>
-    </form>
-    
+
+<body class="login" >
+    <h2>Inicio de Sesión</h2>
+   <div class="form-container">
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Ingresar</button>        
+        </form>
+   </div> 
     <!-- Si hay errores de autenticación -->
     {% if form.errors %}
         <p>Usuario o contraseña incorrectos. Por favor, inténtalo de nuevo.</p>
     {% endif %}
 </body>
 </html>
+
+<!-- 
+ user.set_password('1234')
+>>> user.save()
+-->

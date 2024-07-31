@@ -112,3 +112,15 @@ pip install psutil
 
 politicas cors 
 pip install django-cors-headers
+
+Ajustar la clave si es incluida por la base de datos 
+entrar con el enviromen primero    .\env\Scripts\activate  
+from django.contrib.auth.models import User
+
+# Encuentra al usuario por su nombre de usuario
+user = User.objects.get(username='nombre_de_usuario')
+
+# Establece la nueva contraseña
+user.set_password('nueva_clave')
+user.save()
+asi cambia la clave de sha 

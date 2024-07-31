@@ -1,4 +1,13 @@
+from django import forms 
+from django.contrib.auth.forms import AuthenticationForm
 from django.db import models
+
+# Ingreso al Sistema tabla de login 
+class LoginForm(AuthenticationForm):
+    username = forms.CharField(label='Acceso Usr:',max_length=254 )
+    password = forms.CharField(label='Contraseña', widget=forms.PasswordInput)
+    pass 
+
    
 class declaracion(models.Model):
     IDDeclaracion=models.AutoField(primary_key=True)   
@@ -8,6 +17,7 @@ class declaracion(models.Model):
     estado = models.BooleanField(default = True)
     observaciones = models.TextField(blank=True, verbose_name='Observacion')
     imagen = models.ImageField(upload_to='imagenes/', null=True, verbose_name='Imagen')
+    
     
     
     def __str__(self):
@@ -44,6 +54,8 @@ class Asignacion(models.Model):
     correo =models.BooleanField(default=False)
     Iniciada = models.BooleanField(default=False) 
     Suspendida = models.BooleanField(default=False)
+    Rectificativa = models.BooleanField(default =False)
+    
     
     # llaves foraneas 
     IDClientes_Proveedores = models.ForeignKey(cliente_proveedor_cliente_proveedor, on_delete=models.CASCADE) 
@@ -91,17 +103,18 @@ class Historico_Declaraciones(models.Model):
     Iniciada = models.BooleanField(default=False) 
     Suspendida = models.BooleanField(default=False)
     Usuario_Cierre = models.CharField(max_length=100)  
-    Numero_Comprobante = models.CharField(max_length=50)  
+    Numero_Comprobante = models.CharField(max_length=50, blank =True, null =True) # Permite espacio en blanco  
     Fecha_Final = models.DateField(blank=True, null=True, verbose_name='Fecha_Final')        
     Fecha_Sistema = models.DateTimeField(auto_now_add=True, verbose_name='Fecha_Sistema')
+    rectificativa = models.BooleanField(default =False)
  
     
     # llaves foraneas 
     IDClientes_Proveedores = models.ForeignKey(cliente_proveedor_cliente_proveedor, on_delete=models.CASCADE) 
     IDPlanilla_Funcionarios = models.ForeignKey(planillas_planilla_funcionarios, on_delete=models.CASCADE)
-    IDDeclaracion = models.ForeignKey(declaracion, null=False, blank=False,  on_delete=models.CASCADE)              
-      
-
+    IDDeclaracion = models.ForeignKey(declaracion, null=False, blank=False,  on_delete=models.CASCADE)   
+    
+    
 # Tipo de Beneficios 
 class Declaraciones_Tipo(models.Model):
     IDDeclaraciones_Tipo = models.AutoField(primary_key=True)

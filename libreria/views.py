@@ -1,5 +1,4 @@
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth import logout
+from django.contrib.auth import authenticate, login , logout
 from django.shortcuts import redirect
 from ctypes import util
 from datetime import date, timedelta
@@ -14,26 +13,39 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404, render, redirect
 import psutil
-from .models import Asignacion, Declaracion_Clientes, Historico_Declaraciones, calendario_tributario, declaracion, planillas_planilla_funcionarios,cliente_proveedor_cliente_proveedor,Historico_Declaraciones
+from .models import Asignacion, Declaracion_Clientes, Historico_Declaraciones, LoginForm, calendario_tributario, declaracion, planillas_planilla_funcionarios,cliente_proveedor_cliente_proveedor,Historico_Declaraciones
 from django.core.serializers import serialize
 from django.core import serializers
 from django.db.models import F,Q   
+#from .forms import LoginForm
+
 # la clase F funciona para filtrar productos mayores ejemplo productos = Producto.objects.filter(precio__gt=F('descuento'))
 # la clase Q funciona para generar consultas correctas 
 
-
-def login_user(request):
+# ingreso login al sistema 
+def login_view(request):
     if request.method=='POST':
-        username = request.POST['uname']
-        password = request.POST['password']
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            return redirect('/')
+        form =LoginForm(request, data=request.POST)
+       
+        print('llegue aqui')
+        print('datos',request.POST)
+        print('Form',form.is_valid())
+        print('Errores',form.errors)
+
+        if form.is_valid():                   
+            user = form.get_user()
+            login(request,user)            
+            return redirect('visor/')  # redirige   
         else:
-            messages.warning(request,'Invalid Credentials')
-            return redirect('login')
-    return render(request,'login.html')
+            print('Error del formulario',form.errors)                     
+    else:        
+        form = LoginForm()            
+   
+    return render(request,'formas/login.html',{'form': form})
+def logout_view(request):
+    logout(request)
+    return redirect('login')
+
 
 
 
@@ -358,16 +370,16 @@ def clienteafuncionario(request):
             
             #clientepend_id=list(cliente_proveedor_cliente_proveedor.objects.values().filter(estado=True).order_by('codigo')) 
             
-            print('declaracion',clientepend_id)
+          
 
             cliente_proveedor_instance = cliente_proveedor_cliente_proveedor.objects.filter(Tipo=1).get(pk=clientepend_id)             
             
-            print('cliente',cliente_proveedor_instance)
+             
             funcionario_id = data.get('IDPlanilla_Funcionarios', None)
-            print('funcionario',funcionario_id)
+         
             funcionario_instance = planillas_planilla_funcionarios.objects.get(pk=funcionario_id) 
              
-            print(clientepend_id,funcionario_id)
+           
             if clientepend_id is None or funcionario_id is None:
                 return JsonResponse({'error': 'IDs de cliente o funcionario faltantes'}, status=400)
 
@@ -378,11 +390,10 @@ def clienteafuncionario(request):
             
             #Declaraciones_cliente = Declaracion_Clientes.objects.values().filter(IDClientes_Proveedores=clientepend_id)
             declaraciones_cliente = Declaracion_Clientes.objects.filter(IDClientes_Proveedores=clientepend_id)
-            
-            print('asignado',declaraciones_cliente)  
+                        
             # Crear las asignaciones con las declaraciones del cliente
             for declaracion in declaraciones_cliente:
-                print(declaracion)
+            
                 Asignacion.objects.create(
                     Fecha_Presenta=fecha,
                     Fecha_Asigna=fecha,
@@ -479,34 +490,47 @@ def vsfuncionarioinicia(request,idd2,idd):
          'IDAsignacion',                   
          'Fecha_Proxima',
          'Iniciada',
-         'Suspendida'
+         'Suspendida',
+         'Rectificativa',
     ))
     
     return JsonResponse(datadeclaracion, safe =False) 
 
 # actualiza los campos de la tabla       
-def vsActivaDeclaracion(request, idd):  
-    if request.method=='GET':
-
-       try:      
-         asignacion = Asignacion.objects.filter(pk=idd).first()                                                   
-         declaracion_obj = declaracion.objects.filter(IDDeclaracion=asignacion.IDDeclaracion.IDDeclaracion).first()                          
-                     
-         if declaracion_obj:                                                   
+def vsActivaDeclaracion(request, idd):                
+    if request.method=='POST':                     
+       try:                  
+            asignacion = Asignacion.objects.filter(pk=idd).first()   
+                                                                     
+            if not asignacion:
+                return JsonResponse({'success':False,'error': 'Asignacion no encotrada'})
+        
+            declaracion_obj = declaracion.objects.filter(IDDeclaracion=asignacion.IDDeclaracion.IDDeclaracion).first()      
+            if not declaracion_obj:    
+                return JsonResponse({'success': False,'error': 'Declaracion no encotrada '})
+         
+            # datos recibidos 
+            data =json.loads(request.body.decode('utf-8'))                       
+            rectifica = data.get('rectificativa')     # marca del check                                                                      
             # actualiza campos 
-            asignacion.Iniciada = True
-            asignacion.Fecha_Asigna = date.today()   
-            asignacion.Fecha_Proxima = asignacion.Fecha_Presenta + timedelta(days=int(declaracion_obj.tiempo))#                                                                                               
             
+            asignacion.Iniciada = True
+            asignacion.Fecha_Asigna = date.today()               
+            
+            # el campo viene en on o en off
+            if rectifica == 'on':
+                asignacion.Rectificativa = True 
+            elif rectifica =='off' or rectifica is None:
+                asignacion.Rectificativa = False 
+                asignacion.Fecha_Proxima = asignacion.Fecha_Presenta + timedelta(days=int(declaracion_obj.tiempo))
+                
             # Guarda los campos
             asignacion.save()
             #historico_declaraciones.save()
-            
-            return JsonResponse({'success':True})
-         else:
-             return JsonResponse({'success': False, 'error': 'No se encontró ninguna declaración relacionada'}) 
+            print(f'Asignación actualizada: {asignacion}')  # Mensaje de depuración    
+            return JsonResponse({'success':True})        
        except Exception as e:
-           return JsonResponse({'success': False,'error': str(e)})         
+            return JsonResponse({'success': False,'error': str(e)})         
     else:
            return JsonResponse({'success': False,'error': 'No se Guardaron los datos'})         
 
@@ -534,14 +558,15 @@ def vsCierraDeclaracion(request, idd):
                     Fecha_Final=None,
                     IDClientes_Proveedores=asignacion.IDClientes_Proveedores,
                     IDPlanilla_Funcionarios=asignacion.IDPlanilla_Funcionarios,
-                    IDDeclaracion=asignacion.IDDeclaracion
+                    IDDeclaracion=asignacion.IDDeclaracion,
+                    rectificativa = asignacion.Rectificativa
                 )
                 
                 # Actualizar campos en Asignacion
                 asignacion.Iniciada = False
                 asignacion.Suspendida = False
                 asignacion.Fecha_Presenta = asignacion.Fecha_Proxima
-                
+                asignacion.Rectificativa  = False     
                 # Guardar cambios en Asignacion
                 asignacion.save()
                                 
@@ -594,10 +619,12 @@ def vsSuspendeDeclaracion(request,idd):
 
 
 
-# ve el Status de las declaraciones        
+# ve el Status de las declaraciones       
 def VstatusDeclaracion(request):       
      # apertura el formulario de Visor de Status 
     return render(request, 'formas/Status.html')
+
+
 
 
 # Ver Status de Declaracion - muestra todos los datos de las declaraciones  
@@ -702,9 +729,10 @@ def VsEstatusDeclaracionHistoricas(request):
         'Fecha_Presenta',
         'Fecha_Cierre',
         'IDPlanilla_Funcionarios__Nombre',  # Acceder al nombre del funcionario
-        'IDDeclaracion__estado'                
+        'rectificativa'                
     ))
 
+    print('datos',datadeclaracion)
     return JsonResponse(datadeclaracion, safe=False)
 
 # Confirma las declaraciones cerradas y presentadas para archivo          
@@ -713,7 +741,7 @@ def VsConfirma(request, idd):
         try:
             # se obtiene el objeto historico 
             historico_declaracion = Historico_Declaraciones.objects.get(pk=idd)
-            # ver los datos recidos en el json 
+            # ver los datos recibidos en el json 
             data =json.loads(request.body.decode('utf-8'))
             #print('datos recibido',data )            
             # se obtienen los datos                                
@@ -722,8 +750,7 @@ def VsConfirma(request, idd):
             # Actualizar los campos en el objeto historico_declaracion
             historico_declaracion.Numero_Comprobante = data.get('numero_comprobante')  
             historico_declaracion.Fecha_Final = data.get('fecha_cierre')
-            historico_declaracion.correo = True if correo =='Si' else False 
-                                          
+            historico_declaracion.correo = True if correo =='Si' else False                                        
             # Guardar los cambios en la base de datos
             historico_declaracion.save()
 
