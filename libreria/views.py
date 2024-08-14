@@ -17,6 +17,7 @@ from .models import Asignacion, Declaracion_Clientes, Historico_Declaraciones, L
 from django.core.serializers import serialize
 from django.core import serializers
 from django.db.models import F,Q   
+from django.utils.dateparse import parse_date
 #from .forms import LoginForm
 
 # la clase F funciona para filtrar productos mayores ejemplo productos = Producto.objects.filter(precio__gt=F('descuento'))
@@ -27,10 +28,10 @@ def login_view(request):
     if request.method=='POST':
         form =LoginForm(request, data=request.POST)
        
-        print('llegue aqui')
-        print('datos',request.POST)
-        print('Form',form.is_valid())
-        print('Errores',form.errors)
+       # print('llegue aqui')
+       # print('datos',request.POST)
+       # print('Form',form.is_valid())
+       # print('Errores',form.errors)
 
         if form.is_valid():                   
             user = form.get_user()
@@ -238,6 +239,7 @@ def vsDeclaraciones_Cliente(request,IDD):
             'estado':asignacion.IDDeclaracion.estado,
             'presentada':asignacion.Fecha_Presenta,
             'asignada':asignacion.Fecha_Asigna,
+            'mes':asignacion.Mes,
         })
                                  
     return JsonResponse(data, safe=False)
@@ -368,9 +370,7 @@ def clienteafuncionario(request):
             
             #clientepend_id  = list(cliente_proveedor_cliente_proveedor.objects.values().filter(Tipo=True).order_by('Descripcion') 
             
-            #clientepend_id=list(cliente_proveedor_cliente_proveedor.objects.values().filter(estado=True).order_by('codigo')) 
-            
-          
+            #clientepend_id=list(cliente_proveedor_cliente_proveedor.objects.values().filter(estado=True).order_by('codigo'))                       
 
             cliente_proveedor_instance = cliente_proveedor_cliente_proveedor.objects.filter(Tipo=1).get(pk=clientepend_id)             
             
@@ -386,7 +386,7 @@ def clienteafuncionario(request):
             fecha = datetime.strptime(data['Fecha_Asigna'], '%d/%m/%Y').strftime('%Y-%m-%d')
                     
             # Obtener todas las declaraciones del cliente cliente_proveedor_instance
-            print("Cliente instancia",cliente_proveedor_instance)
+            #print("Cliente instancia",cliente_proveedor_instance)
             
             #Declaraciones_cliente = Declaracion_Clientes.objects.values().filter(IDClientes_Proveedores=clientepend_id)
             declaraciones_cliente = Declaracion_Clientes.objects.filter(IDClientes_Proveedores=clientepend_id)
@@ -492,6 +492,7 @@ def vsfuncionarioinicia(request,idd2,idd):
          'Iniciada',
          'Suspendida',
          'Rectificativa',
+         'Mes',
     ))
     
     return JsonResponse(datadeclaracion, safe =False) 
@@ -539,10 +540,12 @@ def vsActivaDeclaracion(request, idd):
 # actualiza los campos de la tabla para cerrar la declaracion 
 def vsCierraDeclaracion(request, idd): 
     if request.method == 'GET':            
-        try:                      
+        try:            
+                  
             asignacion = Asignacion.objects.filter(pk=idd).first()  
-            declaracion_obj = declaracion.objects.filter(IDDeclaracion=asignacion.IDDeclaracion.IDDeclaracion).first()                  
+            declaracion_obj = declaracion.objects.filter(IDDeclaracion=asignacion.IDDeclaracion.IDDeclaracion).first()                              
             if declaracion_obj:         
+                
                 # Crear registro en Historico_Declaraciones
                 Historico_Declaraciones.objects.create(                                             
                     IDAsignacion=idd,
@@ -559,13 +562,21 @@ def vsCierraDeclaracion(request, idd):
                     IDClientes_Proveedores=asignacion.IDClientes_Proveedores,
                     IDPlanilla_Funcionarios=asignacion.IDPlanilla_Funcionarios,
                     IDDeclaracion=asignacion.IDDeclaracion,
-                    rectificativa = asignacion.Rectificativa
+                    rectificativa = asignacion.Rectificativa,
+                    Mes = asignacion.Mes
                 )
                 
-                # Actualizar campos en Asignacion
+                # Actualizar campos en Asignacion ajusta la fecha y valida mes 
                 asignacion.Iniciada = False
                 asignacion.Suspendida = False
-                asignacion.Fecha_Presenta = asignacion.Fecha_Proxima
+                if not asignacion.Rectificativa:
+                    asignacion.Fecha_Presenta = asignacion.Fecha_Proxima
+                    mes = asignacion.Mes + 1                     
+                    if mes >12:
+                        mes = 1
+                        
+                    asignacion.Mes = mes 
+                                        
                 asignacion.Rectificativa  = False     
                 # Guardar cambios en Asignacion
                 asignacion.save()
@@ -594,37 +605,11 @@ def vsSuspendeDeclaracion(request,idd):
  else:    
         return JsonResponse({'success': False,'error': 'No se Guardaron los datos'})   
        
-# salir de la aplicacion
-#def exit_confirmation(request):    
-    #if request.method == 'POST':
-    # salida confirmada solicitud POST 
-    #    return HttpResponseRedirect('/salir-confirmado/')  # Redirecciona a una página de confirmación 
-    #else:        
-    #    return render(request, 'formas/salir.html')
-
-# cierra la aplicacion     
-#def cerrar_aplicacion():
-    # Detener el servidor de desarrollo de React
-    
-   # subprocess.run(["pkill", "-f", "react-scripts"])
-
-    # Detener el servidor de desarrollo de Django
-   # subprocess.run(["pkill", "-f", "runserver"])
-
-    #if __name__ == "__main__":
-    # Aquí iría tu código para iniciar la aplicación Django
-    # Por ejemplo, podrías iniciar el servidor de desarrollo de Django y el servidor de desarrollo de React
-    # Luego, cuando necesites cerrar la aplicación, llamas a la función cerrar_aplicacion()
-    #return render(request, 'Declaraciones/libreria/templates/formas/salir.html')
-
-
 
 # ve el Status de las declaraciones       
 def VstatusDeclaracion(request):       
      # apertura el formulario de Visor de Status 
     return render(request, 'formas/Status.html')
-
-
 
 
 # Ver Status de Declaracion - muestra todos los datos de las declaraciones  
@@ -732,8 +717,75 @@ def VsEstatusDeclaracionHistoricas(request):
         'rectificativa'                
     ))
 
-    print('datos',datadeclaracion)
+    
     return JsonResponse(datadeclaracion, safe=False)
+
+# ajuste a vista con calendarios 
+
+def VsConfirma_malo(request, idd):     
+    if request.method == 'POST':
+        try:
+            # Obtiene el objeto historico
+            historico_declaracion = Historico_Declaraciones.objects.get(pk=idd)
+            idc = historico_declaracion.IDDeclaracion 
+            chisto = historico_declaracion.objects.all()
+            print('histo',chisto)
+            # Obtiene los datos recibidos en el json
+            data = json.loads(request.body.decode('utf-8'))
+            
+            # Extrae datos
+            numero_comprobante = data.get('numero_comprobante')
+            fecha_cierre = parse_date(data.get('fecha_cierre'))
+            correo = data.get('correo') 
+            
+            
+            print('datos   idc',idc)
+                                                                           
+            # Actualiza campos en el objeto historico_declaracion
+            historico_declaracion.Numero_Comprobante = numero_comprobante
+            historico_declaracion.Fecha_Final = fecha_cierre
+            historico_declaracion.correo = correo == 'Si'
+            
+            # Extrae la fecha_presenta del objeto historico_declaracion
+            fecha_presenta = historico_declaracion.Fecha_Presenta
+                                            
+            if fecha_presenta:               
+                # Extrae el mes y el año de la fecha_presenta
+                mes_grid = fecha_presenta.month
+                anio_grid = fecha_presenta.year               
+                                                                  
+                # calendario = calendario_tributario.objects.all()  # Obtiene todos los registros
+                #print('todos',calendario)
+                                                                
+                print("fecha",mes_grid,anio_grid,idc)                  
+                                                
+                # Buscar el calendario tributario usando filtros
+                calendario = calendario_tributario.objects.filter(
+                    ID = idc,
+                    Fecha_Presenta__month = mes_grid, 
+                    Fecha_Presenta__year = anio_grid                                                                     
+                ).first()  # primer registro 
+                
+                print('calendario total',calendario)
+                                
+                #iddeclaracion = iddeclaracionb                                
+                if calendario:
+                    # Si tiene algo lo actualiza                                                             
+                    historico_declaracion.IDCalendario_tributario = calendario.IDDeclaracion
+                    
+            else:
+                return JsonResponse({'success': False, 'error': 'El campo fecha_presenta está vacío en el registro de declaraciones.'})
+            
+            # Guarda los cambios en la base de datos
+            historico_declaracion.save()
+
+            return JsonResponse({'success': True})
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+    else:
+        return JsonResponse({'success': False, 'error': 'La solicitud no es de tipo POST'})
+
+
 
 # Confirma las declaraciones cerradas y presentadas para archivo          
 def VsConfirma(request, idd):     
@@ -789,8 +841,7 @@ def VsDeclaracionesConfirmadasCerradasAplicadas(request):
         'correo',
         'Numero_Comprobante',
         'Fecha_Final'                
-    ))
-    print('Detalle Encontrado',Total_Declaraciones)
+    ))    
     return JsonResponse(datadeclaracion, safe=False)
 
 
@@ -828,7 +879,7 @@ def VsAgregaDeclaracionCalendario(request,fch):
         try:       
             # Verificar si existe una instancia válida de declaracion con el ID proporcionado            
             declaracion_instance = declaracion.objects.get(IDDeclaracion=declaracion_id)
-            print('ver',declaracion_instance)
+            
             # Verificar si ya existe una entrada en calendario_tributario con esta declaración
             if calendario_tributario.objects.filter(
                 IDDeclaracion=declaracion_instance,
@@ -871,22 +922,17 @@ def VsBuscadeclaracionxan(request, anSeleccionada):
    # an_Selecionado = int(anSeleccionada) # convierte el año        
     try:                  
         an = int(anSeleccionada) 
-                         
-        
+                                 
         Total_Declaraciones = calendario_tributario.objects.filter(Fecha_Presenta__year = an
         ).order_by("-Fecha_Presenta")  
-          
-        print('total',Total_Declaraciones) 
-        
-            
+                                      
         datadeclaracion = list(Total_Declaraciones.values(
             'IDCalendario_tributario',            
             'IDDeclaracion__codigo',
             'IDDeclaracion__detalle',
             'Fecha_Presenta'            
         ))
-     
-             
+                  
         return JsonResponse(datadeclaracion, safe=False)        
                                         
     except calendario_tributario.DoesNotExist:
@@ -897,81 +943,8 @@ def VsBuscadeclaracionxan(request, anSeleccionada):
         print(f"Error: {e}")  # Imprime el error en la consola
         return JsonResponse({'error': str(e)}, status=500)   
     
-# Salir del Sistema 
-#def VsSalirSistema(request): 
-    return render(request, 'formas/Salida.html')
-
-
-
-# cierra todos los procesos abiertos 
-#def exit_application_old(request):   
-    try:
-        # Obtener todos los procesos que contienen "runserver"
-        for proc in util.process_iter(['pid', 'name']):
-            if 'runserver' in proc.info['name']:
-                proc.kill()
-                print(f"Servidor con PID {proc.info['pid']} cerrado correctamente.")
-        
-        print("Servidor(es) cerrado(s) correctamente.")
-    except Exception as e:
-        print(f"Error al cerrar el servidor: {e}")
-
-    return redirect('/')
-
-# cierra solo este proceso 
-#def exit_application_old1(request):   
-    try:
-        # Iterar sobre todos los procesos
-        for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
-            if 'python' in proc.info['name'].lower() and 'runserver' in proc.cmdline():
-                # Verificar que sea el proceso correcto
-                if '--noreload' in proc.cmdline() or '--nothreading' in proc.cmdline():
-                    proc.kill()
-                    subprocess.run(["pkill", "-f", "runserver"])
-                    print(f"Servidor con PID {proc.info['pid']} cerrado correctamente.")
-                    break  # Salir del bucle después de cerrar el proceso
-        
-        print("Servidor cerrado correctamente.")
-    except Exception as e:
-        print(f"Error al cerrar el servidor: {e}")
-
-    return redirect('/')
-
-#def exit_application_old1(request):   
-    try:
-        # Iterar sobre todos los procesos
-        for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
-            if 'python' in proc.info['name'].lower() and 'runserver' in proc.cmdline():
-                # Verificar que sea el proceso correcto
-                if '--noreload' in proc.cmdline() or '--nothreading' in proc.cmdline():
-                    proc.kill()
-                    subprocess.run(["pkill", "-f", "runserver"])
-                    print(f"Servidor con PID {proc.info['pid']} cerrado correctamente.")
-                    break  # Salir del bucle después de cerrar el proceso
-        
-        print("Servidor cerrado correctamente.")
-    except Exception as e:
-        print(f"Error al cerrar el servidor: {e}")
-
-    return redirect('/')
-
-#def exit_application(request):   
-
-
-    logout(request)    
-    return redirect('/')
-
-#@login_required
-#def perfil(request):
-    # Vista de ejemplo protegida, solo accesible por usuarios autenticados
-    return render(request, 'perfil.html')
-
-
 
 # busca las declaraciones del año solicitado 
 def VsReasignadeclaracion(request):    
      return render(request,'formas/Calendario_Tributario_Reasigna.html')       
- 
- 
- 
  

@@ -62,3 +62,12 @@ button {
 p {
     color: red;
 }
+
+.input-group-container {
+    max-width: 800px; /* Ajusta el ancho máximo según sea necesario         Parametros */
+    margin: 1 auto; /* 0 Centra el contenedor horizontalmente                 Parametros*/
+}
+
+.input-group {
+    width: 100%; /* Asegura que el input ocupe todo el ancho del contenedor  Parametros*/
+}

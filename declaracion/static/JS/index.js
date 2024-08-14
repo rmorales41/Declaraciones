@@ -1,5 +1,5 @@
 
-
+Stlistarfuncionario
 document.addEventListener("DOMContentLoaded", function() {
     StListaclientes(); // Llama a la función para cargar el combo al cargar la página por primera vez  
 });
@@ -636,7 +636,7 @@ function Stlistarfuncionario(){
                         }else {                           
                             botoneshtml =`                         
                             <td>
-                                <a name="" id="" class="btn btn-primary" href="#" onclick="StIniciaDeclaracion(${item.IDAsignacion})" role="button">Iniciar</a>                                
+                                <a name="" id="" class="btn btn-primary" href="#" onclick="StIniciaDeclaracion(${item.IDAsignacion},${item.Mes})" role="button">Iniciar</a>                                
                                 <a name="" id="" class="btn btn-danger"  href="#"  role="button">Cierra</a>
                             </td>  `;
                         }
@@ -676,17 +676,16 @@ function Stlistarfuncionario(){
     // esta funcion pertenece al modelo de Asignacion para el inicio de las declaraciones
   
 // Esta función pertenece al modelo de Asignacion para el inicio de las declaraciones
-function StIniciaDeclaracion(asignacionId) { 
+function StIniciaDeclaracion(asignacionId,mes) { 
     // Variables de cambio del formulario 
     const controlck = document.getElementById('checkbox-' + asignacionId.toString());  
     const isCheck = controlck.checked; // a ver si esta marcado     
     // verifica estado 
     const isChecked = isCheck;
 
-    console.log('datos g',controlck,asignacionId,isChecked)  
 
     return Swal.fire({
-        text: "En el momento de dar por iniciada el sistema modificar la fecha de asignación con la fecha actual y ajustara la fecha Maxima de Presentación sumandole el indicador de días por declaración..",
+        text: `En el momento de dar por iniciada el sistema modificar la fecha de asignación con la fecha actual y ajustara la fecha Maxima de Presentación sumandole el indicador de días por declaración, la declaracion a iniciar es la del mes ${mes}.`,
         icon: "warning",
         showCancelButton: true,
         cancelButtonText: "No, Retroceder",
@@ -925,7 +924,7 @@ function StCalendario_Tributario() {
 }
 
 
-// Confirmacion de declaraciones cerradas 
+// confirmacion de declaraciones 
 function StStatushistoricoDeclaraciones() {
     fetch(`/VerDeclaracionHistoricas/`)
         .then(response => {
@@ -987,9 +986,75 @@ function StStatushistoricoDeclaraciones() {
 }
 
 
+// ajuste de confirma con calendarios 
+function StConfirma(idHistoricoDeclaraciones) { 
+    // obtener los datos del formulario    
+    var Numero_C = document.getElementById('numero_comprabante_'+idHistoricoDeclaraciones.toString()).value;
+    var Fecha_C = document.getElementById('fecha_cierre_'+idHistoricoDeclaraciones.toString()).value;
+    var Correo_C = document.getElementById('correo_'+idHistoricoDeclaraciones.toString()).value;
+   
+    Swal.fire({
+        title: "Confirmador de Declaraciones",
+        text: "¿Desea continuar con la confirmación de esta línea?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Sí, proceder"
+    }).then((result) => {
+        if (result.isConfirmed) {            
+            // Solicitud POST                                   
+            fetch(`/Confirma/${idHistoricoDeclaraciones}`, {        
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCSRFToken() 
+                },
+                body: JSON.stringify({
+                    numero_comprobante: Numero_C,
+                    fecha_cierre: Fecha_C,
+                    correo: Correo_C,                 
+                })        
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error: No se pudo confirmar la declaración');
+                }                
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // Indica que el dato llegó bien
+                    Swal.fire({
+                        title: "¡Actualizado!",
+                        text: "Su registro fue actualizado.",
+                        icon: "success"
+                    });
+                    // Recarga la página
+                    location.reload();  
+                } else {
+                    Swal.fire({
+                        title: "Error",
+                        text: "No se pudo actualizar el registro.",
+                        icon: "error"
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error al confirmar la declaración:', error);
+            });
+        }
+    });       
+}
+
+
+
+
+
+
 
 // valida los datos para cerrar la confirmacion de declaraciones realizadas
-function StConfirma(idHistoricoDeclaraciones) {    
+function StConfirma_old(idHistoricoDeclaraciones) {    
     var Numero_C = document.getElementById('numero_comprabante_'+idHistoricoDeclaraciones.toString()).value;
     var Fecha_C = document.getElementById('fecha_cierre_'+idHistoricoDeclaraciones.toString()).value;
     var Correo_C = document.getElementById('correo_'+idHistoricoDeclaraciones.toString()).value;

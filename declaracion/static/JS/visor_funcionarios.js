@@ -102,4 +102,60 @@ function StListaClientesFuncionarios(){
     }) 
 }
 
-   
+
+
+// confirma el cambio del mes de la declaracion que se ha presentado no cambia fechas 
+function StConfirma(idAsignacion) {     
+    var Mes_C = document.getElementById('numero_'+idAsignacion.toString()).value; // obtiene el nuevo mes que va a incluir                
+    console.log('llegue',Mes_C)
+    Swal.fire({
+        title: "Confirmador de Cambio",
+        text: "¿Recuerde que esto no cambia las fechas de inicio de las declaraciones solo cambia el mes de control, debe de comunicarse con T.I para reajustar las fechas de control de las asignadas.?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Sí, proceder"
+    }).then((result) => {
+        if (result.isConfirmed) {            
+            // Solicitud POST                                   
+            fetch(`/ConfirmaMes/${idAsignacion}`, {        
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCSRFToken() 
+                },
+                body: JSON.stringify({
+                    mesdato: Mes_C,                    
+                })        
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error: No se pudo confirmar la declaración');
+                }                
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // Indica que el dato llegó bien
+                    Swal.fire({
+                        title: "¡Actualizado!",
+                        text: "Su registro fue actualizado.",
+                        icon: "success"
+                    });
+                    // Recarga la página
+                    location.reload();  
+                } else {
+                    Swal.fire({
+                        title: "Error",
+                        text: "No se pudo actualizar el registro.",
+                        icon: "error"
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error al confirmar la declaración:', error);
+            });
+        }
+    });       
+}

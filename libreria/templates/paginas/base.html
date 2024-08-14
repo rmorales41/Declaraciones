@@ -42,7 +42,7 @@
                             <li><a class="dropdown-item" href="{% url 'buscadeclaracion' %}"><i class="fas fa-asterisk"></i> Buscar Declaración a Clientes</a></li>
                             <li><a class="dropdown-item" href="{% url 'iniciadeclaracion' %}"><i class="bi bi-cone"></i> Iniciar o Finalizar Declaración por Cliente</a></li>
                             <li><a class="dropdown-item" href="{% url 'StatusDeclaracion' %}"><i class="bi bi-chat-left-text"></i> Status de las Declaraciones</a></li>
-                            <li><a class="dropdown-item" href="{% url 'Vslevanta_Stattus' %}"><i class=""></i> Status y Calendario de las Declaraciones</a></li>
+                            <li><a class="dropdown-item" href="{% url 'Vslevanta_Stattus' %}"><i class="bi bi-backpack3-fill"></i> Status y Calendario de las Declaraciones</a></li>
                             <li><a class="dropdown-item" href="{% url 'VisionDeclaracion' %}"><i class="bi bi-cookie"></i> Visión Global de las Declaraciones</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="#">Generador de Borradores</a></li>
@@ -104,8 +104,32 @@
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="#">Bitácora de Eventos</a></li>
                         </ul>
-                    </li>
-                     <!-- Menú desplegable "Facturación" -->
+                    </li>                    
+
+                     <!-- Menú desplegable "Reportes " -->
+                     <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle reportes" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-printer-fill"></i> Reportes
+                        </a>
+                        <ul class="dropdown-menu">                                                      
+                            <li><a class="dropdown-item" href="{% url 'Rep_General_Declaracion' %}"><i class="bi bi-printer"></i> Listado de Declaraciones General</a></li>
+                            <li><a class="dropdown-item" href="#">Calendario Tributario anual </a></li>
+                            <li><a class="dropdown-item" href="#">Calendario Tributario Mensual</a></li>
+                            <li><a class="dropdown-item" href="#">Funcionarios Asignados</a></li>
+                            <li><a class="dropdown-item" href="{% url 'Rep_Clientesasignar' %}"><i class="bi bi-printer"></i> Clientes sin Asignar</a></li>
+                            <li><a class="dropdown-item" href="#">Status de Declaraciones</a></li>
+                            <li><a class="dropdown-item" href="#">Declaraciones por Confirmar</a></li>
+                            <li><a class="dropdown-item" href="#">Clientes Asignados a Funcionarios</a></li>
+                            <li><a class="dropdown-item" href="#">Reporte Proceso de las Declaraciones Inicio, Proceso</a></li>
+                            <li><a class="dropdown-item" href="#">Estado de las Declaraciones</a></li>
+                            <li><a class="dropdown-item" href="#">Funcionarios y sus Cargas</a></li>
+                            <li><a class="dropdown-item" href="#">Funcionarios y sus Asignadas</a></li>
+                            <li><a class="dropdown-item" href="#">Beneficios asignados</a></li>
+                            <li><a class="dropdown-item" href="#">Estado Mensual</a></li>
+
+                        </ul>
+                    </li>                        
+                     <!-- Menú desplegable "Seguridad" -->
                      <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle seguridad" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="bi bi-key"></i> Seguridad
@@ -115,6 +139,7 @@
                             <li><a class="dropdown-item" href="#">Permisos</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="{% url 'GParametros' %}">Parámetros</a></li>
+                            <li><a class="dropdown-item" href="{% url 'AjusteDeclaraciones' %}">Ajuste Mes Declaracion</a></li> 
                         </ul>
                     </li>
                 </ul>

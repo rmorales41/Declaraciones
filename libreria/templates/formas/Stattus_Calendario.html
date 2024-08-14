@@ -1,75 +1,121 @@
 {% extends "paginas/base.html" %}
-{% load static %}
-{% block titulo %} Historico de Movimientos {% endblock %}
+{% block titulo %} Status de las Declaraciones {% endblock %}
 {% block contenido %}
-<!-- Bootstrap -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
-<!-- DataTables CSS -->
-<link rel="stylesheet" href="https://cdn.datatables.net/1.11.4/css/dataTables.bootstrap5.min.css">
-
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.4/css/dataTables.bootstrap5.min.css">
+    <!-- Flatpickr -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+</head>
+<body>
 <!-- jQuery primero, luego DataTables y Bootstrap Bundle -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.11.4/js/dataTables.bootstrap5.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"></script>
-
-<!-- Flatpickr -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
-<!-- Scripts personalizados -->
+<!-- Scripts personalizados   style="background-color: rgb(202, 202, 221); color: white;"> -->
 <script src="{% static 'js/Calendario.js' %}"></script> 
 
-<!-- <body onload="StStatusDeclaracionesC()"> -->
+<div class="col text-right"> 
+    <h4 style="text-align: center;">Status de las Declaraciones según calendario</h4>               
+    <a href="{% url 'visor' %}" class="btn btn-primary"><i class="fa fa-reply"> Volver al menú </i></a>          
+    <input type="text" id="selector-a" placeholder="Seleccionar mm/aaaa" class="btn btn-info" style="float: right; color: white;">            
+</div>
 
-    <div class="col text-right"> 
-        <h4 style="text-align: center;">Status de las Declaraciones con el calendario</h4>               
-        <a href="{% url 'visor' %}" class="btn btn-primary"><i class="fa fa-reply"> Volver al menú </i></a>          
-        <input type="text" id="selector-a" placeholder="Seleccionar mm/aaaa" class="btn btn-info" onchange="Buscaconcalendario(selectedYear,selectedMonth) " style="float: right; color: white;">            
-    </div>
+<table id="Tabla_Stat1" class="table table-striped" style="width:100%">
+    <thead>
+        <tr style="background-color: rgb(202, 202, 221); color: white;">         
+            <th style="width: 5%">ID</th>
+            <th style="width: 5%">Dcla</th>
+            <th style="width: 5%">Cod.</th>
+            <th style="width: 10%">Cliente</th>
+            <th style="width: 10%">Funcionario</th>
+            <th style="width: 8%">Presenta</th>
+            <th style="width: 8%">Cierre</th> 
+            <th style="width: 8%">Confirma</th> 
+            <th style="width: 8%">Calendario</th> 
+            <th style="width: 8%">Sistema</th> 
+            <th style="width: 12%">Acuse</th> 
+            <th style="width: 10%">Tipo</th>                                              
+        </tr>
+    </thead>
+    <tbody>                                                
+    </tbody>                      
+</table>     
 
-        <table id="Stattus" class="table table-striped" style="width:100%">
-                <thead>
-                    <tr style="background-color: rgb(202, 202, 221); color: white;">
-                        <th scope="col">ID</th>
-                        <th scope="col">Cod.</th>
-                        <th scope="col">Cliente</th>
-                        <th scope="col">Funcionario</th>
-                        <th scope="col">Cierre</th>
-                        <th scope="col">Confirma</th> 
-                        <th scope="col">Calendario</th> 
-                        <th scope="col">Sistema</th> 
-                        <th scope="col">Acuse</th> 
-                        <th scope="col">Estado</th>
-                        <th scope="col">Tipo</th>                        
-                    </tr>
-                </thead>
-            <tbody>                                                
-            </tbody>                      
-        </table>     
-        <!-- paginacion-->                                                       
-        {% include "formas/paginacion.html" %}           
-</body>
+<!-- paginacion                                                   
+{% include "formas/paginacion.html" %}           
+-->    
 
-<!-- orden columnas --> 
+<script>
+    // Configura flatpickr para mostrar año y mes 
+    flatpickr("#selector-a", {
+        dateFormat: "Y-m",  // Formato de fecha: solo año y mes
+        minDate: "2000-01",   // Año mínimo permitido
+        maxDate: "2050-12",  // Hasta el año actual + 10 
+        yearRange: "2000:2050",  // Rango de años permitido
+        onChange: function(selectedDates, dateStr, instance) {
+            var selectedYear = parseInt(dateStr.split('-')[0]);
+            var selectedMonth = parseInt(dateStr.split('-')[1]);
+            Buscaconcalendario(selectedYear, selectedMonth);  // Llama a la función directamente
+        }
+    });
+</script>
 
+<!--
+<script>
 
+    
+    $(document).ready(function () {
+        
+        $('#Tabla_Stat1').DataTable({            
+            "language": {
+                "url": "{% static 'json/Spanish.json' %}" 
+            },
+            "searching": true,  // Habilitar búsqueda global
+            "ordering": true,   // Habilitar ordenamiento de columnas
+            "paging": true,     // Habilitar paginación
+            "info": true,       // Mostrar información de la tabla
+            "scrollX": true,    // Habilitar scroll horizontal
+            "scrollY": "430px", // Altura del scroll vertical
+            "responsive": true, // Adaptar la tabla a diferentes tamaños de pantalla
+            "autoWidth": true,  // Ajustar el ancho de las columnas automáticamente
+            "scrollCollapse": true,
+            "stateSave": true,  // Guardar el estado de la tabla
+            "buttons": [
+                'copy', 'excel', 'pdf', 'print'
+            ],
+            "columnDefs": [
+                { "targets": "_all", "defaultContent": "" } // Agregar contenido por defecto a las celdas vacías
+            ]
+        });
+    });
+</script>
+-->
+
+<!--
 <script> 
     // Inicializar DataTable
     $(document).ready(function () {
-        $('#Stattus').DataTable({
+        $('#Tabla_Stat1').DataTable({
             "language": {
                 "url": "{% static 'json/Spanish.json' %}" 
             },
             "searching": true,  // Habilitar búsqueda global
             "ordering": true,    // Habilitar ordenamiento de columnas
-            "paging": true,      // habilita paginacion 
+            "paging": true,
             "info": true,
-            "scrollX": true,     // muestra barra 
+            "scrollX": true,
             "scrollY": "430px",
-            "responsive": true, 
-            "autoWidth": true,   // ajusta columnas 
+            "responsive": true,
+            "autoWidth": true,
             "scrollCollapse": true,
             "stateSave": true, // permite guardar el estado de la tabla 
             "buttons": [
@@ -87,20 +133,7 @@
         });
     });
 </script>
+-->
 
-<script>
-    // Configura flatpickr para mostrar año y mes 
-    flatpickr("#selector-a", {
-        dateFormat: "Y-m",  // Formato de fecha: solo año
-        minDate: "2000-01",   // Año mínimo permitido
-        maxDate: "today+10",  // Hasta el año actual + 10 
-        yearRange: "2000:today",  // Rango de años permitido
-        onChange: function(selectedDates, dateStr, instance) {
-            var selectedYear = parseInt(dateStr.split('-')[0]);
-            var selectedMonth = parseInt(dateStr.split('-')[1]);
-            document.getElementById("selector-a").setAttribute("onchange", `Buscaconcalendario(${selectedYear},${selectedMonth})`);
-        }
-    });
-</script>
-
+</body>
 {% endblock %}

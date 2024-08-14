@@ -52,13 +52,7 @@ def VsPendiente_realizar_consultas(request,selectedYear, selectedMonth):
              
         return JsonResponse(datadeclaracion, safe=False)        
                                         
-    except calendario_tributario.DoesNotExist:
-        return JsonResponse({'error': 'El objeto no existe'}, status=404)   
-    except ValueError:
-        return JsonResponse({'error': 'El año proporcionado no es válido'}, status=400)
-    except Exception as e:
-        print(f"Error: {e}")  # Imprime el error en la consola
-        return JsonResponse({'error': str(e)}, status=500)   
+   
     
   
 

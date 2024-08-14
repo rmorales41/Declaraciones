@@ -94,6 +94,24 @@ DATABASES = {
     },
 } 
 
+# base conexion 2
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'mssql',
+#        'NAME':'Declaraciones',
+#        'HOST':'127.0.0.1',
+#        'PORT':'1433',
+#        'USER':'sa',
+#        'PASSWORD':'0026',
+#        'ATOMIC_REQUESTS': True,
+#        
+#        'OPTIONS':{
+#            'driver':'ODBC Driver 17 for SQL Server',
+#            'init.command':"SET sql_mode='STRICT_TRANS_TABLES'" ,
+#                  },
+#    },
+#} 
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators

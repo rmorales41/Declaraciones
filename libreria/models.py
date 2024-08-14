@@ -33,6 +33,14 @@ class planillas_planilla_funcionarios(models.Model):
     IDPlanilla_Funcionarios = models.AutoField(primary_key=True)
     Nombre = models.CharField(max_length=20)
     Estado = models.BooleanField(default=True) 
+
+   
+# Coorporativo 
+class Configuracion_Corporativo(models.Model):
+    IDConfiguracion_Corporativo = models.AutoField(primary_key=True) 
+    Detalle = models.CharField(max_length=180,verbose_name="Detalle")
+    Observaciones = models.TextField(blank=True,null=True, verbose_name="Observaciones") # longchar
+        
     
 class cliente_proveedor_cliente_proveedor(models.Model):    
     IDClientes_Proveedores = models.AutoField(primary_key=True)
@@ -42,6 +50,9 @@ class cliente_proveedor_cliente_proveedor(models.Model):
     Fecha_Ult_Movimiento = models.DateTimeField(null=True)  
     Estado = models.BooleanField(default=True) # activo , inactivo 
     Tipo   = models.BooleanField(default=True) # true cliente , false proveedor             
+    
+    # llaves foraneas 
+    IDConfiguracion_Corporativo = models.ForeignKey(Configuracion_Corporativo, on_delete=models.CASCADE)      
     
     def __str__(self):
         return "{}".format(self.Descripcion)
@@ -55,6 +66,7 @@ class Asignacion(models.Model):
     Iniciada = models.BooleanField(default=False) 
     Suspendida = models.BooleanField(default=False)
     Rectificativa = models.BooleanField(default =False)
+    Mes = models.IntegerField(default = 1,verbose_name='Mes')
     
     
     # llaves foraneas 
@@ -107,12 +119,15 @@ class Historico_Declaraciones(models.Model):
     Fecha_Final = models.DateField(blank=True, null=True, verbose_name='Fecha_Final')        
     Fecha_Sistema = models.DateTimeField(auto_now_add=True, verbose_name='Fecha_Sistema')
     rectificativa = models.BooleanField(default =False)
- 
+    Mes = models.IntegerField(default = 0,null=False, verbose_name='Mes') # guarda el mes de la declaraciones
     
     # llaves foraneas 
     IDClientes_Proveedores = models.ForeignKey(cliente_proveedor_cliente_proveedor, on_delete=models.CASCADE) 
     IDPlanilla_Funcionarios = models.ForeignKey(planillas_planilla_funcionarios, on_delete=models.CASCADE)
     IDDeclaracion = models.ForeignKey(declaracion, null=False, blank=False,  on_delete=models.CASCADE)   
+    
+    # Llave foránea a la tabla 'calendario_tributario' adicional
+    IDCalendario_tributario = models.ForeignKey(calendario_tributario, null=True, blank=True, on_delete=models.CASCADE)
     
     
 # Tipo de Beneficios 
@@ -171,3 +186,4 @@ class Detalle_Declaracion_Tipo(models.Model):
     #llave foraneas
     IDClientes_Proveedores = models.ForeignKey(cliente_proveedor_cliente_proveedor, on_delete=models.CASCADE) 
     IDDeclaraciones_Tipo = models.ForeignKey(Declaraciones_Tipo,on_delete=models.CASCADE)
+ 

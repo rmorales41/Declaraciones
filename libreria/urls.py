@@ -2,7 +2,7 @@ from django.urls import path
 
 from . import views
 from .Vistas import Views_BuscaDeclaracionxm,Views_pendiente_realizar,Views_Historico_Movimientos,Views_Funcionarios
-from .Vistas import Views_Historico_Movimientos_Busqueda,Views_Beneficios,Views_Utilitarios
+from .Vistas import Views_Historico_Movimientos_Busqueda,Views_Beneficios,Views_Utilitarios,Views_ReportesGenerales
 
 from .Vistas import Views_Statttus 
 
@@ -13,11 +13,16 @@ from django.contrib.staticfiles.urls import static
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
-      
+     
+    # menu principal   
     path('',views.login_view, name = 'login'),      
     path('logout/',views.logout_view, name = 'login'),      
-    path('clientes/',views.clientes, name= 'clientes'),
     path('base',views.base, name= 'base'),
+    
+    # Menu de Clientes 
+    path('clientes/',views.clientes, name= 'clientes'),
+    
+    # Menu de Declaraciones     
     path('visor/',views.visor,name='visor'),
     path('crear',views.crear,name='crear'),
     path('editar/<int:IDD>',views.editar,name='editar'),
@@ -54,7 +59,7 @@ urlpatterns = [
     path('StatusDeclaracion/',views.VstatusDeclaracion, name='StatusDeclaracion'),  
     path('VisionDeclaracion/',views.VsVisionDeclaracion, name='VisionDeclaracion'), 
     path('VerDeclaracion/',views.VsEstatusDeclaracion, name='VerDeclaracion'),
-    path('ActivaSuspendida/<int:idd>',views.VsActivaSuspendida,name ='ActivaSuspendida'),
+    path('ActivaSuspendida/<int:idd>',views.VsActivaSuspendida,name ='ActivaSuspendida'),    
     path('calendario/',views.VsCalendario,name ='calendario'),
     path('ConfirmaDeclaracion/',views.VsConfirmaDeclaracion,name ='ConfirmaDeclaracion'),
     path('VerDeclaracionHistoricas/',views.VsEstatusDeclaracionHistoricas, name='VerDeclaracionHistoricas'),    
@@ -73,6 +78,8 @@ urlpatterns = [
     path('Realizar_consulta/<str:selectedYear>,<str:selectedMonth>/',Views_pendiente_realizar.VsPendiente_realizar_consultas, name='Realizar_consulta'),
     path('historico_movimientos/',Views_Historico_Movimientos.VsHistorico_Movimientos, name='historico_movimientos'),
     path('Realizar_consulta_Historica/<str:selectedYear>,<str:selectedMonth>/',Views_Historico_Movimientos.VsMovimiento_Historico, name='Realizar_consulta_Historica'),
+    
+    # Menu de Funcionarios 
     path('Funcionarios/',Views_Funcionarios.VsCargaformula, name='Funcionarios'),
     path('VisorFuncionario/',Views_Funcionarios.VsVisor_Funcionarios, name='VisorFuncionario'),
     path('busqueda_historico_movimientos/',Views_Historico_Movimientos_Busqueda.VsHistorico_Movimientos, name='busqueda_historico_movimientos'),
@@ -80,6 +87,8 @@ urlpatterns = [
     path('asignadasafuncionario/',Views_Funcionarios.Vsasignadasafuncionario, name='asignadasafuncionario'),
     path('ListaColaboradores/',Views_Funcionarios.VsListaColaboradores, name='ListaColaboradores'),  
     path('DetalleColaborador/<int:IDD>/', Views_Funcionarios.VsListaColaboradoresyclientes, name='DetalleColaborador'),
+    
+    # Menu de Clientes 
     path('clienteyfuncionario/', Views_Funcionarios.Vsclienteyfuncionario, name='clienteyfuncionario'),
     path('DetalleClienteColaborador/', Views_Funcionarios.VsDetalleClienteColaborador, name='DetalleClienteColaborador'),
     path('Declara_Tipo/', Views_Beneficios.Vspyme, name='Declara_Tipo'),
@@ -91,17 +100,26 @@ urlpatterns = [
     path('editar_tipo/<int:idTipo>',Views_Beneficios.editartipo,name='editar_tipo'), 
     path('Asigna_tipo',Views_Beneficios.Vsasigna_tipo,name='Asigna_tipo'),    
     path('Stguarda_tipo',Views_Beneficios.Vsguarda_tipo,name='guarda_tipo'), 
+    
+    # Menu de Beneficios 
     path('busca_beneficios/<int:IDD>',Views_Beneficios.Vsbusca_beneficios,name='busca_beneficios'), 
     path('elimina_tipo_g/<int:id>',Views_Beneficios.Vseliminabeneficio,name='elimina_tipo_g'), 
     path('obtener_datos_registro/<int:id>/',Views_Beneficios.Vsobtener_datos_registro,name='obtener_datos_registro'), 
     path('Visor_Beneficios/',Views_Beneficios.VsBeneficios_Visor,name='Visor_Beneficios'), 
     path('BNotificar/',Views_Beneficios.VsNotificaciones,name='BNotificar'), 
-    path('BNotificar2/',Views_Beneficios.VsNotificaciones2,name='BNotificar2'), 
-    path('GParametros/',Views_Utilitarios.VsParametros,name='GParametros'), 
+    path('BNotificar2/',Views_Beneficios.VsNotificaciones2,name='BNotificar2'),     
     path('Vslevanta_Stattus/',Views_Statttus.Vslevanta_Stattus,name='Vslevanta_Stattus'),    
-    path('Buscaconcalendariog/<int:selectedYear>,<int:selectedMonth>/',Views_Statttus.VsDeclaracionesfinales,name='Buscaconcalendariog'),        
+    path('Buscaconcalendariofinal/<int:selectedYear>,<int:selectedMonth>/',Views_Statttus.VsDeclaracionesfinales,name='Buscaconcalendariofinal'),    
 
+    # Reportes
+    path('Rep_General_Declaracion/',Views_ReportesGenerales.Declaracion_General,name='Rep_General_Declaracion'),    
+    path('Rep_Clientesasignar/',Views_ReportesGenerales.Reporte_Cliente_S_Asignar,name='Rep_Clientesasignar'),    
 
-
+    # Seguridad
+    path('GParametros/',Views_Utilitarios.VsParametros,name='GParametros'), 
+    path('AjusteDeclaraciones/',Views_Utilitarios.VsAjuste_Declaracion,name='AjusteDeclaraciones'),  
+    path('ConfirmaMes/<int:idd>',Views_Utilitarios.VsConfirmaMes, name='Confirma'),    
+ 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
+#  path('Buscamovcalendario/<int:selectedYear>,<int:selectedMonth>/',Views_Statttus.VsDeclaracionesfinales,name='Buscamovcalendario'),        

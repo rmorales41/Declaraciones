@@ -113,7 +113,9 @@ pip install psutil
 politicas cors 
 pip install django-cors-headers
 
-Ajustar la clave si es incluida por la base de datos 
+
+en caso de incluir claves por debajo en la base de datos 
+Ajustar la clave si es incluida por la base de datos
 entrar con el enviromen primero    .\env\Scripts\activate  
 from django.contrib.auth.models import User
 
@@ -124,3 +126,15 @@ user = User.objects.get(username='nombre_de_usuario')
 user.set_password('nueva_clave')
 user.save()
 asi cambia la clave de sha 
+
+# para levantar el front 
+primero si es nueva hay que instalar 
+npm install 
+luego 
+npm start  o npm run start 
+
+
+# creacion de reportes con report lab de python 
+# pip install reportlab
+# pip install pdf2image    // se utiliza para convertir de pdf a imagen 
+
