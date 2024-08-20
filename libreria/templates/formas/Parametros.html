@@ -10,7 +10,6 @@
 <!-- Personalizado CSS -->
 <link rel="stylesheet" href="{% static 'css/style.css' %}">
 
-
 <!-- jQuery primero, luego DataTables y Bootstrap Bundle -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
@@ -21,26 +20,58 @@
 <!-- Scripts personalizados -->
 <script src="{% static 'js/Seguridad.js' %}"></script>
 
+<body onload="StParametros()"></body> 
 
-<form id="formularioParametros" action="StParametros" method="post"  enctype="multipart/form-data">
-    <head> 
-        <div class="card-body">
-            <input type="button" onclick="history.back()" class="btn btn-primary" name="volver atrás" value="volver atrás" style="float: left;">
-            <h4 class="card-title" style="text-align: center;">Parámetros</h4>                   
-        </div>  
-    </head>
+<form id="formularioParametros" action="" method="POST"  enctype="multipart/form-data">
+    {% csrf_token %}  <!-- llave de formulario de Django--> 
+    <div class="card-body">
+        <input type="button" onclick="history.back()" class="btn btn-primary" name="volver atrás" value="volver atrás" style="float: left;">
+        <h4 class="card-title" style="text-align: center;">Parámetros</h4>                   
+    </div>  
 
-    <div class="row mt-3">
-        <div class="input-group-container">
-            <div class="input-group">
-                <input type="file" class="form-control" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04" aria-label="">
-            </div>
-        </div>
+
+    <div class="input-group">
+        <span class="input-group-text" id="inputGroup-sizing-default">Nombres:</span>      
+        <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" id="nombre" name="nombre">
     </div>
 
+    <div class="row mt-3">        
+        <div class="input-group-container">
+            <div class="input-group">
+                <input type="file" class="form-control" id="inputGroupFile04" name="inputGroupFile04" aria-describedby="inputGroupFileAddon04" aria-label="">
+                <div id="file-info" class="input-group-text ms-2"></div>
+            </div>
+        </div>        
+    </div>
+
+    <span class="" id="inputGroup-sizing-default">Conexion:</span>
+
+
+    <div class="input-group mt3">
+        <span class="input-group-text" id="inputGroup-sizing-default">Base Datos:</span>
+        <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" id="basedatos" name="basedatos">
+    </div>        
     
-
-
+    <div class="input-group mt3">
+        <span class="input-group-text" id="inputGroup-sizing-default">Puerto:</span>
+        <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" id="puerto" name="puerto">        
+        <span class="input-group-text" id="inputGroup-sizing-default">Server:</span>
+        <input type="text" class="form-control " aria-label="Default" aria-describedby="inputGroup-sizing-default" id="server" name="server">
+        <span class="input-group-text" id="inputGroup-sizing-default">Usuario:</span>
+        <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" id="usuario" name="usuario">
+        <span class="input-group-text" id="inputGroup-sizing-default">Clave:</span>
+        <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" id="clave" name="clave">
+    </div>
+    <div class="input-group mt3">
+        <span class="input-group-text" id="inputGroup-sizing-default">IDCia:</span>
+        <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" id="idcia" name="idcia">
+        <span class="input-group-text" id="inputGroup-sizing-default">ID_Registro:</span>
+        <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" id="idreg" name="idreg" disabled = True>
+    </div>
+        
+    <div class="container_boton">   
+        <button type="button" class="btn btn-outline-success" onclick="StConfirmaparametros()">Guardar Cambios</button>
+    </div>    
 
 </form>
 {% endblock %}

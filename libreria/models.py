@@ -187,3 +187,15 @@ class Detalle_Declaracion_Tipo(models.Model):
     IDClientes_Proveedores = models.ForeignKey(cliente_proveedor_cliente_proveedor, on_delete=models.CASCADE) 
     IDDeclaraciones_Tipo = models.ForeignKey(Declaraciones_Tipo,on_delete=models.CASCADE)
  
+# configuracion de Parametros para la conexion y datos generales 
+class Parametros_Declaraciones(models.Model):
+    IDParametros_Declaraciones = models.AutoField(primary_key=True) 
+    Nombre = models.CharField(max_length=255)
+    Ubicacion_logo = models.ImageField(upload_to='imagenes/', null=True, verbose_name='Imagen') # longchar
+    IDCia = models.IntegerField(blank = True, null=True, verbose_name="IDCia")
+    Nombre_Base = models.CharField(max_length=255,blank = True, null=True, verbose_name="Nombre_Base")
+    Usuario = models.CharField(max_length=100,blank = True, null=True, verbose_name="Usuario")
+    Clave   = models.CharField(max_length=100,blank = True, null=True, verbose_name="Clave")
+    Puerto  = models.CharField(max_length=15, blank = True, null=True, verbose_name="Puerto")
+    Server  = models.CharField(max_length=50, blank = True, null=True, verbose_name="Server")
+    

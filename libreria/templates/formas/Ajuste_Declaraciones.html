@@ -16,17 +16,17 @@
 <!-- Scripts personalizados -->
 <script src="{% static 'js/visor_funcionarios.js' %}"></script>
 
-<h4 class="card-title" style="text-align: center;">Ajuste mes declaraciones asignadas </h4>
+<form id="ajusteDeclaracion" action="" method="post"  enctype="multipart/form-data">
+    {% csrf_token %}  <!-- llave de formulario de Django--> 
+    <h4 class="card-title" style="text-align: center;">Ajuste mes declaraciones asignadas </h4>
 
-<div class="row mt-3">
-    <div class="col text-right">
-        <a href="{% url 'visor' %}" class="btn btn-primary"><i class="fa fa-reply"></i> Volver al menú </a>       
+    <div class="row mt-3">
+        <div class="col text-right">
+            <a href="{% url 'visor' %}" class="btn btn-primary"><i class="fa fa-reply"></i> Volver al menú </a>       
+        </div>
     </div>
-</div>
 
-<!-- <body onload="StVisorFuncionario()"></body> -->
-
-<table id="Ajuste_Declaracion" class="table table-striped" style="width:100%">
+    <table id="Ajuste_Declaracion" class="table table-striped" style="width:100%">
     <thead>
         <tr>
             <th>ID</th>
@@ -39,55 +39,59 @@
 
         </tr>
     </thead>
-    <tbody>       
-        {% for asignacion in var_asignaciones %}
-        <tr>
-            <!-- forloop.counter cuenta lineas del grid pone de 1 en adelante -->
-            <td>{{ asignacion.IDAsignacion }}</td> <!-- Pone el Id de asignacion   -->
-            <td>{{ asignacion.IDClientes_Proveedores__Descripcion }}</td>
-            <td>{{ asignacion.IDDeclaracion__codigo }}</td>
-            <td>{{ asignacion.IDDeclaracion__detalle }}</td>
-            <td>{{ asignacion.Mes }}</td> <!-- Si el campo 'Mes' está en tus datos -->
-            <td><input type="text" id="numero_${asignacion.IDAsignacion}" name="numero_mes" value={{asignacion.Mes}} placeholder='Mes' size="1"  min="1" max="12" step="1" oninput="validateMonth(this)"></td>                            
-            <td><button class="btn btn-primary" onclick="StConfirma(IDAsignacion)"><i class="bi bi-floppy"></i></button></td>
-        </tr>
-        {% endfor %}   
+        <tbody>       
+            {% for asignacion in var_asignaciones %}
+            <tr>
+                <!-- forloop.counter cuenta lineas del grid pone de 1 en adelante -->
+                <td>{{ asignacion.IDAsignacion }}</td> <!-- Pone el Id de asignacion   -->
+                <td>{{ asignacion.IDClientes_Proveedores__Descripcion }}</td>
+                <td>{{ asignacion.IDDeclaracion__codigo }}</td>
+                <td>{{ asignacion.IDDeclaracion__detalle }}</td>
+                <td>{{ asignacion.Mes }}</td> <!-- Si el campo 'Mes' está en tus datos -->
+                <td>
+                    <input type="text" id="numero_{{asignacion.IDAsignacion}}" value={{asignacion.Mes}} placeholder='Mes' size="1"  min="1" max="12" step="1" oninput="validaMes(this)">
+                </td>                            
+                <td>
+                    <button class="btn btn-primary" id="mes_{{asignacion.IDAsignacion}}"  onclick="StMesConfirma('{{ asignacion.IDAsignacion }}',event)"><i class="bi bi-floppy"></i></button>
+                </td>
+            </tr>
+            {% endfor %}   
     </tbody>
-</table>
+    </table>
 
-<script> 
-    // Inicializar DataTable
-    $(document).ready(function () {
-        $('#Ajuste_Declaracion').DataTable({
-            "language": {
-                "url": "{% static 'json/Spanish.json' %}" 
-            },
-            "searching": true,  // Habilitar búsqueda global
-            "ordering": true,    // Habilitar ordenamiento de columnas
-            "info": true,
-            "scrollX": true,
-            "paging": true,
-            "scrollY": "430px",
-            "responsive": true,
-            "scrollCollapse": true,
+    <script> 
+        // Inicializar DataTable
+        $(document).ready(function () {
+            $('#Ajuste_Declaracion').DataTable({
+                "language": {
+                    "url": "{% static 'json/Spanish.json' %}" 
+                },
+                "searching": true,  // Habilitar búsqueda global
+                "ordering": true,    // Habilitar ordenamiento de columnas
+                "info": true,
+                "scrollX": true,
+                "paging": true,
+                "scrollY": "430px",
+                "responsive": true,
+                "scrollCollapse": true,
+            });
         });
-    });
-</script>
+    </script>
 
-<!-- Valida el campo para que no ingrese otro tipo de dato permitido -->
-<script>
-    function validateMonth(input) {      
-      const value = input.value;  // Obtener el valor del campo      
-      const num = Number(value);  // Convertir el valor a un número        
-      if (isNaN(num) || num < 1 || num > 12) { // Validar si el valor es un número y está en el rango de 1 a 12      
-        input.setCustomValidity('Por favor, ingrese un mes entre 1 y 12.');   // Si no es válido, mostrar un mensaje de error o ajustar el valor
-        input.reportValidity(); // Muestra el mensaje de error
-      } else {        
-        input.setCustomValidity(''); // Si es válido, eliminar el mensaje de error
-      }
-    }
-  </script>
-
+    <!-- Valida el campo para que no ingrese otro tipo de dato permitido -->
+    <script>
+        function validaMes(input) {      
+        const value = input.value;  // Obtener el valor del campo      
+        const num = Number(value);  // Convertir el valor a un número        
+        if (isNaN(num) || num < 1 || num > 12) { // Validar si el valor es un número y está en el rango de 1 a 12      
+            input.setCustomValidity('Por favor, ingrese un mes entre 1 y 12.');   // Si no es válido, mostrar un mensaje de error o ajustar el valor
+            input.reportValidity(); // Muestra el mensaje de error
+        } else {        
+            input.setCustomValidity(''); // Si es válido, eliminar el mensaje de error
+        }
+        }
+    </script>
+</form>
 {% endblock %}
 
 

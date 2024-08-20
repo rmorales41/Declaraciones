@@ -118,8 +118,13 @@ urlpatterns = [
     # Seguridad
     path('GParametros/',Views_Utilitarios.VsParametros,name='GParametros'), 
     path('AjusteDeclaraciones/',Views_Utilitarios.VsAjuste_Declaracion,name='AjusteDeclaraciones'),  
-    path('ConfirmaMes/<int:idd>',Views_Utilitarios.VsConfirmaMes, name='Confirma'),    
- 
+    path('ConfirmaMes/<int:idd>',Views_Utilitarios.VsConfirmaMes, name='ConfirmaMes'),    
+    path('bparametros/',Views_Utilitarios.VsParametrosDatos, name='bparametros'),    
+    path('ConfirmaParametro/<int:IDreg>',Views_Utilitarios.VsParametrosConfirma, name='ConfirmaParametro'),    
+    path('Rusuarios',Views_Utilitarios.VsRusuarios, name='Rusuarios'),    
+    path('BuscaUsuarios/',Views_Utilitarios.VsBuscaUsuarios, name='BuscaUsuarios'),    
+    
+     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 #  path('Buscamovcalendario/<int:selectedYear>,<int:selectedMonth>/',Views_Statttus.VsDeclaracionesfinales,name='Buscamovcalendario'),        

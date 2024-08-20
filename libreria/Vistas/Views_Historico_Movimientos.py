@@ -35,8 +35,7 @@ def VsMovimiento_Historico(request,selectedYear,selectedMonth):
             'Fecha_Final',            
             'Numero_Comprobante',                                    
             'IDPlanilla_Funcionarios__Nombre',  
-        ))
-        print('movimientos',tmovimientos)   
+        ))         
                                                    
         return JsonResponse(tmovimientos, safe=False)        
                                         

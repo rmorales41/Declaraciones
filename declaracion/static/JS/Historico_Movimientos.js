@@ -48,34 +48,4 @@ function formatearFecha(fechaCompleta) {
   return fechaFormateada;
 }
 
-          /*const tbody = document.querySelector("tbody");
-          tbody.innerHTML = ''; */
-
-       /*   tmovimientos.forEach(item => {
-            //  const row = document.createElement("tr");
-
-              const columns = [
-                  item.IDHistorico_Declaraciones,
-                  item.IDDeclaracion__codigo,
-                  item.IDDeclaracion__detalle,
-                  item.IDClientes_Proveedores__Descripcion,
-                  item.Fecha_Asigna,
-                  item.Fecha_Presenta,
-                  item.Fecha_Cierre,
-                  item.Numero_Comprobante,
-                  item.IDPlanilla_Funcionarios__Nombre
-              ];
-
-              columns.forEach(column => {
-                  const cell = document.createElement("td");
-                  cell.textContent = column;
-                  row.appendChild(cell);
-              });
-
-              tbody.appendChild(row);
-          });
-      })
-      .catch(error => {
-          console.error('Fetch error:', error);
-      });
-} */
+  

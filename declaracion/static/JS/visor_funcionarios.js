@@ -90,8 +90,7 @@ function StListaClientesFuncionarios(){
         var table = $('#visorasginados').DataTable();
         table.clear().draw();
         // Iterar sobre los datos obtenidos y agregar filas a DataTables   
-        datos .forEach(item => {          
-            console.log(item)         
+        datos .forEach(item => {                             
             table.row.add([
               item.IDClientes_Proveedores,
               item.Descripcion ,                
@@ -105,9 +104,11 @@ function StListaClientesFuncionarios(){
 
 
 // confirma el cambio del mes de la declaracion que se ha presentado no cambia fechas 
-function StConfirma(idAsignacion) {     
-    var Mes_C = document.getElementById('numero_'+idAsignacion.toString()).value; // obtiene el nuevo mes que va a incluir                
-    console.log('llegue',Mes_C)
+function StMesConfirma(idAsignacion, event) {   
+    if (event) event.preventDefault(); // Prevenir el comportamiento por defecto      
+    elementoid = 'numero_'+idAsignacion     
+    const mesInput = document.getElementById(elementoid);            
+    const mesValue = mesInput  ? mesInput.value : null;        
     Swal.fire({
         title: "Confirmador de Cambio",
         text: "¿Recuerde que esto no cambia las fechas de inicio de las declaraciones solo cambia el mes de control, debe de comunicarse con T.I para reajustar las fechas de control de las asignadas.?",
@@ -118,15 +119,15 @@ function StConfirma(idAsignacion) {
         confirmButtonText: "Sí, proceder"
     }).then((result) => {
         if (result.isConfirmed) {            
-            // Solicitud POST                                   
+            // Solicitud POST              
             fetch(`/ConfirmaMes/${idAsignacion}`, {        
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRFToken': getCSRFToken() 
+                    'X-CSRFToken': getCSRFToken1() 
                 },
                 body: JSON.stringify({
-                    mesdato: Mes_C,                    
+                    mesdato: mesValue                   
                 })        
             })
             .then(response => {
@@ -158,4 +159,10 @@ function StConfirma(idAsignacion) {
             });
         }
     });       
+}
+
+// Función para obtener el token CSRF
+function getCSRFToken1() {
+    const csrfTokenElement = document.getElementsByName('csrfmiddlewaretoken')[0];
+    return csrfTokenElement ? csrfTokenElement.value : null;
 }

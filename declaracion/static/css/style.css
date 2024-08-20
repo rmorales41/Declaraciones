@@ -71,3 +71,49 @@ p {
 .input-group {
     width: 100%; /* Asegura que el input ocupe todo el ancho del contenedor  Parametros*/
 }
+
+
+/* formulario parametros */
+
+#formularioParametros {
+    margin: 5px ;
+    padding: 5px;
+    max-width: 1800px;   
+}
+
+#nombre {
+    max-width: 180%;
+}
+
+#IDCia{
+    max-width: 10%;
+}
+
+.container_boton {
+    display: flex;
+    justify-content: flex-end; /* Alinea el contenido al final (derecha) del contenedor */
+    padding: 20px; /* Opcional: agrega algo de espacio dentro del contenedor */
+}
+
+#Boton{  
+    left: 10; 
+    margin: 5px ;
+    padding: 55px; 
+}
+
+#server{
+    max-width: 20%;
+}
+
+/*  es el formulario de Creacion de Usuarios */ 
+
+#formularioUsuario{
+    margin:0 auto;
+    max-width: 1200px;
+
+}
+/*
+#TablaUsuarios{
+    width: 100%;
+    margin-top: 140px;
+}*/
