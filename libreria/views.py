@@ -13,7 +13,7 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404, render, redirect
 import psutil
-from .models import Asignacion, Declaracion_Clientes, Historico_Declaraciones, LoginForm, calendario_tributario, declaracion, planillas_planilla_funcionarios,cliente_proveedor_cliente_proveedor,Historico_Declaraciones
+from .models import Asignacion, Bitacora, Declaracion_Clientes, Historico_Declaraciones, LoginForm, calendario_tributario, declaracion, planillas_planilla_funcionarios,cliente_proveedor_cliente_proveedor,Historico_Declaraciones
 from django.core.serializers import serialize
 from django.core import serializers
 from django.db.models import F,Q   
@@ -28,25 +28,39 @@ def login_view(request):
     if request.method=='POST':
         form =LoginForm(request, data=request.POST)
        
-       # print('llegue aqui')
-       # print('datos',request.POST)
-       # print('Form',form.is_valid())
-       # print('Errores',form.errors)
 
         if form.is_valid():                   
             user = form.get_user()
-            login(request,user)            
+            login(request,user)    
+            
+            #registro de ingreso a bitacora 
+            usuario = user.first_name
+            proceso = "Ingreso al Sistema"        
+            descripcion = "El usuario logro el ingreso de su usuario al sistema."
+            observaciones = "Ingreso Correcto se valido sin problema."
+            modulo = "login"
+            VsCreaBitacora(request, usuario, proceso, descripcion, observaciones, modulo)
+            
             return redirect('visor/')  # redirige   
         else:
-            print('Error del formulario',form.errors)                     
+            print('Error del formulario',form.errors)                              
     else:        
         form = LoginForm()            
    
     return render(request,'formas/login.html',{'form': form})
+
+# salida del sistema 
 def logout_view(request):
     logout(request)
+    
+    #registro de salida a bitacora 
+    usuario = request.user.first_name 
+    proceso = "Sale del Sistema"        
+    descripcion = "El usuario salio de la aplicación."
+    observaciones = "Salida del Sistema."
+    modulo = "logout"
+    VsCreaBitacora(request, usuario, proceso, descripcion, observaciones, modulo)
     return redirect('login')
-
 
 
 
@@ -96,7 +110,20 @@ def crear(request):
     if dato_formulario.is_valid():         
         dato_formulario.save()                                  
         messages.success(request,'Creado Correctamente')
+        
+        #registro de salida a bitacora 
+        datos = dato_formulario.cleaned_data # obtiene datos del form 
+        vdetalle =  datos.get('detalle')
+        
+        usuario = request.user.first_name 
+        proceso = "Crea una nueva Declaración al Sistema"        
+        descripcion = "Se Creo el registro "+ vdetalle
+        observaciones = "Creacion de Registros."
+        modulo = "Declaracion - Visor"
+        VsCreaBitacora(request, usuario, proceso, descripcion, observaciones, modulo)
+        
         return redirect('visor')      
+    
     return render(request,'formas/crear.html', {'var_formulario': dato_formulario })   
 
 # vista Editar 
@@ -106,13 +133,30 @@ def editar(request, IDD):
     if dato_formulario.is_valid() and request.POST: 
         dato_formulario.save()
         messages.success(request,'Modificado Correctamente')
+        
+        # registro de bitacora
+        usuario = request.user.first_name 
+        proceso = "Realiza cambios a las Declaraciones."        
+        descripcion = "Se ha modificado el registro  "+ decla.detalle
+        observaciones = "Modificación de Registros."
+        modulo = "Declaracion - Visor"
+        VsCreaBitacora(request, usuario, proceso, descripcion, observaciones, modulo)
         return redirect('visor')
     return render(request,'formas/editar.html',{'var_formulario': dato_formulario})
 
 # Vista Eliminar
 def elimina(request,IDD):
     decla= declaracion.objects.get(IDDeclaracion=IDD)
-    decla.delete()    
+    decla.delete()  
+    
+    # registro de bitacora     
+    usuario = request.user.first_name 
+    proceso = "Elimina Declaraciones."        
+    descripcion = "Ha sido eliminado el registro "+ decla.detalle
+    observaciones = "Elimina Registros."
+    modulo = "Declaracion - Visor"
+    VsCreaBitacora(request, usuario, proceso, descripcion, observaciones, modulo)  
+    
     return redirect('visor')
 
 # busca todos los clientes que no tenga asignada a un funcionario 
@@ -318,6 +362,18 @@ def VDeclaracion_Cliente_asignacion(request,IDD):
 # Vista Elimina la declaracion del cliente 
 def velimina_declaracion_cliente(request,IDD):
     decla= Declaracion_Clientes.objects.get(IDDeclaracion_Clientes=IDD)
+    IDDecla = decla.IDDeclaracion
+    IDClien = decla.IDClientes_Proveedores
+     
+    
+    #registro de salida a bitacora 
+    usuario = request.user.first_name 
+    proceso = "Desasigna Declaración"        
+    descripcion = f"Se le quita la declaración {IDDecla} al Cliente {IDClien}."
+    observaciones = "Elimina Declaracion."
+    modulo = "Clientes"
+    VsCreaBitacora(request, usuario, proceso, descripcion, observaciones, modulo)   
+    
     decla.delete()    
    # return JsonResponse({'success': True})
     return redirect('clientes_declaraciones')
@@ -337,6 +393,7 @@ def vagregarunadeclaracion(request):
         data = json.loads(request.body)                                
         cliente_id = data.get('clienteID', None)
         declaracion_id = data.get('declaracionID', None)                                
+        
         if cliente_id is None or declaracion_id is None:
             return JsonResponse({'error': 'IDs de cliente o declaración faltantes'}, status=400)
 
@@ -350,6 +407,23 @@ def vagregarunadeclaracion(request):
                 IDClientes_Proveedores_id=cliente_id,
                 IDDeclaracion_id=declaracion_id,
             )            
+            # obtiene el nombre del cliente 
+            cliente_obj = cliente_proveedor_cliente_proveedor.objects.get(IDClientes_Proveedores = cliente_id  )
+            Ncliente = cliente_obj.Descripcion
+            # obtener el codigo y nombre de la declaracion 
+            declaracion_obj =  declaracion.objects.get(IDDeclaracion = declaracion_id )
+            Cdec = declaracion_obj.codigo
+            Ndec = declaracion_obj.detalle 
+
+
+            #registro de salida a bitacora 
+            usuario = request.user.first_name 
+            proceso = "Asignación de Declaración"        
+            descripcion = f"Se le asigna la declaración {Cdec +' '+ Ndec} al cliente {Ncliente}."
+            observaciones = "Asignacion de declaracion."
+            modulo = "Clientes"
+            VsCreaBitacora(request, usuario, proceso, descripcion, observaciones, modulo)
+                                    
             return JsonResponse({'message': 'Declaración de cliente creada correctamente'}, status=201)
         except Exception as e:
             print('Error al crear la declaración de cliente:', str(e))
@@ -363,20 +437,19 @@ def clienteafuncionario(request):
         try:                          
             data = json.loads(request.body)                                   
             clientepend_id = data.get('IDClientes_Proveedores', None) 
-
+            
             # Validar la presencia de datos importantes
             if 'IDClientes_Proveedores' not in data or 'IDPlanilla_Funcionarios' not in data or 'Fecha_Asigna' not in data:
                 return JsonResponse({'error': 'Campos requeridos faltantes'}, status=400)
             
-            #clientepend_id  = list(cliente_proveedor_cliente_proveedor.objects.values().filter(Tipo=True).order_by('Descripcion') 
-            
+            #clientepend_id  = list(cliente_proveedor_cliente_proveedor.objects.values().filter(Tipo=True).order_by('Descripcion')             
             #clientepend_id=list(cliente_proveedor_cliente_proveedor.objects.values().filter(estado=True).order_by('codigo'))                       
 
-            cliente_proveedor_instance = cliente_proveedor_cliente_proveedor.objects.filter(Tipo=1).get(pk=clientepend_id)             
+            cliente_proveedor_instance = cliente_proveedor_cliente_proveedor.objects.filter(Tipo=1).get(pk=clientepend_id)                                      
             
-             
             funcionario_id = data.get('IDPlanilla_Funcionarios', None)
-         
+            print('funcionario ',funcionario_id)
+            
             funcionario_instance = planillas_planilla_funcionarios.objects.get(pk=funcionario_id) 
              
            
@@ -404,6 +477,14 @@ def clienteafuncionario(request):
                     IDDeclaracion=declaracion.IDDeclaracion,
                 )  
             
+            # registro de bitacora     
+            usuario = request.user.first_name 
+            proceso = "Agrega Cliente a Funcionario."        
+            descripcion = f"El usuario agrego el cliente '{cliente_proveedor_instance.Descripcion}' al funcionario   '{funcionario_instance.Nombre}' "
+            observaciones = "Asigna Cliente a funcionario."
+            modulo = "Asignación de Clientes"
+            VsCreaBitacora(request, usuario, proceso, descripcion, observaciones, modulo) 
+            
             return JsonResponse({'message': 'Asignacion a funcionario creada correctamente'}, status=201)
         except KeyError as e:
             return JsonResponse({'error': f'Campo requerido faltante: {e}'}, status=400)
@@ -424,12 +505,29 @@ def clienteafuncionario(request):
 
 # desasigna cliente a funcionario  quita los clientes a un funcionario  
 def vsdesasignaclienteafuncionario(request, IDD):    
-    try: 
-        # Intenta obtener la asignación por IDClientes_Proveedores al funcionario con filter se logra no con get 
-        asignacion = Asignacion.objects.filter(IDClientes_Proveedores=IDD)
+    try:                
+        # asignación por IDClientes_Proveedores al funcionario 
+        asignacion = Asignacion.objects.filter(IDClientes_Proveedores=IDD)                        
+        #fun_id = asignacion.IDPlanilla_Funcionarios
         
+        # busca funcionario 
+        #busca_funcionario = planillas_planilla_funcionarios.objects.get(pk=fun_id)        
+        #print(f'funcionario',{busca_funcionario})
+        
+        # busca cliente 
+        cliente_proveedor_instance = cliente_proveedor_cliente_proveedor.objects.get(pk=IDD)                     
+   
         # Elimina la asignación encontrada
-        asignacion.delete()
+        asignacion.delete()        
+        
+        # registro de bitacora     
+        usuario = request.user.first_name 
+        proceso = "Desasignación del Cliente al Funcionario."        
+        descripcion = f"El usuario quitó  el cliente '{cliente_proveedor_instance.Descripcion}' al funcionario.  " 
+        observaciones = "Desasignación del Cliente al funcionario."
+        modulo = "Asignacion de Clientes"
+        VsCreaBitacora(request, usuario, proceso, descripcion, observaciones, modulo)             
+        print("Bitácora registrada con éxito")
         
         # Devuelve una respuesta JSON de éxito
         return JsonResponse({'success': True})
@@ -500,21 +598,23 @@ def vsfuncionarioinicia(request,idd2,idd):
 # actualiza los campos de la tabla       
 def vsActivaDeclaracion(request, idd):                
     if request.method=='POST':                     
-       try:                  
+       try:            
+                             
             asignacion = Asignacion.objects.filter(pk=idd).first()   
-                                                                     
+                                                                                            
             if not asignacion:
                 return JsonResponse({'success':False,'error': 'Asignacion no encotrada'})
         
+            idcliente = asignacion.IDClientes_Proveedores                                   
+
             declaracion_obj = declaracion.objects.filter(IDDeclaracion=asignacion.IDDeclaracion.IDDeclaracion).first()      
             if not declaracion_obj:    
                 return JsonResponse({'success': False,'error': 'Declaracion no encotrada '})
          
             # datos recibidos 
-            data =json.loads(request.body.decode('utf-8'))                       
+            data =json.loads(request.body.decode('utf-8'))                                 
             rectifica = data.get('rectificativa')     # marca del check                                                                      
-            # actualiza campos 
-            
+            # actualiza campos             
             asignacion.Iniciada = True
             asignacion.Fecha_Asigna = date.today()               
             
@@ -528,7 +628,16 @@ def vsActivaDeclaracion(request, idd):
             # Guarda los campos
             asignacion.save()
             #historico_declaraciones.save()
-            print(f'Asignación actualizada: {asignacion}')  # Mensaje de depuración    
+            #print(f'Asignación actualizada: {asignacion}')  # Mensaje de depuración    
+            
+            #registro de ingreso a bitacora 
+            usuario = request.user.first_name
+            proceso = "Inicia Declaración"        
+            descripcion = f"Se inicia declaración {declaracion_obj.codigo} {declaracion_obj.detalle} del Cliente {idcliente} referencia {asignacion.Fecha_Presenta}, Fecha asignada {asignacion.Fecha_Asigna}, Mes proceso {asignacion.Mes} rectificativa {rectifica}"
+            observaciones = f"Se procede al inicio de la declaracion '{rectifica}'"
+            modulo = "Inicia Declaración"
+            VsCreaBitacora(request, usuario, proceso, descripcion, observaciones, modulo)
+            
             return JsonResponse({'success':True})        
        except Exception as e:
             return JsonResponse({'success': False,'error': str(e)})         
@@ -544,6 +653,10 @@ def vsCierraDeclaracion(request, idd):
                   
             asignacion = Asignacion.objects.filter(pk=idd).first()  
             declaracion_obj = declaracion.objects.filter(IDDeclaracion=asignacion.IDDeclaracion.IDDeclaracion).first()                              
+            
+            idcliente = asignacion.IDClientes_Proveedores              
+            
+            
             if declaracion_obj:         
                 
                 # Crear registro en Historico_Declaraciones
@@ -569,6 +682,8 @@ def vsCierraDeclaracion(request, idd):
                 # Actualizar campos en Asignacion ajusta la fecha y valida mes 
                 asignacion.Iniciada = False
                 asignacion.Suspendida = False
+                
+                
                 if not asignacion.Rectificativa:
                     asignacion.Fecha_Presenta = asignacion.Fecha_Proxima
                     mes = asignacion.Mes + 1                     
@@ -580,6 +695,16 @@ def vsCierraDeclaracion(request, idd):
                 asignacion.Rectificativa  = False     
                 # Guardar cambios en Asignacion
                 asignacion.save()
+                
+                #registro de ingreso a bitacora 
+                usuario = request.user.first_name
+                proceso = "Cierre de Declaración"        
+                descripcion = f"Se cierra declaración {declaracion_obj.codigo} {declaracion_obj.detalle} del Cliente {idcliente} referencia {asignacion.Fecha_Presenta}, Fecha asignada {asignacion.Fecha_Asigna}, Mes proceso {mes -1}"
+                observaciones = f"Se procede al cierre de la  declaración "
+                modulo = "Cierre Declaración"
+                VsCreaBitacora(request, usuario, proceso, descripcion, observaciones, modulo)
+                
+                
                                 
                 return JsonResponse({'success': True})
         except Exception as e:        
@@ -592,13 +717,25 @@ def vsCierraDeclaracion(request, idd):
 def vsSuspendeDeclaracion(request,idd):     
  if request.method=='GET':             
     try:                      
-        asignacion = Asignacion.objects.filter(pk=idd).first()            
+        asignacion = Asignacion.objects.filter(pk=idd).first()  
+        
+        idcliente = asignacion.IDClientes_Proveedores  
+                  
         declaracion_obj = declaracion.objects.filter(IDDeclaracion=asignacion.IDDeclaracion.IDDeclaracion).first()                  
         if declaracion_obj:                        
          # actualiza campos         
          asignacion.Suspendida = True             
          # Guarda los campos                
-         asignacion.save()        
+         asignacion.save()   
+         
+        #registro de ingreso a bitacora 
+        usuario = request.user.first_name
+        proceso = "Suspende Declaración"        
+        descripcion = f"Se suspende declaración {declaracion_obj.codigo} {declaracion_obj.detalle} del Cliente {idcliente} referencia {asignacion.Fecha_Presenta}, Fecha asignada {asignacion.Fecha_Asigna}, Mes proceso {asignacion.Mes}"
+        observaciones = f"Se procede al suspender la  declaración "
+        modulo = "Suspende Declaración"
+        VsCreaBitacora(request, usuario, proceso, descripcion, observaciones, modulo)     
+        
         return JsonResponse({'success':True})
     except Exception as e:        
         return JsonResponse({'success': False,'error': str(e)})         
@@ -660,7 +797,6 @@ def VsVisionDeclaracion(request):
         'IDClientes_Proveedores__Email',
     ))
 
-
     return render(request,'formas/Vision_Global_Declaraciones.html',{'v_Global': datadeclaracion  })    
     
 
@@ -669,7 +805,8 @@ def VsVisionDeclaracion(request):
 def VsActivaSuspendida(request,idd):
     if request.method=='GET':
        try:      
-         asignacion = Asignacion.objects.filter(pk=idd).first()                                                   
+         asignacion = Asignacion.objects.filter(pk=idd).first()   
+         idcliente = asignacion.IDClientes_Proveedores                                                 
          declaracion_obj = declaracion.objects.filter(IDDeclaracion=asignacion.IDDeclaracion.IDDeclaracion).first()                          
                      
          if declaracion_obj:                                                   
@@ -677,6 +814,15 @@ def VsActivaSuspendida(request,idd):
             asignacion.Suspendida = False                         
             # Guarda los campos
             asignacion.save()
+            
+            
+            #registro de ingreso a bitacora 
+            usuario = request.user.first_name
+            proceso = "Reinicia Declaración"        
+            descripcion = f"Se reincia declaración {declaracion_obj.codigo} {declaracion_obj.detalle} del Cliente {idcliente} referencia {asignacion.Fecha_Presenta}, Fecha asignada {asignacion.Fecha_Asigna}, Mes proceso {asignacion.Mes}"
+            observaciones = f"Se procede al reiniciar la  declaración "
+            modulo = "Reinicio Declaración"
+            VsCreaBitacora(request, usuario, proceso, descripcion, observaciones, modulo)     
             return JsonResponse({'success':True})
          else:
              return JsonResponse({'success': False, 'error': 'No se encontró ninguna declaración relacionada'}) 
@@ -886,14 +1032,20 @@ def VsAgregaDeclaracionCalendario(request,fch):
                 Fecha_Presenta = fch).exists():
                                 
                 return JsonResponse({'error': 'Esta declaración ya está incluida en el calendario'}, status=400)                      
-    
-            
+                
             nueva_declaracion_calendario = calendario_tributario.objects.create(
                 Fecha_Presenta=fch,                
                 Observaciones=observaciones,
                 IDDeclaracion=declaracion_instance,
             )     
-                                                   
+            
+            #registro de salida a bitacora 
+            usuario = request.user.first_name 
+            proceso = "Agrega Declaraciones al Calendario Tributario"        
+            descripcion = "Se agrego la Declaracion "+ declaracion_instance.detalle + ' Fecha asignada : '+fch
+            observaciones = "Ingreso al Calendario Tributario."
+            modulo = "Calendarización"
+            VsCreaBitacora(request, usuario, proceso, descripcion, observaciones, modulo)                                      
             
             return JsonResponse({'message': 'Declaración incluida'}, status=201)
         except Exception as e:  
@@ -906,7 +1058,22 @@ def VsAgregaDeclaracionCalendario(request,fch):
 def VsCalendario_Tributario_lineaBorra(request,linea):  
     try:                       
         decla= calendario_tributario.objects.get(IDCalendario_tributario=linea)    
-        decla.delete()    
+        
+        # Obtener el nombre del detalle de la declaración asociada
+        detalle_declaracion = decla.IDDeclaracion.detalle
+        
+        decla.delete()  
+        
+        #registro de salida a bitacora 
+        usuario = request.user.first_name 
+        proceso = "Elimina Declaraciones al Calendario Tributario"        
+        descripcion = f"Se eliminó la Declaración '{detalle_declaracion}' Fecha asignada: {decla.Fecha_Presenta}"
+        observaciones = "Elimino la Declaracion del Calendario Tributario."
+        modulo = "Calendarización"
+        VsCreaBitacora(request, usuario, proceso, descripcion, observaciones, modulo)  
+        
+        
+        
         return JsonResponse({'message': 'Eliminado correctamente'}, status=200)
     except calendario_tributario.DoesNotExist:
         return JsonResponse({'error': 'El objeto no existe'}, status=404)
@@ -948,3 +1115,42 @@ def VsBuscadeclaracionxan(request, anSeleccionada):
 def VsReasignadeclaracion(request):    
      return render(request,'formas/Calendario_Tributario_Reasigna.html')       
  
+ 
+ # Muestra todos los movimientos 
+def VsBitacora(request):
+    # busca el usuario a ver si existe        
+      if request.method == 'GET':         
+            
+            try:                                               
+                # muestra los datos de parametros 
+                Bitacoras = Bitacora.objects.all().order_by("-Fecha_Sistema") 
+                 
+                # convierte los datos en diccionario
+                tbitacora = list(Bitacoras.values(     
+                        'IDBitacora',
+                        'Fecha_Sistema',
+                        'Usuario',         
+                        'Proceso',
+                        'Descripcion',
+                        'Observaciones',                        
+                        'Modulo'
+                    ))
+                                                                                               
+                return render(request,'formas/Bitacora.html',{'var_formulario': tbitacora}) 
+            except Exception as e:
+                return JsonResponse({'success': False, 'error': str(e)})
+      else:
+            return JsonResponse({'success': False, 'error': 'La solicitud no es de tipo GET'})
+         
+
+def VsCreaBitacora(request,Usr,Pro,Des,Obs,Modu):    
+    # crea un salva nuevo registro en la tabla bitacora    
+    Nbitacora = Bitacora.objects.create(                                                     
+            Usuario = Usr,
+            Proceso = Pro,
+            Descripcion = Des,
+            Observaciones = Obs,
+            Modulo = Modu,
+            )
+
+    

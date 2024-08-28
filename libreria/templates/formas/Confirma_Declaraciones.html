@@ -15,8 +15,18 @@
 <div class="row mt-3">
     <div class="col text-right">                
         <a href="{% url 'visor' %}" class="btn btn-primary"><i class="fa fa-reply"> Volver al menú </i></a>          
+                 <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom"><i class="bi bi-arrow-up-left-circle-fill"></i></button>
+                    <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel">
+                        <div class="offcanvas-header">
+                            <h5 class="offcanvas-title" id="offcanvasBottomLabel">Registro de Ubicación del Archivo de Acuse y Declaración </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                        </div>
+                    <div class="offcanvas-body small">            
     </div>
 </div>  
+
+
+
 <!-- <th scope="col">Declaracion</th>-->          
 <div class="card">
     <div class="card-body">        
@@ -83,6 +93,8 @@
         }
     });
 </script>
+
+
 
 {% endblock %}
 

@@ -1,3 +1,4 @@
+from datetime import date
 import json
 from django.http import JsonResponse
 from django.shortcuts import render
@@ -129,8 +130,7 @@ def VsRusuarios(request):
         return render(request,'formas/Usuarios.html')
 
 # Muestra todos los usuarios para verlos en la pantalla     
-def VsBuscaUsuarios(request):
-       print('llegue')
+def VsBuscaUsuarios(request):       
        if request.method == 'GET':           
         try:                                               
                 # muestra los datos de parametros 
@@ -142,8 +142,7 @@ def VsBuscaUsuarios(request):
                         'last_name',
                         'email',
                         'is_active',                        
-                    ))                                                                  
-                print('datos',tusuarios)
+                    ))                                                                                  
                 if tusuarios:
                         return JsonResponse(tusuarios, safe=False)  
                 else:
@@ -152,3 +151,46 @@ def VsBuscaUsuarios(request):
             return JsonResponse({'success': False, 'error': str(e)})
        else:
             return JsonResponse({'success': False, 'error': 'La solicitud no es de tipo GET'})
+
+
+# Permite crear usuarios al sistema         
+def VsCreaUsuarios(request):
+    # busca el usuario a ver si existe         
+       if request.method == 'POST':                      
+        try:                                              
+            vusuario = request.POST.get('usuario')
+            vnombre = request.POST.get('nombre')
+            vclave = request.POST.get('clave')
+            vapellido = request.POST.get('apellido')
+            vactivo = request.POST.get('activo')
+            vemail = request.POST.get('email')            
+                        
+            # revisa si el usuario existe 
+            if User.objects.filter(username=vusuario).exists():
+                return JsonResponse({'success': False,'error': 'El Usuario ya existe'})
+            
+            
+            # crear un nuevo usuario 
+            nuevo_usuario = User(
+                    username = vusuario,
+                    password = vclave,
+                    first_name = vnombre,
+                    last_name = vapellido,
+                    is_active = vactivo ,
+                    email = vemail, 
+            )
+            
+            # Establecer la contraseña usando set_password para manejar el hashing
+            nuevo_usuario.set_password(vclave) 
+            nuevo_usuario.save()   # guarda el usuario                       
+                        
+             # Obtener datos actualizados para la tabla
+            usuarios = User.objects.all().values('id', 'username', 'first_name', 'last_name', 'email', 'is_active')
+            usuarios_lista = list(usuarios)
+            
+            return JsonResponse({'success': True, 'usuarios': usuarios_lista})
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+       else:
+            return JsonResponse({'success': False, 'error': 'La solicitud no es de tipo POST'}) 
+

@@ -18,9 +18,7 @@ urlpatterns = [
     path('',views.login_view, name = 'login'),      
     path('logout/',views.logout_view, name = 'login'),      
     path('base',views.base, name= 'base'),
-    
-    # Menu de Clientes 
-    path('clientes/',views.clientes, name= 'clientes'),
+        
     
     # Menu de Declaraciones     
     path('visor/',views.visor,name='visor'),
@@ -89,19 +87,21 @@ urlpatterns = [
     path('DetalleColaborador/<int:IDD>/', Views_Funcionarios.VsListaColaboradoresyclientes, name='DetalleColaborador'),
     
     # Menu de Clientes 
+    path('clientes/',views.clientes, name= 'clientes'),
     path('clienteyfuncionario/', Views_Funcionarios.Vsclienteyfuncionario, name='clienteyfuncionario'),
-    path('DetalleClienteColaborador/', Views_Funcionarios.VsDetalleClienteColaborador, name='DetalleClienteColaborador'),
-    path('Declara_Tipo/', Views_Beneficios.Vspyme, name='Declara_Tipo'),
+    path('DetalleClienteColaborador/', Views_Funcionarios.VsDetalleClienteColaborador, name='DetalleClienteColaborador'),    
     path('clientesactivos/', Views_Beneficios.VsClientesActivos, name='clientesactivos'),
     path('VisorClientes/', Views_Beneficios.VsVisorClientes, name='VisorClientes'),
-    path('VisorTipos/', Views_Beneficios.VsVisorTipos, name='VisorClientes'),   
-    path('elimina_tipo/<int:IDD>',Views_Beneficios.elimina,name='elimina'),  
-    path('Tipoformulario/',Views_Beneficios.NuevoTipo,name='Tipoformulario'),  
-    path('editar_tipo/<int:idTipo>',Views_Beneficios.editartipo,name='editar_tipo'), 
-    path('Asigna_tipo',Views_Beneficios.Vsasigna_tipo,name='Asigna_tipo'),    
-    path('Stguarda_tipo',Views_Beneficios.Vsguarda_tipo,name='guarda_tipo'), 
-    
+    path('VisorTipos/', Views_Beneficios.VsVisorTipos, name='VisorClientes'),       
+        
+        
     # Menu de Beneficios 
+    path('Asigna_tipo',Views_Beneficios.Vsasigna_tipo,name='Asigna_tipo'),    
+    path('Declara_Tipo/', Views_Beneficios.Vspyme, name='Declara_Tipo'),
+    path('Tipoformulario/',Views_Beneficios.NuevoTipo,name='Tipoformulario'),  
+    path('Stguarda_tipo',Views_Beneficios.Vsguarda_tipo,name='guarda_tipo'), 
+    path('editar_tipo/<int:idTipo>',Views_Beneficios.editartipo,name='editar_tipo'),     
+    path('elimina_tipo/<int:IDD>',Views_Beneficios.elimina,name='elimina'),  
     path('busca_beneficios/<int:IDD>',Views_Beneficios.Vsbusca_beneficios,name='busca_beneficios'), 
     path('elimina_tipo_g/<int:id>',Views_Beneficios.Vseliminabeneficio,name='elimina_tipo_g'), 
     path('obtener_datos_registro/<int:id>/',Views_Beneficios.Vsobtener_datos_registro,name='obtener_datos_registro'), 
@@ -123,6 +123,9 @@ urlpatterns = [
     path('ConfirmaParametro/<int:IDreg>',Views_Utilitarios.VsParametrosConfirma, name='ConfirmaParametro'),    
     path('Rusuarios',Views_Utilitarios.VsRusuarios, name='Rusuarios'),    
     path('BuscaUsuarios/',Views_Utilitarios.VsBuscaUsuarios, name='BuscaUsuarios'),    
+    path('CrearUsuario/',Views_Utilitarios.VsCreaUsuarios, name='CrearUsuario'),    
+    path('Bitacora/',views.VsBitacora, name='Bitacora'),    
+    
     
      
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

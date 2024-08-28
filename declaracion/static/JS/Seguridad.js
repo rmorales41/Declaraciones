@@ -171,3 +171,9 @@ function StUsuarios() {
             console.error('Fetch error:', error);
         });
 }
+
+
+// Usuario Nuevo 
+function StUsuarioNuevo() {
+
+}

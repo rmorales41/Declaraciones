@@ -81,10 +81,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'mssql',
         'NAME':'Declaraciones',
-        'HOST':'192.168.10.100',
+        'HOST':'127.0.0.1',
         'PORT':'1433',
-        'USER':'Usuario05',
-        'PASSWORD':'Usuario05',
+        'USER':'sa',
+        'PASSWORD':'0026',
         'ATOMIC_REQUESTS': True,
         
         'OPTIONS':{
@@ -137,7 +137,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Mexico_City'
 
 USE_I18N = True
 

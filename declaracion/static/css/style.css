@@ -1,3 +1,24 @@
+/* Maneja el login */ 
+body.login {
+    background-image: url('/static/imagenes/login.jpeg');
+    background-size: cover; /* Ajusta la imagen para que cubra toda la pantalla */
+    background-position: center; /* Centra la imagen */
+    background-repeat: no-repeat; /* Evita que la imagen se repita */    
+    margin: 0; /* Elimina los márgenes predeterminados del body */
+    height: 100vh; /* altura completa de la pantalla */
+}
+
+.form-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 255, 255, 0.8); /* Fondo semitransparente para el formulario */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
 /*Formulario Base */ 
 /* Cambia el color del texto y del icono al mismo tiempo  formulario base */
 .dropdown-toggle.facturacion {

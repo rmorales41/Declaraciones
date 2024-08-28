@@ -102,7 +102,7 @@
                             <li><a class="dropdown-item" href="#">Visor Pendiente Fase 3</a></li>
                             <li><a class="dropdown-item" href="#">Facturar Fase 3</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#">Bitácora de Eventos</a></li>
+                            <li><a class="dropdown-item" href="{% url 'Bitacora' %}">Bitácora de Eventos</a></li>
                         </ul>
                     </li>                    
 
@@ -135,8 +135,8 @@
                             <i class="bi bi-key"></i> Seguridad
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{% url 'Rusuarios' %}">Usuarios</a></li>
-                            <li><a class="dropdown-item" href="#">Permisos</a></li>
+                            <li><a class="dropdown-item" href="{% url 'Rusuarios' %}">Usuarios</a></li>                            
+                            <li><a class="dropdown-item" href="{% url 'Bitacora' %}"><i class="bi bi-layout-text-sidebar"></i> Bitácora</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="{% url 'GParametros' %}"><i class="bi bi-database-fill-up"></i> Parámetros</a></li>
                             <li><a class="dropdown-item" href="{% url 'AjusteDeclaraciones' %}"><i class="bi bi-gear"></i> Ajuste Mes Declaración</a></li> 
@@ -178,9 +178,8 @@
                 cancelButtonColor: "#d33",
                 confirmButtonText: "Salir del Sistema"
             }).then((willExit) => {
-                if (willExit.isConfirmed) {
-                    // Aquí podrías hacer la llamada al servidor para cerrar sesión si es necesario
-                    // Ejemplo de redirección después de cerrar sesión:
+                if (willExit.isConfirmed) {                    
+                    // redirección después de cerrar sesión
                     window.location.href = "/";
                 }
             });

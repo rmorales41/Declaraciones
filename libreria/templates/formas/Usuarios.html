@@ -23,9 +23,11 @@
 <!-- Personalizados  <link rel="stylesheet" href="{% static 'css/style.css' %}">-->
 <script src="{% static 'js/Seguridad.js' %}"></script>  
 
-<body onload="StUsuarios()">
 
-<form id="formularioUsuario" action="" method="post" enctype="multipart/form-data">
+<body onload="StUsuarios()"></body> 
+
+
+<form id="formularioUsuario" action="{% url 'CrearUsuario' %}" method="post" enctype="multipart/form-data">
     {% csrf_token %}  <!-- llave de formulario de Django--> 
 
     <div class="container mt-4">
@@ -33,10 +35,8 @@
             <div class="col text-right">
                 <a href="{% url 'visor' %}" class="btn btn-primary"><i class="fa fa-reply"></i> Volver al menú </a>            
             </div>                
-        </div>
-        
-        <hr>
-        
+        </div>        
+        <hr>        
         <div class="row mb-3">
             <div class="col-sm-6 col-md-4">
                 <div class="input-group input-group-sm mb-1">  
@@ -56,8 +56,7 @@
             </div>
             <div class="col-sm-12 col-md-4">
                 <label class="form-check-label" for="flexCheckIndeterminate">Esta Activo</label>
-                <input class="form-check-input" type="checkbox" value="is_active" id="is_active">       
-            </div>
+                <input class="form-check-input" type="checkbox" value="1" id="activo" name="activo" checked>                          
         </div>
 
         <div class="row mb-3">
@@ -83,8 +82,8 @@
 
         <div class="row mb-3">
             <div class="col text-right">
-                <button type="submit" class="btn btn-success">Nuevo</button>            
-                <button type="button" class="btn btn-info">Enviar</button>
+                <button type="button" class="btn btn-success"  href="#" onclick="clearFormFields()">Nuevo</button>            
+                <button type="submit" class="btn btn-info" >Enviar</button>
             </div>
         </div>
         
@@ -109,5 +108,109 @@
         </div>
     </div>
 </form> 
+
 </body>
+
+<!-- limpia campos del formulario -->
+<script>
+    function clearFormFields() {
+        // Limpiar campos de texto
+        document.getElementById('usuario').value = '';
+        document.getElementById('clave').value = '';
+        document.getElementById('nombre').value = '';
+        document.getElementById('apellido').value = '';
+        document.getElementById('email').value = '';
+        
+        // No cambiar el estado del checkbox
+        document.getElementById('is_active').checked = false;
+        
+        // Colocar el foco en el primer campo
+        document.getElementById('usuario').focus();
+    }
+</script>
+
+
+<!-- Actualiza la tabla del formulario  -->
+<script>
+    document.getElementById('formularioUsuario').addEventListener('submit', function(event) {
+        event.preventDefault(); // Previene el envío estándar del formulario
+
+        let formData = new FormData(this);
+
+        fetch(this.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': document.querySelector('[name="csrfmiddlewaretoken"]').value // Agrega el token CSRF
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                Swal.fire({
+                    title: 'Éxito',
+                    text: 'Usuario creado correctamente',
+                    icon: 'success',
+                    confirmButtonText: 'Aceptar'
+                }).then(() => {
+                    // Actualiza la tabla con los nuevos datos
+                    updateTable(data.usuarios);
+                    
+                    // Limpia el formulario
+                    clearFormFields();
+                });
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: data.error,
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire({
+                title: 'Error',
+                text: 'Se produjo un error al enviar el formulario',
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+            });
+        });
+    });
+
+    function clearFormFields() {
+        document.getElementById('formularioUsuario').reset(); // Limpia todos los campos del formulario
+    }
+
+    function updateTable(usuarios) {
+        
+        let tableBody = document.querySelector('#TablaUsuarios tbody');
+        tableBody.innerHTML = ''; // Limpia el contenido actual
+
+        usuarios.forEach(usuario => {
+            let row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${usuario.id}</td>
+                <td>${usuario.username}</td>
+                <td>${usuario.first_name}</td>
+                <td>${usuario.last_name}</td>
+                <td>${usuario.email}</td>
+                <td>${usuario.is_active ? 'Sí' : 'No'}</td>
+                <td><button class="btn btn-warning btn-sm">Editar</button></td>
+            `;
+            tableBody.appendChild(row);
+        });
+
+        // Re-inicializa DataTable si es necesario
+        if ($.fn.DataTable.isDataTable('#TablaUsuarios')) {
+            $('#TablaUsuarios').DataTable().destroy();
+        }
+        $('#TablaUsuarios').DataTable();
+    }
+</script>
+
+
+
+
 {% endblock %}

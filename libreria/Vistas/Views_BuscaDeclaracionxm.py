@@ -3,7 +3,7 @@ from datetime import datetime
 from django.core import serializers
 from django.http import JsonResponse
 from django.shortcuts import render
-from libreria.models import calendario_tributario, declaracion
+from libreria.models import Bitacora, calendario_tributario, declaracion
 
 
 # Vista BuscaDeclaracionxm 
@@ -65,7 +65,17 @@ def VsReasignaDeclaracionCalendario(request,fecha_propuesta):
                     Fecha_Presenta=fecha_propuesta,                
                     Observaciones='N/A',
                     IDDeclaracion=declaracion_instance
-                )                                                                            
+                )                     
+                
+                # registro de bitacora     
+                usuario = request.user.first_name 
+                proceso = "Ingreso Calendario Tributario"        
+                descripcion = f"Se han incluido fechas al Calendario Tributario: ID Declaración {nueva_declaracion_calendario.IDDeclaracion}, Fecha: {nueva_declaracion_calendario.Fecha_Presenta}"                
+                observaciones = "Registro de nuevas fechas programadas."
+                modulo = "Reasignacion Calendario Tributario"
+                VsCreaBitacora(request, usuario, proceso, descripcion, observaciones, modulo) 
+                
+                                                                       
                 return JsonResponse({'message': 'Declaración incluida'}, status=201)
         except Exception as e:  
             print('Error:', str(e))          
@@ -73,3 +83,14 @@ def VsReasignaDeclaracionCalendario(request,fecha_propuesta):
     else:
        
         return JsonResponse({'error': 'Método no permitido'}, status=405)    
+    
+    
+def VsCreaBitacora(request,Usr,Pro,Des,Obs,Modu):    
+    # crea un salva nuevo registro en la tabla bitacora    
+    Nbitacora = Bitacora.objects.create(                                                     
+            Usuario = Usr,
+            Proceso = Pro,
+            Descripcion = Des,
+            Observaciones = Obs,
+            Modulo = Modu,
+            )

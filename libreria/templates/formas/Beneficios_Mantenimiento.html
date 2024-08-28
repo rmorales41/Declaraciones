@@ -36,16 +36,7 @@
             >Nuevo</a
         >        
     </div>
-<!---
-<form action="{% url 'Tipoformulario' %}" method="post">
-    {% csrf_token %}
-    <button type="submit" class="btn btn-success">Nuevo</button>
-</form> -->
 
-
-<!-- 
-<i data-toggle="tooltip" title="Permite el ingreso de registros. ">
--->
 
 <table id="" class="table table-striped" style="width:100%">
     <thead>
@@ -61,38 +52,6 @@
     <tbody>        
     </tbody>
 </table>
-
-<!--
-<div id="infoFilaSeleccionada">
-    Fila seleccionada: <span id="filaSeleccionada"></span>
-</div>
-
-<script> 
-    // Inicializar DataTable
-    $(document).ready(function () {
-    var table = $('#visormantenimiento').DataTable({
-        "language": {
-            "url": "{% static 'json/Spanish.json' %}" 
-        },
-        "searching": true,
-        "ordering": true,
-        "select": true,  // Habilitar selección de filas
-        "rowCallback": function(row, data, index) {
-            $(row).click(function() {
-                // Remover resaltado de la fila previa
-                table.$('tr.selected').removeClass('selected');
-                // Agregar resaltado a la fila actual
-                $(this).addClass('selected');
-                
-                // Mostrar información de la fila seleccionada
-                var filaId = data[0]; // Suponiendo que el primer dato es el ID
-                $('#filaSeleccionada').text(filaId);
-            });
-        }
-    });
-});
-</script>
--->
 
 
 {% endblock %}

@@ -3,21 +3,19 @@
 {% block contenido %}
 {% load static %}
 
-
-
-
-<!-- busca las declaracioens -->
-
-
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
-<!-- Bootstrap -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
-<!-- DataTables CSS -->
-<link rel="stylesheet" href="https://cdn.datatables.net/1.11.4/css/dataTables.bootstrap5.min.css">
-
-<!-- jQuery primero, luego DataTables y Bootstrap Bundle -->
+<head>
+    <meta charset="UTF-8">
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.4/css/dataTables.bootstrap5.min.css">
+    <!-- Flatpickr -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <!-- DataTables Buttons CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.7.1/css/buttons.bootstrap5.min.css">
+</head>
+<body>
+<!-- jQuery y DataTables -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.11.4/js/dataTables.bootstrap5.min.js"></script>
@@ -25,78 +23,140 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
 
+<!-- DataTables Buttons JS -->
+<script src="https://cdn.datatables.net/buttons/1.7.1/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.bootstrap5.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.print.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.colVis.min.js"></script>
 
 <!-- Flatpickr -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
-
 <script src="{% static 'js/index.js' %}"></script> 
-
-
-<body onload="StStatusDeclaraciones()"></body>
 
 <div class="row mt-3">
     <div class="col text-right">                
         <a href="{% url 'visor' %}" class="btn btn-primary"><i class="fa fa-reply"> Volver al menú </i></a>          
     </div>
 </div>  
-          
+
 <table id="estatus" class="table table-striped" style="width:100%">
-                <thead>
-                    <tr style="background-color: rgb(202, 202, 221); color: white;">
-                        <th scope="col">ID</th>
-                        <th scope="col">Cod.</th>
-                        <th scope="col">Declaracion</th>
-                        <th scope="col">Asignada</th>
-                        <th scope="col">Presentar</th>
-                        <th scope="col">Tiempo</th> 
-                        <th scope="col">Funcionario</th> 
-                        <th scope="col">Estado</th>
-                        <th scope="col">Proceso</th>                        
-                    </tr>
-                </thead>
-                <tbody>                                                
-                </tbody>                      
+    <thead>
+        <tr style="background-color: rgb(202, 202, 221); color: white;">
+            <th scope="col">ID</th>
+            <th scope="col">Cod.</th>
+            <th scope="col">Declaracion</th>
+            <th scope="col">Asignada</th>
+            <th scope="col">Presentar</th>
+            <th scope="col">Tiempo</th> 
+            <th scope="col">Funcionario</th> 
+            <th scope="col">Estado</th>
+            <th scope="col">Proceso</th>                        
+        </tr>
+    </thead>
+    <tbody>                                                
+    </tbody>                      
 </table>     
+
 <!-- paginacion-->                                                                      
 {% include "formas/paginacion.html" %}   
 
-
-
 <script> 
-    // Inicializar DataTable
-    $(document).ready(function () {
-        $('#estatus').DataTable({
-            "language": {
-                "url": "{% static 'json/Spanish.json' %}" 
-            },
-            "searching": true,  // Habilitar búsqueda global
-            "ordering": true,    // Habilitar ordenamiento de columnas
-            "paging": true,      // habilita paginacion 
-            "info": true,
-            "scrollX": true,     // muestra barra 
-            "scrollY": "430px",
-            "responsive": true, 
-            "autoWidth": true,   // ajusta columnas 
-            "scrollCollapse": true,
-            "stateSave": true, // permite guardar el estado de la tabla 
-            "buttons": [
-                'copy', 'excel', 'pdf', 'print'
-                        ],
-            "buttons": [
-                   {
-                    extend: 'colvis',
-                    columns: [0, 1, 2],
-                    action: function (e, dt, node, config) {
-                    alert('Botón de visibilidad de columnas clicado');
-                                }
-                    }
-                        ]                        
+    function StStatusDeclaraciones() {      
+        fetch(`/VerDeclaracion/`) 
+        .then(response => {       
+            if (!response.ok) {
+                throw new Error('Error: No se pueden mostrar los datos');
+            }       
+            return response.json();        
+        })
+        .then(datadeclaracion => {
+            const tbody = document.querySelector("tbody"); 
+            tbody.innerHTML = ''; 
+                
+            datadeclaracion.forEach(item => {                    
+                const row = document.createElement("tr");
+                const fechaProxima = new Date(item.Fecha_Presenta);
+                const fechaAsignada = new Date(item.Fecha_Asigna);
+                const fechaActual = new Date(); 
+                const diffTiempo = fechaProxima.getTime() - fechaActual.getTime();
+                const diffDias = Math.ceil(diffTiempo / (1000 * 60 * 60 * 24));
+                                                                              
+                row.innerHTML = `
+                    <td>${item.IDDeclaracion}</td>
+                    <td>${item.IDDeclaracion__codigo}</td>
+                    <td>${item.IDDeclaracion__detalle}</td>
+                    <td>${formatDate(item.Fecha_Asigna)}</td>
+                    <td>${formatDate(item.Fecha_Presenta)}</td>
+                    <td>${diffDias} días</td>
+                    <td>${item.IDPlanilla_Funcionarios__Nombre}</td>              
+                    <td>${item.IDDeclaracion__estado ? "Activo" : "Inactivo"}</td>                
+                    <td>${item.Iniciada == 1 && item.Suspendida == 0 ? "Iniciada" : (item.Iniciada == 1 && item.Suspendida == 1 ? "Suspendida" : "Cerrada")}</td> 
+                `;
+
+                tbody.appendChild(row);
+            });
+
+            
+            // Inicializar DataTable después de agregar los datos
+            $('#estatus').DataTable({
+                dom: 'Bfrtip', // Esto es necesario para mostrar los botones
+                language: {
+                    url: "{% static 'json/Spanish.json' %}" 
+                },
+                searching: true,
+                ordering: true,
+                paging: true,
+                info: true,
+                scrollX: true,
+                scrollY: "430px",
+                responsive: true,
+                autoWidth: true,
+                scrollCollapse: true,
+                stateSave: true,                
+                buttons: [
+                        {
+                            extend: 'copy',
+                            text: 'Copiar',
+                            className: 'btn btn-secondary'
+                        },
+                        {
+                            extend: 'excel',
+                            text: 'Excel',
+                            className: 'btn btn-success'
+                        },
+                        {
+                            extend: 'pdf',
+                            text: 'PDF',
+                            className: 'btn btn-danger'
+                        },
+                        {
+                            extend: 'print',
+                            text: 'Imprimir',
+                            className: 'btn btn-info'
+                        },
+                        {
+                            extend: 'colvis',
+                            text: 'Visibilidad de Columnas',
+                            className: 'btn btn-primary'
+                        }
+                ]
+            });
+        })
+        .catch(error => {
+            console.error('Error al obtener los datos:', error);
         });
+    }
+  
+    // Llamar a la función al cargar la página
+    document.addEventListener('DOMContentLoaded', (event) => {
+        StStatusDeclaraciones();
     });
 </script>
 
 
+</body>
 {% endblock %}
-

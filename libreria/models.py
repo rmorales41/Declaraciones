@@ -135,7 +135,7 @@ class Declaraciones_Tipo(models.Model):
     IDDeclaraciones_Tipo = models.AutoField(primary_key=True)
     Descripcion = models.CharField(max_length=120)
     Institucion = models.CharField(max_length=180)
-    Observacion = models.CharField(max_length=255)
+    Observacion = models.TextField()
     Estado      = models.BooleanField(default=True) 
         
 # Control de pymes y Exoneraciones 
@@ -198,4 +198,15 @@ class Parametros_Declaraciones(models.Model):
     Clave   = models.CharField(max_length=100,blank = True, null=True, verbose_name="Clave")
     Puerto  = models.CharField(max_length=15, blank = True, null=True, verbose_name="Puerto")
     Server  = models.CharField(max_length=50, blank = True, null=True, verbose_name="Server")
+    
+
+# bitacora de actividad 
+class Bitacora(models.Model):    
+    IDBitacora = models.AutoField(primary_key=True)
+    Fecha_Sistema = models.DateTimeField(auto_now_add=True)
+    Usuario = models.CharField(max_length=100,blank = True, null=True, verbose_name="Usuario")
+    Proceso = models.CharField(max_length=100,blank = True, null=True, verbose_name="Proceso") # indica en donde esta en el sistema 
+    Descripcion = models.TextField()
+    Observaciones = models.TextField()
+    Modulo = models.CharField(max_length=50,blank = True, null=True, verbose_name="Modulo") # indica en donde esta en el sistema 
     

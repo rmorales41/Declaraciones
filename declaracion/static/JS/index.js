@@ -800,46 +800,46 @@ function StIniciaDeclaracion(asignacionId,mes) {
     }
    
 // busca el estado de las declaraciones 
-function StStatusDeclaraciones() {      
-    fetch(`/VerDeclaracion/`) 
-    .then(response => {       
-        if (!response.ok) {
-            throw new Error('Error: No se pueden mostrar los datos');
-        }       
-       return response.json();        
-    })
-    .then(datadeclaracion => {
-        const tbody = document.querySelector("tbody"); 
-        tbody.innerHTML = '';                                 
+//function StStatusDeclaraciones() {      
+//    fetch(`/VerDeclaracion/`) 
+ //   .then(response => {       
+ //       if (!response.ok) {
+ //           throw new Error('Error: No se pueden mostrar los datos');
+ //       }       
+ //      return response.json();        
+  //  })
+  //  .then(datadeclaracion => {
+   //     const tbody = document.querySelector("tbody"); 
+   //     tbody.innerHTML = '';                                 
             
-        datadeclaracion.forEach(item => {                    
-            const row = document.createElement("tr");
-            const fechaProxima = new Date(item.Fecha_Presenta);
-            const fechaAsignada = new Date(item.Fecha_Asigna);
-            const fechaActual = new Date(); // fecha actual
-            const diffTiempo = fechaProxima.getTime() - fechaActual.getTime();
-            const diffDias = Math.ceil(diffTiempo / (1000 * 60 * 60 * 24));
-            
-            let diasRestantesHTML = `<td>${diffDias} días</td>`; // Calcula días restantes
-                                                                             
-          row.innerHTML = `
-                <td>${item.IDDeclaracion}</td>
-                <td>${item.IDDeclaracion__codigo}</td>
-                <td>${item.IDDeclaracion__detalle}</td>
-                <td>${formatDate(item.Fecha_Asigna)}</td>
-                <td>${formatDate(item.Fecha_Presenta)}</td>
-                ${diasRestantesHTML}                
-                <td>${item.IDPlanilla_Funcionarios__Nombre}</td>              
-                <td>${item.IDDeclaracion__estado ? "Activo" : "Inactivo"}</td>                
-                <td>${item.Iniciada == 1 && item.Suspendida == 0 ? "Iniciada" : (item.Iniciada == 1 && item.Suspendida == 1 ? "Suspendida" : "Cerrada")}</td> `
+   //     datadeclaracion.forEach(item => {                    
+   //         const row = document.createElement("tr");
+   //         const fechaProxima = new Date(item.Fecha_Presenta);
+   //         const fechaAsignada = new Date(item.Fecha_Asigna);
+   //         const fechaActual = new Date(); // fecha actual
+   //         const diffTiempo = fechaProxima.getTime() - fechaActual.getTime();
+   //         const diffDias = Math.ceil(diffTiempo / (1000 * 60 * 60 * 24));
+   //        //${diasRestantesHTML}
+   //        //let diasRestantesHTML = `<td>${diffDias} días</td>`; // Calcula días restantes
+   //                                                                          
+   //       row.innerHTML = `
+   //             <td>${item.IDDeclaracion}</td>
+   //             <td>${item.IDDeclaracion__codigo}</td>
+   //             <td>${item.IDDeclaracion__detalle}</td>
+   //             <td>${formatDate(item.Fecha_Asigna)}</td>
+   //             <td>${formatDate(item.Fecha_Presenta)}</td>
+   //            <td>${diffDias} días</td>
+   //             <td>${item.IDPlanilla_Funcionarios__Nombre}</td>              
+   //             <td>${item.IDDeclaracion__estado ? "Activo" : "Inactivo"}</td>                
+   //             <td>${item.Iniciada == 1 && item.Suspendida == 0 ? "Iniciada" : (item.Iniciada == 1 && item.Suspendida == 1 ? "Suspendida" : "Cerrada")}</td> `
 
-            tbody.appendChild(row);
-        });
-    })
-    .catch(error => {
-        console.error('Error al obtener los datos:', error);
-    });
-}
+   //         tbody.appendChild(row);
+   //     });
+   // })
+   // .catch(error => {
+    //    console.error('Error al obtener los datos:', error);
+   // });
+//}
 
 // Muestra todas las declaraciones del sistema 
 function StCalendario_Tributario_old() { 
@@ -963,7 +963,7 @@ function StStatushistoricoDeclaraciones() {
                         </select>
                     </td>      
                     <td><input type="text" id="numero_comprabante_${item.IDHistorico_Declaraciones}" name="numero_comprobante" value="" placeholder='Comprobante'></td>                
-                    <td><input type="date" id="fecha_cierre_${item.IDHistorico_Declaraciones}" name="fecha_cierre"></td>                      
+                    <td><input type="date" id="fecha_cierre_${item.IDHistorico_Declaraciones}" name="fecha_cierre"></td>                                         
                     <td><a name="" id="" class="btn btn-warning" href="#" onclick="StConfirma(${item.IDHistorico_Declaraciones})">Confirma</a></td>`;
               
                 tbody.appendChild(row);
@@ -1200,10 +1200,7 @@ function Stagrega_Declaracion(){
     // obtiene la declaracion seleccionada 
     var declaracion_seleccionada = document.getElementById('lcalendario').value;
     // obtiene la fecha seleccionada 
-    var fecha_selecionada = document.getElementById('fecha').value;    
-
-    //const formato_fecha_seleccionada = formatDate(fecha_selecionada);
-    
+    var fecha_selecionada = document.getElementById('fecha').value;        
     const data = {
         fecha_Presenta: fecha_selecionada ,
         Observaciones : 'N/A',
