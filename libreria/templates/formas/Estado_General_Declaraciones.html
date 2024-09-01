@@ -1,7 +1,7 @@
 {% extends "paginas/base.html" %}
-{% block titulo %} Status de las Declaraciones Activas {% endblock %}
+{% block titulo %} Estado General de  las Declaraciones  {% endblock %}
 {% block contenido %}
-{% load static %}
+{% load static%}
 
 <head>
     <meta charset="UTF-8">
@@ -35,74 +35,85 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
-<script src="{% static 'js/index.js' %}"></script> 
+<!-- Scripts personalizados -->
+<script src="{% static 'js/Beneficios.js' %}"></script>
 
-<div class="row mt-3">
-    <div class="col text-right">                
-        <a href="{% url 'visor' %}" class="btn btn-primary"><i class="fa fa-reply"> Volver al menú </i></a>          
+<!-- <body onload="StStatusDeclaraciones()"> -->
+
+
+<div class="card">
+    <div class="col text-right">
+            <a href="{% url 'visor' %}" class="btn btn-primary"><i class="fa fa-reply"></i> Volver al menú </a>
+             
+        <div class="card-body">
+        <h4 class="card-title">Estado General de las Declaraciones </h4>      
+        <table id="visorglobalgeneral" class="table table-striped" style="width:130%">
+                <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Codigo</th>
+                        <th scope="col">Detalle</th>
+                        <th scope="col">Asigno</th>
+                        <th scope="col">Presento</th>
+                        <th scope="col">Mes</th> 
+                        <th scope="col">Funcionario</th> 
+                        <th scope="col">Estado</th>                        
+                        <th scope="col">Iniciada</th>
+                        <th scope="col">Suspendida</th>                        
+                        <th scope="col">ID Cliente</th>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Correo</th>
+                    </tr>
+                </thead>
+                <tbody>                         
+                    {% for a in v_Estado %}
+
+                    <tr class="">
+                        <td scope="row">{{a.IDDeclaracion}}</td>
+                        <td scope="row">{{a.IDDeclaracion__codigo}}</td>
+                        <td style="width: 18%" scope="col">{{a.IDDeclaracion__detalle}}</td>
+                        <td scope="row">{{a.Fecha_Asigna}}</td>
+                        <td scope="row">{{a.Fecha_Presenta}}</td>
+                        <td scope="row">{{a.Mes}}</td>  
+                        <td scope="row">{{a.IDPlanilla_Funcionarios__Nombre}}</td> 
+                        <td scope="row">
+                            {% if a.IDDeclaracion__estado %}
+                                Activa
+                            {% else %}
+                                Inactiva
+                            {% endif %}
+                        </td>                                                
+                        <td scope="row">
+                            {% if a.Iniciada %}
+                                Si
+                            {% else %}
+                                No
+                            {% endif %}
+                        </td> 
+                        <td scope="row">
+                            {% if a.Suspendida %}
+                                Si
+                            {% else %}
+                                No
+                            {% endif %}
+                        </td> 
+                          
+                        <td scope="row">{{a.IDClientes_Proveedores__IDClientes_Proveedores}}</td> 
+                        <td scope="row">{{a.IDClientes_Proveedores__Descripcion}}</td> 
+                        <td scope="row">{{a.IDClientes_Proveedores__Email}}</td> 
+                    </td>
+                    {% endfor %}                   
+                </tbody>                           
+        </table>     
+                <!-- paginacion-->                                                       
+                {% include "formas/paginacion.html" %} 
+        </div> 
     </div>
-</div>  
-
-<table id="estatus" class="table table-striped" style="width:100%">
-    <thead>
-        <tr style="background-color: rgb(202, 202, 221); color: white;">
-            <th scope="col">ID</th>
-            <th scope="col">Cod.</th>
-            <th scope="col">Declaracion</th>
-            <th scope="col">Asignada</th>
-            <th scope="col">Presentar</th>
-            <th scope="col">Tiempo</th> 
-            <th scope="col">Funcionario</th> 
-            <th scope="col">Estado</th>
-            <th scope="col">Proceso</th>                        
-        </tr>
-    </thead>
-    <tbody>                                                
-    </tbody>                      
-</table>     
-
-<!-- paginacion-->                                                                      
-{% include "formas/paginacion.html" %}   
+</div>
 
 <script> 
-    function StStatusDeclaraciones() {      
-        fetch(`/VerDeclaracion/`) 
-        .then(response => {       
-            if (!response.ok) {
-                throw new Error('Error: No se pueden mostrar los datos');
-            }       
-            return response.json();        
-        })
-        .then(datadeclaracion => {
-            const tbody = document.querySelector("tbody"); 
-            tbody.innerHTML = ''; 
-                
-            datadeclaracion.forEach(item => {                    
-                const row = document.createElement("tr");
-                const fechaProxima = new Date(item.Fecha_Presenta);
-                const fechaAsignada = new Date(item.Fecha_Asigna);
-                const fechaActual = new Date(); 
-                const diffTiempo = fechaProxima.getTime() - fechaActual.getTime();
-                const diffDias = Math.ceil(diffTiempo / (1000 * 60 * 60 * 24));
-                                                                              
-                row.innerHTML = `
-                    <td>${item.IDDeclaracion}</td>
-                    <td>${item.IDDeclaracion__codigo}</td>
-                    <td>${item.IDDeclaracion__detalle}</td>
-                    <td>${formatDate(item.Fecha_Asigna)}</td>
-                    <td>${formatDate(item.Fecha_Presenta)}</td>
-                    <td>${diffDias} días</td>
-                    <td>${item.IDPlanilla_Funcionarios__Nombre}</td>              
-                    <td>${item.IDDeclaracion__estado ? "Activo" : "Inactivo"}</td>                
-                    <td>${item.Iniciada == 1 && item.Suspendida == 0 ? "Iniciada" : (item.Iniciada == 1 && item.Suspendida == 1 ? "Suspendida" : "Cerrada")}</td> 
-                `;
-
-                tbody.appendChild(row);
-            });
-
-            
-            // Inicializar DataTable después de agregar los datos
-            $('#estatus').DataTable({
+    // Inicializar DataTable
+    $('#visorglobalgeneral').DataTable({
                 dom: 'Bfrtip', // Esto es necesario para mostrar los botones
                 language: {
                     url: "{% static 'json/Spanish.json' %}" 
@@ -148,19 +159,9 @@
                             className: 'btn btn-primary'
                         }
                 ]
-            });
-        })
-        .catch(error => {
-            console.error('Error al obtener los datos:', error);
-        });
-    }
-  
-    // Llamar a la función al cargar la página
-    document.addEventListener('DOMContentLoaded', (event) => {
-        StStatusDeclaraciones();
     });
 </script>
 
 
-</body>
 {% endblock %}
+

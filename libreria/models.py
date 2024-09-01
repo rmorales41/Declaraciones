@@ -120,6 +120,8 @@ class Historico_Declaraciones(models.Model):
     Fecha_Sistema = models.DateTimeField(auto_now_add=True, verbose_name='Fecha_Sistema')
     rectificativa = models.BooleanField(default =False)
     Mes = models.IntegerField(default = 0,null=False, verbose_name='Mes') # guarda el mes de la declaraciones
+    imagen = models.FileField(upload_to='imagenes/acuse/', null=True, verbose_name='Imagen')  # Cambiado a FileField    
+    
     
     # llaves foraneas 
     IDClientes_Proveedores = models.ForeignKey(cliente_proveedor_cliente_proveedor, on_delete=models.CASCADE) 
@@ -198,6 +200,7 @@ class Parametros_Declaraciones(models.Model):
     Clave   = models.CharField(max_length=100,blank = True, null=True, verbose_name="Clave")
     Puerto  = models.CharField(max_length=15, blank = True, null=True, verbose_name="Puerto")
     Server  = models.CharField(max_length=50, blank = True, null=True, verbose_name="Server")
+    Calendario = models.URLField(max_length=255, blank=True, null=True, verbose_name="Calendario")
     
 
 # bitacora de actividad 

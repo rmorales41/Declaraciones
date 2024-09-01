@@ -13,12 +13,20 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404, render, redirect
 import psutil
-from .models import Asignacion, Bitacora, Declaracion_Clientes, Historico_Declaraciones, LoginForm, calendario_tributario, declaracion, planillas_planilla_funcionarios,cliente_proveedor_cliente_proveedor,Historico_Declaraciones
+from .models import Asignacion, Bitacora, Declaracion_Clientes, Historico_Declaraciones, LoginForm, Parametros_Declaraciones, calendario_tributario, declaracion, planillas_planilla_funcionarios,cliente_proveedor_cliente_proveedor,Historico_Declaraciones
 from django.core.serializers import serialize
 from django.core import serializers
 from django.db.models import F,Q   
 from django.utils.dateparse import parse_date
 #from .forms import LoginForm
+
+# documentos PDF 
+from django.http import FileResponse, Http404
+import os
+from django.conf import settings
+
+
+
 
 # la clase F funciona para filtrar productos mayores ejemplo productos = Producto.objects.filter(precio__gt=F('descuento'))
 # la clase Q funciona para generar consultas correctas 
@@ -800,6 +808,38 @@ def VsVisionDeclaracion(request):
     return render(request,'formas/Vision_Global_Declaraciones.html',{'v_Global': datadeclaracion  })    
     
 
+# ver todas las asignaciones 
+def Vsestado_general (request):
+    Total_Declaraciones = Asignacion.objects.select_related(
+        'IDClientes_Proveedores', 
+        'IDPlanilla_Funcionarios', 
+        'IDDeclaracion'
+    ).all().order_by("Fecha_Presenta","Mes")
+    
+    datadeclaracion = list(Total_Declaraciones.values(
+        'IDDeclaracion',  # Acceder al ID de la declaración relacionada
+        'IDDeclaracion__codigo',
+        'IDDeclaracion__detalle',
+        'Fecha_Asigna',
+        'Fecha_Presenta',
+        'IDPlanilla_Funcionarios__Nombre',  # Acceder al nombre del funcionario
+        'IDDeclaracion__tiempo',
+        'IDDeclaracion__estado', 
+        'IDDeclaracion__observaciones',
+        'Iniciada',
+        'Suspendida',
+        'IDClientes_Proveedores__IDClientes_Proveedores',
+        'IDClientes_Proveedores__Descripcion',
+        'IDClientes_Proveedores__Email',
+        'Mes',
+    ))
+
+    return render(request,'formas/Estado_General_Declaraciones.html',{'v_Estado': datadeclaracion  })    
+    
+
+
+
+
 
 # suspende las declaraciones que el funcionario esta trabajando 
 def VsActivaSuspendida(request,idd):
@@ -866,72 +906,6 @@ def VsEstatusDeclaracionHistoricas(request):
     
     return JsonResponse(datadeclaracion, safe=False)
 
-# ajuste a vista con calendarios 
-
-def VsConfirma_malo(request, idd):     
-    if request.method == 'POST':
-        try:
-            # Obtiene el objeto historico
-            historico_declaracion = Historico_Declaraciones.objects.get(pk=idd)
-            idc = historico_declaracion.IDDeclaracion 
-            chisto = historico_declaracion.objects.all()
-            print('histo',chisto)
-            # Obtiene los datos recibidos en el json
-            data = json.loads(request.body.decode('utf-8'))
-            
-            # Extrae datos
-            numero_comprobante = data.get('numero_comprobante')
-            fecha_cierre = parse_date(data.get('fecha_cierre'))
-            correo = data.get('correo') 
-            
-            
-            print('datos   idc',idc)
-                                                                           
-            # Actualiza campos en el objeto historico_declaracion
-            historico_declaracion.Numero_Comprobante = numero_comprobante
-            historico_declaracion.Fecha_Final = fecha_cierre
-            historico_declaracion.correo = correo == 'Si'
-            
-            # Extrae la fecha_presenta del objeto historico_declaracion
-            fecha_presenta = historico_declaracion.Fecha_Presenta
-                                            
-            if fecha_presenta:               
-                # Extrae el mes y el año de la fecha_presenta
-                mes_grid = fecha_presenta.month
-                anio_grid = fecha_presenta.year               
-                                                                  
-                # calendario = calendario_tributario.objects.all()  # Obtiene todos los registros
-                #print('todos',calendario)
-                                                                
-                print("fecha",mes_grid,anio_grid,idc)                  
-                                                
-                # Buscar el calendario tributario usando filtros
-                calendario = calendario_tributario.objects.filter(
-                    ID = idc,
-                    Fecha_Presenta__month = mes_grid, 
-                    Fecha_Presenta__year = anio_grid                                                                     
-                ).first()  # primer registro 
-                
-                print('calendario total',calendario)
-                                
-                #iddeclaracion = iddeclaracionb                                
-                if calendario:
-                    # Si tiene algo lo actualiza                                                             
-                    historico_declaracion.IDCalendario_tributario = calendario.IDDeclaracion
-                    
-            else:
-                return JsonResponse({'success': False, 'error': 'El campo fecha_presenta está vacío en el registro de declaraciones.'})
-            
-            # Guarda los cambios en la base de datos
-            historico_declaracion.save()
-
-            return JsonResponse({'success': True})
-        except Exception as e:
-            return JsonResponse({'success': False, 'error': str(e)})
-    else:
-        return JsonResponse({'success': False, 'error': 'La solicitud no es de tipo POST'})
-
-
 
 # Confirma las declaraciones cerradas y presentadas para archivo          
 def VsConfirma(request, idd):     
@@ -939,24 +913,76 @@ def VsConfirma(request, idd):
         try:
             # se obtiene el objeto historico 
             historico_declaracion = Historico_Declaraciones.objects.get(pk=idd)
-            # ver los datos recibidos en el json 
-            data =json.loads(request.body.decode('utf-8'))
-            #print('datos recibido',data )            
-            # se obtienen los datos                                
-            correo = data.get('correo')           
-                        
+                          
+            # Obtener datos del formulario se usa POST.get ya que hay que traer un archivo 
+            numero_comprobante = request.POST.get('numero_comprobante')
+            fecha_cierre = request.POST.get('fecha_cierre')
+            correo = request.POST.get('correo') 
+            
+            # Validación de datos
+            if not numero_comprobante or not fecha_cierre:
+                return JsonResponse({'success': False, 'error': 'Faltan datos requeridos'})
+                                                
             # Actualizar los campos en el objeto historico_declaracion
-            historico_declaracion.Numero_Comprobante = data.get('numero_comprobante')  
-            historico_declaracion.Fecha_Final = data.get('fecha_cierre')
+            historico_declaracion.Numero_Comprobante = numero_comprobante
+            historico_declaracion.Fecha_Final = fecha_cierre
             historico_declaracion.correo = True if correo =='Si' else False                                        
-            # Guardar los cambios en la base de datos
+            
+            # Manejar la carga de archivos se valida 
+            if 'imagen' in request.FILES:
+                imagen = request.FILES['imagen']
+                # Puedes agregar validaciones para el archivo aquí
+                historico_declaracion.imagen = imagen
+                        
+            # Guardar los cambios en la base de datos                                  
             historico_declaracion.save()
 
             return JsonResponse({'success': True})
+        except Historico_Declaraciones.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Registro no encontrado'})
         except Exception as e:
             return JsonResponse({'success': False, 'error': str(e)})
     else:
         return JsonResponse({'success': False, 'error': 'La solicitud no es de tipo POST'})
+    
+# Confirma las declaraciones cerradas y presentadas para archivo          
+def VsConfirma_malo(request, idd):     
+    if request.method == 'POST':
+        try:
+            # se obtiene el objeto historico 
+            historico_declaracion = Historico_Declaraciones.objects.get(pk=idd)
+            # ver los datos recibidos en el json 
+            #data =json.loads(request.body.decode('utf-8'))
+            #print('datos recibido',data )            
+            # se obtienen los datos                                
+            #correo = data.get('correo')       
+                
+            # Obtener datos del formulario
+            numero_comprobante = request.POST.get('numero_comprobante')
+            fecha_cierre = request.POST.get('fecha_cierre')
+            correo = request.POST.get('correo')
+            
+                        
+            # Actualizar los campos en el objeto historico_declaracion
+            historico_declaracion.Numero_Comprobante = 'numero_comprobante'
+            historico_declaracion.Fecha_Final = 'fecha_cierre'
+            historico_declaracion.correo = True if correo =='Si' else False                                        
+            
+            # Manejar la carga de archivos
+            if 'imagen' in request.FILES:
+                historico_declaracion.imagen = request.FILES['imagen']
+                        
+            # Guardar los cambios en la base de datos                                  
+            historico_declaracion.save()
+            return JsonResponse({'success': True})
+        
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+    else:
+        return JsonResponse({'success': False, 'error': 'La solicitud no es de tipo POST'})
+    
+    
+    
 
 # levanta el formulario para la declaracion historico cerrada 
 def VsDeclaracionesConfirmadasCerradas(request):       
@@ -986,7 +1012,8 @@ def VsDeclaracionesConfirmadasCerradasAplicadas(request):
         'IDDeclaracion__estado',
         'correo',
         'Numero_Comprobante',
-        'Fecha_Final'                
+        'Fecha_Final',
+        'imagen'                
     ))    
     return JsonResponse(datadeclaracion, safe=False)
 
@@ -1084,6 +1111,22 @@ def VsCalendario_Tributario_lineaBorra(request,linea):
 def VsCalendarioTributario(request):    
     return render(request,'formas/Calendario_Tributario.html')       
  
+# ver link en la web
+def Vsverweb(request):
+    try:                                                        
+        Ver_parametros = Parametros_Declaraciones.objects.first()
+                                      
+        if Ver_parametros:
+            url = Ver_parametros.Calendario
+            if url:
+                return JsonResponse({'url': url})       
+            else:
+                return JsonResponse({'error': 'El campo calendario esta vacio '}, status=404)                                    
+    except Exception as e:
+        print(f"Error: {e}")  # Imprime el error en la consola
+        return JsonResponse({'error': str(e)}, status=500)     
+ 
+ 
 # busca las declaraciones del año solicitado 
 def VsBuscadeclaracionxan(request, anSeleccionada):
    # an_Selecionado = int(anSeleccionada) # convierte el año        
@@ -1153,4 +1196,13 @@ def VsCreaBitacora(request,Usr,Pro,Des,Obs,Modu):
             Modulo = Modu,
             )
 
-    
+# ver documentos PDF    
+def serve_pdf(request, filename):
+    print('nombre',filename)
+    file_path = os.path.join(settings.PDF_ROOT, filename)
+    print(f"Buscando archivo en: {file_path}")  # Mensaje de depuración
+     
+    if os.path.exists(file_path):
+        return FileResponse(open(file_path, 'rb'), content_type='application/pdf')
+    else:
+        raise Http404("Archivo no encontrado")

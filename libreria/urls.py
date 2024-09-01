@@ -76,6 +76,10 @@ urlpatterns = [
     path('Realizar_consulta/<str:selectedYear>,<str:selectedMonth>/',Views_pendiente_realizar.VsPendiente_realizar_consultas, name='Realizar_consulta'),
     path('historico_movimientos/',Views_Historico_Movimientos.VsHistorico_Movimientos, name='historico_movimientos'),
     path('Realizar_consulta_Historica/<str:selectedYear>,<str:selectedMonth>/',Views_Historico_Movimientos.VsMovimiento_Historico, name='Realizar_consulta_Historica'),
+    path('estado_general/',views.Vsestado_general, name='estado_general'), 
+    path('verweb/',views.Vsverweb, name='verweb'), 
+    
+    
     
     # Menu de Funcionarios 
     path('Funcionarios/',Views_Funcionarios.VsCargaformula, name='Funcionarios'),
@@ -126,8 +130,15 @@ urlpatterns = [
     path('CrearUsuario/',Views_Utilitarios.VsCreaUsuarios, name='CrearUsuario'),    
     path('Bitacora/',views.VsBitacora, name='Bitacora'),    
     
-    
+    # Otras rutas pdf ...
+    path('pdfs/<str:filename>/', views.serve_pdf, name='serve_pdf'),
      
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
 
-#  path('Buscamovcalendario/<int:selectedYear>,<int:selectedMonth>/',Views_Statttus.VsDeclaracionesfinales,name='Buscamovcalendario'),        
+#+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+# Ruta para servir archivos PDF
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.PDF_URL, document_root=settings.PDF_ROOT)

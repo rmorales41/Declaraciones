@@ -155,9 +155,15 @@ STATICFILES_DIRS = [
 ]
 
 # para poder manejar las imagenes
-
-MEDIA_ROOT = os.path.join(BASE_DIR,'')
 MEDIA_URL = '/'
+MEDIA_ROOT = os.path.join(BASE_DIR,'')
+
+# archivos para los PDF 
+PDF_URL = '/pdfs/'
+PDF_ROOT = os.path.join(BASE_DIR,'imagenes/acuse/')
+
+
+
 
 # Configuración para enviar correos electrónicos
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # Backend para enviar correos SMTP

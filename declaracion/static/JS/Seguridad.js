@@ -16,6 +16,7 @@ function StParametros(){
                     
                     document.getElementById('nombre').value = tparametro.Nombre !== null && tparametro.Nombre !== undefined ? tparametro.Nombre : '';
                     document.getElementById('basedatos').value = tparametro.Nombre_Base !== null && tparametro.Nombre_Base !== undefined ? tparametro.Nombre_Base : '';
+                    document.getElementById('calendario').value = tparametro.Calendario !== null && tparametro.Calendario !== undefined ? tparametro.Calendario : '';
                     document.getElementById('puerto').value = tparametro.Puerto !== null && tparametro.Puerto !== undefined ? tparametro.Puerto : '';
                     document.getElementById('server').value = tparametro.Server !== null && tparametro.Server !== undefined ? tparametro.Server : '';
                     document.getElementById('usuario').value = tparametro.Usuario !== null && tparametro.Usuario !== undefined ? tparametro.Usuario : '';
@@ -53,6 +54,7 @@ function StConfirmaparametros() {
     var Cusuario = document.getElementById('usuario').value;
     var Cclave = document.getElementById('clave').value;
     var Cubicacion_Logo = document.getElementById('inputGroupFile04').value ;
+    var Ccalendario = document.getElementById('calendario').value;
 
     Swal.fire({
         title: "Guardar datos del Parámetro",
@@ -80,6 +82,7 @@ function StConfirmaparametros() {
                     clave: Cclave,
                     idcia: idcian,
                     inputGroupFile04 :  Cubicacion_Logo,
+                    calendario: Ccalendario,
                 })             
             })                 
             .then(response => {                     

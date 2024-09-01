@@ -13,7 +13,7 @@
       <button class="btn btn-info" type="button" onclick="Stagrega_Declaracion()">Agregar</button>
   </div> -->
 
-
+<body>
 <!-- busca los script para todos los clientes-->
 <script src="{% static 'js/index.js' %}"></script> 
 
@@ -23,8 +23,9 @@
 <!-- <body onload="StCalendario_Tributario()"> -->
 
     <div class="row mt-3">
-        <div class="col text-right">
+        <div class="col text-right">                        
             <a href="{% url 'visor' %}" class="btn btn-primary"><i class="fa fa-reply"></i> Volver al menú </a>
+            <button class="btn btn-outline-secondary" type="button" onclick="stparametros()">Ver Calendario en la Web</button>            
             <input type="text" id="selector-a" placeholder="Seleccionar año" class="btn btn-info" onchange="StbuscaDeclaracionesCalendarioanual(this.value) " style="float: right; color: white;">            
         </div>
     </div>

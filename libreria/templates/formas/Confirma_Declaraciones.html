@@ -5,23 +5,37 @@
 {% csrf_token %}  <!-- llave de formulario de Django--> 
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="{% static 'js/index.js' %}"></script> 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
-<!-- busca las declaracioens -->
-
+<!-- Personaliza  -->
+<script src="{% static 'js/index.js' %}"></script> 
+<script src="{% static 'css/style.css' %}"></script> 
 
 <body onload="StStatushistoricoDeclaraciones()">
 
 <div class="row mt-3">
     <div class="col text-right">                
         <a href="{% url 'visor' %}" class="btn btn-primary"><i class="fa fa-reply"> Volver al menú </i></a>          
-                 <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom"><i class="bi bi-arrow-up-left-circle-fill"></i></button>
-                    <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel">
-                        <div class="offcanvas-header">
-                            <h5 class="offcanvas-title" id="offcanvasBottomLabel">Registro de Ubicación del Archivo de Acuse y Declaración </h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                        </div>
-                    <div class="offcanvas-body small">            
+                <button class="btn btn-primary btn-fix" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
+                    <i class="bi bi-arrow-up-left-circle-fill"></i>
+                </button>
+    </div>                
+</div>                
+
+<div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasBottomLabel">Registro de Ubicación del Archivo de Acuse y Declaración </h5>                                                        
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body small">    
+        <!-- Sector de carga del documento -->      
+       <!-- <form id="fileUploadForm" method="POST" enctype="multipart/form-data">  -->
+           <!-- {% csrf_token %}  control del token -->
+            <div class="input-group mb-3">
+                <input type="file" class="form-control" id="inputGroupFile02" name="imagen" accept=".pdf">
+                <label class="input-group-text" for="inputGroupFile02"></label>
+          </div>
+         <!-- <button type="submit" class="btn btn-primary">Enviar</button>
+        </form> -->
     </div>
 </div>  
 

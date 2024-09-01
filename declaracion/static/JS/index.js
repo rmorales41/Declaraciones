@@ -726,11 +726,6 @@ function StIniciaDeclaracion(asignacionId,mes) {
     });        
 }
 
-// Función para obtener el token CSRF desde una metaetiqueta en el HTML    
-//function getCSRFToken() {
-//    return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-//}
- 
 
 // suspende o cierra finaliza o suspende la declaracion iniciada -aqui
     function StDetenerDeclaracion(asignacionId,botontexto) {         
@@ -988,11 +983,21 @@ function StStatushistoricoDeclaraciones() {
 
 // ajuste de confirma con calendarios 
 function StConfirma(idHistoricoDeclaraciones) { 
-    // obtener los datos del formulario    
+    // Obtener los datos del formulario    
     var Numero_C = document.getElementById('numero_comprabante_'+idHistoricoDeclaraciones.toString()).value;
     var Fecha_C = document.getElementById('fecha_cierre_'+idHistoricoDeclaraciones.toString()).value;
     var Correo_C = document.getElementById('correo_'+idHistoricoDeclaraciones.toString()).value;
-   
+    var imagen = document.getElementById('inputGroupFile02').files[0]; // Obtener el archivo seleccionado
+
+    // Crear un objeto FormData
+    var formData = new FormData();
+    formData.append('numero_comprobante', Numero_C);
+    formData.append('fecha_cierre', Fecha_C);
+    formData.append('correo', Correo_C);
+    if (imagen) {
+        formData.append('imagen', imagen);
+    }
+
     Swal.fire({
         title: "Confirmador de Declaraciones",
         text: "¿Desea continuar con la confirmación de esta línea?",
@@ -1003,18 +1008,13 @@ function StConfirma(idHistoricoDeclaraciones) {
         confirmButtonText: "Sí, proceder"
     }).then((result) => {
         if (result.isConfirmed) {            
-            // Solicitud POST                                   
+            // Solicitud POST con FormData
             fetch(`/Confirma/${idHistoricoDeclaraciones}`, {        
                 method: 'POST',
+                body: formData,
                 headers: {
-                    'Content-Type': 'application/json',
                     'X-CSRFToken': getCSRFToken() 
-                },
-                body: JSON.stringify({
-                    numero_comprobante: Numero_C,
-                    fecha_cierre: Fecha_C,
-                    correo: Correo_C,                 
-                })        
+                }
             })
             .then(response => {
                 if (!response.ok) {
@@ -1134,9 +1134,13 @@ function StDeclaracionesConfirmadasCerradasHistoricas(){
             const fechaActual = new Date(); // fecha actual
             const diffTiempo = fechaProxima.getTime() - fechaActual.getTime();
             const diffDias = Math.ceil(diffTiempo / (1000 * 60 * 60 * 24));
-
-            let diasRestantesHTML = `<td>${diffDias} días</td>`; // Calcula días restantes                                                          
-
+            
+            let diasRestantesHTML = `<td>${diffDias} días</td>`; // Calcula días restantes                  
+            
+            // Define el URL del archivo PDF basado en la ruta proporcionada en `item.imagen`            
+            const fileName = item.imagen ? item.imagen.split('/').pop() : '';
+            const pdfUrl = fileName ? `/imagenes/acuse/${fileName}` : '';
+                        
             row.innerHTML = `
                 <td>${item.IDHistorico_Declaraciones}</td>
                 <td>${item.IDDeclaracion__codigo}</td>                
@@ -1148,17 +1152,80 @@ function StDeclaracionesConfirmadasCerradasHistoricas(){
                 <td>${item.IDPlanilla_Funcionarios__Nombre}</td>              
                 <td>${item.IDDeclaracion__estado ? "A" : "I"}</td>  
                 <td>${item.correo ? "Si" : "No"}</td>                        
-                <td>${item.Numero_Comprobante}</td>                
-                <td>${item.Fecha_Final}</td> `
-          
-            tbody.appendChild(row);
+                <td>${item.Numero_Comprobante}</td>                             
+                <td>${item.Fecha_Final}</td>   
+                 ${item.imagen ? `<td><a id="pdfButton" href="${pdfUrl}" target="_blank">Ver</a></td>` : `<td>No disponible</td>`}
+`;
+                
+      //    <td><a id="pdfButton" href="${pdfUrl}" target="_blank">Ver</a></td> <!-- Añadido el enlace para ver el PDF  `; //
+                
+        
+            tbody.appendChild(row);                        
+            });
 
-        });       
-    })
-    .catch(error => {
-        console.error('Error al obtener los datos:', error);
-    });
+            // Destruir la instancia anterior del DataTable si existe
+            if ($.fn.DataTable.isDataTable('#Confirmadas')) {
+                $('#Confirmadas').DataTable().destroy();
+            }
+
+            // Inicializar DataTable después de agregar los datos
+            $('#Confirmadas').DataTable({
+                dom: 'fBrtip', // Esto es necesario para mostrar los botones
+                language: {
+                    url: "{% static 'json/Spanish.json' %}"
+                },
+                searching: true,
+                ordering: true,
+                paging: true,
+                info: true,
+                scrollX: true,
+                scrollY: "540px",
+                responsive: true,
+                autoWidth: true,
+                scrollCollapse: true,
+                stateSave: true,
+                lengthMenu: [
+                    [10, 25, 50, 100, -1], // Número de registros por página
+                    [10, 25, 50, 100, "All"] // Etiquetas para los números de registros
+                ],
+                buttons: [
+                    {
+                        extend: 'copy',
+                        text: 'Copiar',
+                        className: 'btn btn-secondary'
+                    },
+                    {
+                        extend: 'excel',
+                        text: 'Excel',
+                        className: 'btn btn-success'
+                    },
+                    {
+                        extend: 'pdf',
+                        text: 'PDF',
+                        className: 'btn btn-danger'
+                    },
+                    {
+                        extend: 'print',
+                        text: 'Imprimir',
+                        className: 'btn btn-info'
+                    },
+                    {
+                        extend: 'colvis',
+                        text: 'Visibilidad de Columnas',
+                        className: 'btn btn-primary'
+                    }
+                ]
+            });
+        })
+        .catch(error => {
+            console.error('Error al obtener los datos:', error);
+        });
 }
+
+
+
+
+
 
 // busca la fecha seleccionada 
 function StBuscaporfecha(){       
@@ -1326,3 +1393,29 @@ function StbuscaDeclaracionesCalendarioanual(anSeleccionada){
       });
 
 }
+
+
+function stparametros(){            
+        fetch('/verweb/', { // busca la vista 
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.url) {
+                // Abrir una nueva ventana en blanco
+                var nuevaVentana = window.open('', '_blank');
+                
+                // Redirigir a la URL deseada en la nueva ventana
+                nuevaVentana.location.href = data.url;
+            } else {
+                alert(data.error || 'Error desconocido');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error al realizar la solicitud');
+        });
+    } 

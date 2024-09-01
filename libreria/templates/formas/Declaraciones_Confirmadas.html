@@ -4,23 +4,46 @@
 {% load static %}
 {% csrf_token %}  <!-- llave de formulario de Django--> 
 
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<!--<script src="{% static 'node_modules/moment/moment.js' %}" type="module"></script> -->
+<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="{% static 'node_modules/moment/moment.js' %}" type="module"></script> 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
 <script src="{% static 'js/index.js' %}"></script> 
+-->
 
+<head>
+    <meta charset="UTF-8">
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.4/css/dataTables.bootstrap5.min.css">
+    <!-- Flatpickr -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <!-- DataTables Buttons CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.7.1/css/buttons.bootstrap5.min.css">
+</head>
+<body>
+<!-- jQuery y DataTables -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.4/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
 
-<!-- Script para inicializar DataTables -->
-<script>
-    $(document).ready(function () {
-        $('#declaracionesTabla').DataTable({
-            "language": {
-                "url": "{% static 'json/Spanish.json' %}"
-            }
-        });
-    });
-</script>
+<!-- DataTables Buttons JS -->
+<script src="https://cdn.datatables.net/buttons/1.7.1/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.bootstrap5.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.print.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.colVis.min.js"></script>
+
+<!-- Flatpickr -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<!-- Personalizados -->
+<script src="{% static 'js/index.js' %}"></script> 
 
 <!-- Declaraciones Confirmadas Cerradas -->
 <body onload="StDeclaracionesConfirmadasCerradasHistoricas()">
@@ -32,10 +55,10 @@
 </div>  
 <!-- <th scope="col">Declaracion</th>-->          
 <div class="card">
-    <div class="card-body">        
-        <table class="table">
+    <div class="card-body" >         
+        <table id="Confirmadas" class="table table-striped" style="width:100%">
                 <thead>
-                    <tr style="background-color: blue; color: white;">
+                    <tr style="background-color: rgb(185, 177, 177); color: white;">
                         <th scope="col">ID</th>
                         <th scope="col">Cod.</th>                        
                         <th scope="col">Cod.</th>
@@ -47,52 +70,20 @@
                         <th scope="col">Est</th> 
                         <th scope="col">Correo</th>                        
                         <th scope="col">Comprobante</th> 
-                        <th scope="col">Fecha</th>                                                                                         
+                        <th scope="col">Fecha</th> 
+                        <th scope="col">Ver</th>                                                                                                                                                    
                     </tr>
                 </thead>
                 <tbody>                                                
                 </tbody>
                       
          </table>     
-                <!-- paginacion-->                                                       
-                {% include "formas/paginacion.html" %}   
+                <!-- paginacion -->  
+                {% include "formas/paginacion.html" %}                                                       
     </div>
     <div class="card-footer text-muted"></div>
 </div>
 </body>
-
-<!-- orden columnas --> 
-<script>
-    $(document).ready(function() {
-        // Función para ordenar los datos al hacer clic en el encabezado de la columna
-        $('th').click(function() {
-            var table = $(this).parents('table').eq(0);
-            var rows = table.find('tr:gt(0)').toArray().sort(comparar($(this).index()));
-
-            this.asc = !this.asc;
-            if (!this.asc) {
-                rows = rows.reverse();
-            }
-            for (var i = 0; i < rows.length; i++) {
-                table.append(rows[i]);
-            }
-        });
-        
-        // Función para comparar los valores y ordenarlos
-        function comparar(index) {
-            return function(a, b) {
-                var valA = getCellValue(a, index);
-                var valB = getCellValue(b, index);
-                return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.localeCompare(valB);
-            };
-        }
-
-        // Función para obtener el valor de la celda
-        function getCellValue(row, index) {
-            return $(row).children('td').eq(index).text();
-        }
-    });
-</script>
 
 {% endblock %}
 

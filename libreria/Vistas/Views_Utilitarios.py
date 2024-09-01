@@ -75,6 +75,7 @@ def VsParametrosDatos(request):
                         'Server',
                         'IDCia',    
                         'Ubicacion_logo',
+                        'Calendario',
                     ))                                                                  
       
                 if tparametro:
@@ -101,6 +102,7 @@ def VsParametrosConfirma(request,IDreg):
             vclave = data.get('clave')
             vidc = data.get('idcia')
             vubicacion_logo = data.get('inputGroupFile04')
+            vcalendario = data.get('calendario')
             
             vparametros.Nombre = vnombre                      # Actualizar los campos de la tabla asignacion                           
             vparametros.Nombre_Base = vbase
@@ -109,6 +111,7 @@ def VsParametrosConfirma(request,IDreg):
             vparametros.Usuario = vusuario
             vparametros.Clave = vclave
             vparametros.IDCia = vidc    
+            vparametros.Calendario = vcalendario
             
              # Validar vubicacion_logo 
             if vubicacion_logo not in [None, '', 'None']:

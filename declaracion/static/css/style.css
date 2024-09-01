@@ -133,8 +133,10 @@ p {
     max-width: 1200px;
 
 }
-/*
-#TablaUsuarios{
-    width: 100%;
-    margin-top: 140px;
-}*/
+/* Maneja el boton de Adjuntar documentos en la confirmacion de declaraciones */ 
+.btn-fix {
+    position: fixed ; /* Fija el botón en la pantalla */
+    top: 120px; /* Espacio desde la parte inferior de la pantalla */
+    right: 20px; /* Espacio desde el lado derecho de la pantalla */
+    z-index: 1000; /* Asegura que el botón esté por encima de otros elementos */
+}
