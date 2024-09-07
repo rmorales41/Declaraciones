@@ -40,3 +40,39 @@ def VsMovimiento_Historicobusqueda(request):
     except Exception as e:
         print(f"Error: {e}")  # Imprime el error en la consola
         return JsonResponse({'error': str(e)}, status=500) 
+    
+    
+    
+# busca declaraciones de estado por cliente historico solo de un cliente ** ojo
+def VsMovimiento_Historicobusquedacliente(request,IDD):      
+    try:                                                                 
+        Total_Movimientos = Historico_Declaraciones.objects.select_related(  
+                    'IDClientes_Proveedores', 
+                    'IDPlanilla_Funcionarios', 
+                    'IDDeclaracion'
+        ).filter(IDClientes_Proveedores=IDD).order_by("-Fecha_Sistema")
+                
+                 
+        tmovimientos = list(Total_Movimientos.values(
+            'IDHistorico_Declaraciones',  
+            'IDDeclaracion__codigo',                       
+            'IDClientes_Proveedores__Descripcion',
+            'IDPlanilla_Funcionarios__Nombre',              
+            'Fecha_Presenta',
+            'Fecha_Asigna',
+            'Fecha_Cierre',
+            'Fecha_Final',   
+            'Fecha_Sistema',         
+            'Numero_Comprobante',      
+            'rectificativa',
+            'Mes',            
+        ))                                                   
+        return JsonResponse(tmovimientos, safe=False)        
+                                        
+    except Historico_Declaraciones.DoesNotExist:
+        return JsonResponse({'error': 'El objeto no existe'}, status=404)   
+    except ValueError:
+        return JsonResponse({'error': 'El año proporcionado no es válido'}, status=400)
+    except Exception as e:
+        print(f"Error: {e}")  # Imprime el error en la consola
+        return JsonResponse({'error': str(e)}, status=500) 

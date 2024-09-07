@@ -4,11 +4,17 @@
 {% load static %}
 {% csrf_token %}  <!-- llave de formulario de Django--> 
 
+
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.14.305/pdf.min.js"></script>
+
 <!-- Personaliza  -->
 <script src="{% static 'js/index.js' %}"></script> 
-<script src="{% static 'css/style.css' %}"></script> 
+<!--<script src="{% static 'css/style.css' %}"></script> -->
 
 <body onload="StStatushistoricoDeclaraciones()">
 
@@ -27,26 +33,26 @@
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body small">    
-        <!-- Sector de carga del documento -->      
-       <!-- <form id="fileUploadForm" method="POST" enctype="multipart/form-data">  -->
-           <!-- {% csrf_token %}  control del token -->
+       
             <div class="input-group mb-3">
                 <input type="file" class="form-control" id="inputGroupFile02" name="imagen" accept=".pdf">
-                <label class="input-group-text" for="inputGroupFile02"></label>
-          </div>
-         <!-- <button type="submit" class="btn btn-primary">Enviar</button>
-        </form> -->
+                <label class="input-group-text" for="inputGroupFile02"></label>     
+                <button id="viewPdfBtn" class="btn btn-primary">Ver PDF</button>                     
+            </div>
+            <div>
+               <canvas id="pdfViewer"></canvas>                               
+            </div>
+         
+       
     </div>
 </div>  
-
 
 
 <!-- <th scope="col">Declaracion</th>-->          
 <div class="card">
     <div class="card-body">        
         <table class="table table-striped" id="declaracionesTabla" style="width:100%">
-                <thead>
-                    
+                <thead>                    
                     <tr style="background-color: blue; color: white;">
                         <th style="width: 8%">ID</th>                        
                         <th style="width: 8%">Cod.</th>                        
@@ -108,6 +114,65 @@
     });
 </script>
 
+<!--
+<script>
+    const inputFile = document.getElementById('inputGroupFile02');
+    const viewPdfBtn = document.getElementById('viewPdfBtn');
+    const pdfViewer = document.getElementById('pdfViewer');
+    const ctx = pdfViewer.getContext('2d');
+
+    viewPdfBtn.addEventListener('click', () => {
+            const file = inputFile.files[0];
+            if (file && file.type === 'application/pdf') {
+                const fileReader = new FileReader();
+
+                fileReader.onload = function(e) {
+                    const loadingTask = pdfjsLib.getDocument({data: e.target.result});
+                    loadingTask.promise.then(function(pdf) {
+                        pdf.getPage(1).then(function(page) {
+                            const scale = 1.5;
+                            const viewport = page.getViewport({scale: scale});
+
+                            pdfViewer.height = viewport.height;
+                            pdfViewer.width = viewport.width;
+
+                            const renderContext = {
+                                canvasContext: ctx,
+                                viewport: viewport
+                            };
+                            page.render(renderContext);
+                        });
+                    });
+                };
+
+                fileReader.readAsArrayBuffer(file);
+            } else {
+                alert('Por favor, selecciona un archivo PDF.');
+            }
+        });
+    </script> -->
+
+    <script>
+        const inputFile = document.getElementById('inputGroupFile02');
+        const viewPdfBtn = document.getElementById('viewPdfBtn');
+    
+        viewPdfBtn.addEventListener('click', () => {
+            const file = inputFile.files[0];
+            if (file && file.type === 'application/pdf') {
+                const fileReader = new FileReader();
+    
+                fileReader.onload = function(e) {
+                    const blob = new Blob([e.target.result], { type: 'application/pdf' });
+                    const url = URL.createObjectURL(blob);
+                    window.open(url, '_blank');
+                };
+    
+                fileReader.readAsArrayBuffer(file);
+            } else {
+                alert('Por favor, selecciona un archivo PDF.');
+            }
+        });
+    </script>
 
 
 {% endblock %}

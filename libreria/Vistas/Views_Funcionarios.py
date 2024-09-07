@@ -101,3 +101,16 @@ def VsDetalleClienteColaborador(request):
         error_msg = f"Error en la vista VsDetalleClienteColaborador: {str(e)}"
         print(error_msg)  # Registrar el error en los registros de la aplicación
         return JsonResponse({'error': error_msg}, status=500)
+
+
+# Carga la pagina de EStado de Declaraciones 
+def VsdeclaraEstado(request):
+    return render(request,'formas/Estado_Cuenta_Declaracion.html')   
+
+# ver datos de los clientes 
+def VsListadeclaraClientes(request):
+    try:
+        todos_clientes = cliente_proveedor_cliente_proveedor.objects.filter(Estado=True, Tipo=True).order_by('Descripcion').values()        
+        return JsonResponse({'data': list(todos_clientes)})
+    except Exception as e:
+        return JsonResponse({'error': 'Error al obtener los datos de clientes'}, status=500) 

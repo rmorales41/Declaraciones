@@ -1,0 +1,102 @@
+{% extends "paginas/base.html" %}
+{% load static %}
+{% block titulo %} Estado de Declaración por Cliente {% endblock %}
+{% block contenido %}
+<!-- Bootstrap y otras bibliotecas -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.11.4/css/dataTables.bootstrap5.min.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.4/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<!-- Estilos para los botones -->
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.7.1/css/buttons.dataTables.min.css">
+
+<!-- Scripts para los botones -->
+<script src="https://cdn.datatables.net/buttons/1.7.1/js/dataTables.buttons.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.print.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.colVis.min.js"></script>
+
+<!-- Scripts personalizados -->
+<script src="{% static 'js/historico_movimientos_busqueda.js'  %}"></script>
+
+<div class="row mt-3">
+    <div class="col d-flex align-items-center">
+        <a href="{% url 'visor' %}" class="btn btn-primary mr-auto"><i class="fa fa-reply"></i> Volver al menú</a>
+        <h4 class="card-title text-center mb-0 flex-grow-1">Estado Declaración por Cliente</h4>
+        <div class="form-group d-flex align-items-center">
+            <label class="text-primary me-2">Clientes</label>                       
+            <select id="ListaClientes" class="form-select" onchange="StBuscaDeclaraciones()"></select>               
+         </div>  
+    </div>
+</div>
+
+<table id="declaracionesTabla" class="table table-striped" style="width:100%">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Codigo</th>
+            <th>Cliente</th>            
+            <th>Funcionario</th>
+            <th>Fch/Presenta</th>
+            <th>Fch/Asigna</th>
+            <th>Fch/Cierre</th>
+            <th>Fch/Confirma</th>
+            <th>Fch/Sistema</th>
+            <th>Acuse</th>
+            <th>Rectif.</th>
+            <th>Mes</th>
+        </tr>
+    </thead>
+    <tbody>    
+    </tbody>
+</table>
+
+<!-- Inicializar DataTable -->
+<script>
+    $(document).ready(function () {
+        $('#declaracionesTabla').DataTable({
+            dom: 'lBfrtip',
+            language: {
+                url: "{% static 'json/Spanish.json' %}"
+            },
+            searching: true,
+            ordering: true,
+            paging: true,
+            info: true,
+            scrollX: true,
+            scrollY: "430px",
+            responsive: true,
+            autoWidth: true,
+            scrollCollapse: true,
+            stateSave: true,    
+            lengthMenu: [
+                [10, 25, 50, 100, -1],
+                [10, 25, 50, 100, "All"]
+            ],
+            buttons: [
+                { extend: 'copy', text: 'Copiar', className: 'btn btn-secondary' },
+                { extend: 'excel', text: 'Excel', className: 'btn btn-success' },
+                { extend: 'pdf', text: 'PDF', className: 'btn btn-danger' },
+                { extend: 'print', text: 'Imprimir', className: 'btn btn-info' },
+                { extend: 'colvis', text: 'Visibilidad de Columnas', className: 'btn btn-primary' }
+            ]
+        });
+    });
+</script>
+
+
+<!-- carga los datos de primero en el dom-->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        StListaclientesEstado();
+    });
+</script>
+
+{% endblock %}

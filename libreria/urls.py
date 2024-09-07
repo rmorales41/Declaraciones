@@ -2,7 +2,7 @@ from django.urls import path
 
 from . import views
 from .Vistas import Views_BuscaDeclaracionxm,Views_pendiente_realizar,Views_Historico_Movimientos,Views_Funcionarios
-from .Vistas import Views_Historico_Movimientos_Busqueda,Views_Beneficios,Views_Utilitarios,Views_ReportesGenerales
+from .Vistas import Views_Historico_Movimientos_Busqueda,Views_Beneficios,Views_Utilitarios,Views_ReportesGenerales,Views_ReportesGenerales_Landscape
 
 from .Vistas import Views_Statttus 
 
@@ -32,8 +32,7 @@ urlpatterns = [
     path('asignaciones/<int:IDD>', views.Clientes_Funcionario, name='asignaciones'),
     path('declaracionxcliente/<int:IDD>',views.Declaracion_Cliente, name='declaracionxcliente'),
     path('asigna_declaracion_clientes',views.Asigna_Declaracion_Clientes, name='asigna_declaracion_clientes'),
-    path('asigna_declaracion/<int:cliente_id>/<int:colaborador_id>',views.Asigna_Declaracion, name='asigna_declaracion'),
-    path('clientes_declaraciones/',views.VsListaclientes,name ='clientes_declaraciones'),  
+    path('asigna_declaracion/<int:cliente_id>/<int:colaborador_id>',views.Asigna_Declaracion, name='asigna_declaracion'),    
     path('Carga_Clientes_Sin_Declaracion/',views.VsClientessindeclaraciones,name='Carga_Clientes_Sin_Declaracion'),
     path('VsListaclientesdatos/',views.VsListaclientesdatosa,name ='VsListaclientesdatos'),
     path('BuscarDeclaracionxCliente/<int:IDD>',views.VDeclaracion_Cliente_asignacion,name ='BuscarDeclaracionxCliente'),
@@ -80,6 +79,18 @@ urlpatterns = [
     path('verweb/',views.Vsverweb, name='verweb'), 
     
     
+    # Menu de Clientes 
+    path('clientes/',views.clientes, name= 'clientes'),
+    path('clienteyfuncionario/', Views_Funcionarios.Vsclienteyfuncionario, name='clienteyfuncionario'),
+    path('clientes_declaraciones/',views.VsListaclientes,name ='clientes_declaraciones'),  
+    path('DetalleClienteColaborador/', Views_Funcionarios.VsDetalleClienteColaborador, name='DetalleClienteColaborador'),    
+    path('clientesactivos/', Views_Beneficios.VsClientesActivos, name='clientesactivos'),
+    path('VisorClientes/', Views_Beneficios.VsVisorClientes, name='VisorClientes'),
+    path('VisorTipos/', Views_Beneficios.VsVisorTipos, name='VisorClientes'),   
+    path('Estado_Declaracion/', Views_Funcionarios.VsdeclaraEstado, name='Estado_Declaracion'),   
+    path('ListaclientesDeclaracion/', Views_Funcionarios.VsListadeclaraClientes, name='ListaclientesDeclaracion'),     
+    path('BuscaDeclaracionCliente/<int:IDD>', Views_Historico_Movimientos_Busqueda.VsMovimiento_Historicobusquedacliente, name='Views_Historico_Movimientos_Busqueda'), 
+              
     
     # Menu de Funcionarios 
     path('Funcionarios/',Views_Funcionarios.VsCargaformula, name='Funcionarios'),
@@ -89,16 +100,7 @@ urlpatterns = [
     path('asignadasafuncionario/',Views_Funcionarios.Vsasignadasafuncionario, name='asignadasafuncionario'),
     path('ListaColaboradores/',Views_Funcionarios.VsListaColaboradores, name='ListaColaboradores'),  
     path('DetalleColaborador/<int:IDD>/', Views_Funcionarios.VsListaColaboradoresyclientes, name='DetalleColaborador'),
-    
-    # Menu de Clientes 
-    path('clientes/',views.clientes, name= 'clientes'),
-    path('clienteyfuncionario/', Views_Funcionarios.Vsclienteyfuncionario, name='clienteyfuncionario'),
-    path('DetalleClienteColaborador/', Views_Funcionarios.VsDetalleClienteColaborador, name='DetalleClienteColaborador'),    
-    path('clientesactivos/', Views_Beneficios.VsClientesActivos, name='clientesactivos'),
-    path('VisorClientes/', Views_Beneficios.VsVisorClientes, name='VisorClientes'),
-    path('VisorTipos/', Views_Beneficios.VsVisorTipos, name='VisorClientes'),       
-        
-        
+                            
     # Menu de Beneficios 
     path('Asigna_tipo',Views_Beneficios.Vsasigna_tipo,name='Asigna_tipo'),    
     path('Declara_Tipo/', Views_Beneficios.Vspyme, name='Declara_Tipo'),
@@ -118,6 +120,9 @@ urlpatterns = [
     # Reportes
     path('Rep_General_Declaracion/',Views_ReportesGenerales.Declaracion_General,name='Rep_General_Declaracion'),    
     path('Rep_Clientesasignar/',Views_ReportesGenerales.Reporte_Cliente_S_Asignar,name='Rep_Clientesasignar'),    
+    path('Rep_StatusDeclaracion/',Views_ReportesGenerales.Reporte_StatusDeclaracion,name='Rep_StatusDeclaracion'),    
+    path('Rep_PorConfirmar/',Views_ReportesGenerales_Landscape.Reporte_DeclaracionxConfirmar,name='Rep_PorConfirmar'),    
+    path('Rep_DeclaracionInicio/',Views_ReportesGenerales_Landscape.Reporte_Proceso_Declaracion,name='Rep_DeclaracionInicio'),    
 
     # Seguridad
     path('GParametros/',Views_Utilitarios.VsParametros,name='GParametros'), 

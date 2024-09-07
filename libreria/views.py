@@ -1159,14 +1159,14 @@ def VsReasignadeclaracion(request):
      return render(request,'formas/Calendario_Tributario_Reasigna.html')       
  
  
- # Muestra todos los movimientos 
+# Muestra todos los movimientos 
 def VsBitacora(request):
     # busca el usuario a ver si existe        
       if request.method == 'GET':         
             
             try:                                               
                 # muestra los datos de parametros 
-                Bitacoras = Bitacora.objects.all().order_by("-Fecha_Sistema") 
+                Bitacoras = Bitacora.objects.all().order_by("-IDBitacora") 
                  
                 # convierte los datos en diccionario
                 tbitacora = list(Bitacoras.values(     

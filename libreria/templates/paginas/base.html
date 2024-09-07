@@ -61,7 +61,7 @@
                             <li><a class="dropdown-item" href="{% url 'clientesactivos' %}"><i class="bi bi-sunset"></i> Clientes Activos</a></li>
                             <li><a class="dropdown-item" href="{% url 'clientes_declaraciones' %}"><i class="fa fa-deaf"></i> Asigna Declaraciones a Clientes</a></li>
                             <li><a class="dropdown-item" href="{% url 'pendiente_realizar' %}"><i class="bi bi-cone-striped"></i> Pendientes por Realizar</a></li>
-                            <li><a class="dropdown-item" href="#"><i class=""></i> Estado de Declaraciones por Cliente </a></li>
+                            <li><a class="dropdown-item" href="{% url 'Estado_Declaracion' %}"><i class="bi bi-activity"></i> Estado de Declaraciones por Cliente </a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="{% url 'historico_movimientos' %}"><i class="bi bi-collection"></i> Historico de Movimientos Presentación</a></li>
                             <li><a class="dropdown-item" href="{% url 'busqueda_historico_movimientos' %}"><i class="bi bi-collection"></i> Búsqueda Historica de Movimientos</a></li>                            
@@ -77,7 +77,6 @@
                             <li><a class="dropdown-item" href="{% url 'asignadasafuncionario' %}"><i class="bi bi-person-lines-fill"></i> Funcionarios y sus asignados</a></li>
                             <li><a class="dropdown-item" href="{% url 'clienteyfuncionario' %}"><i class="bi bi-stack"></i> Clientes Estado</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#">Envíos</a></li>
                         </ul>
                     </li>
 
@@ -114,21 +113,11 @@
                             <i class="bi bi-printer-fill"></i> Reportes
                         </a>
                         <ul class="dropdown-menu">                                                      
-                            <li><a class="dropdown-item" href="{% url 'Rep_General_Declaracion' %}"><i class="bi bi-printer"></i> Listado de Declaraciones General</a></li>
-                            <li><a class="dropdown-item" href="#">Calendario Tributario anual </a></li>
-                            <li><a class="dropdown-item" href="#">Calendario Tributario Mensual</a></li>
-                            <li><a class="dropdown-item" href="#">Funcionarios Asignados</a></li>
+                            <li><a class="dropdown-item" href="{% url 'Rep_General_Declaracion' %}"><i class="bi bi-printer"></i> Listado de Declaraciones General</a></li>                                                        
                             <li><a class="dropdown-item" href="{% url 'Rep_Clientesasignar' %}"><i class="bi bi-printer"></i> Clientes sin Asignar</a></li>
-                            <li><a class="dropdown-item" href="#">Status de Declaraciones</a></li>
-                            <li><a class="dropdown-item" href="#">Declaraciones por Confirmar</a></li>
-                            <li><a class="dropdown-item" href="#">Clientes Asignados a Funcionarios</a></li>
-                            <li><a class="dropdown-item" href="#">Reporte Proceso de las Declaraciones Inicio, Proceso</a></li>
-                            <li><a class="dropdown-item" href="#">Estado de las Declaraciones</a></li>
-                            <li><a class="dropdown-item" href="#">Funcionarios y sus Cargas</a></li>
-                            <li><a class="dropdown-item" href="#">Funcionarios y sus Asignadas</a></li>
-                            <li><a class="dropdown-item" href="#">Beneficios asignados</a></li>
-                            <li><a class="dropdown-item" href="#">Estado Mensual</a></li>
-
+                            <li><a class="dropdown-item" href="{% url 'Rep_StatusDeclaracion' %}"><i class="bi bi-printer"></i> Estado General de Declaraciones</a></li>
+                            <li><a class="dropdown-item" href="{% url 'Rep_PorConfirmar' %}"><i class="bi bi-printer"></i> Declaraciones por Confirmar</a></li>                            
+                            <li><a class="dropdown-item" href="{% url 'Rep_DeclaracionInicio' %}"><i class="bi bi-printer"></i> Reporte Proceso de las Declaraciones Inicio, Proceso</a></li>
                         </ul>
                     </li>                        
                      <!-- Menú desplegable "Seguridad" -->
@@ -141,7 +130,7 @@
                             <li><a class="dropdown-item" href="{% url 'Bitacora' %}"><i class="bi bi-layout-text-sidebar"></i> Bitácora</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="{% url 'GParametros' %}"><i class="bi bi-database-fill-up"></i> Parámetros</a></li>
-                            <li><a class="dropdown-item" href="{% url 'AjusteDeclaraciones' %}"><i class="bi bi-gear"></i> Ajuste Mes Declaración</a></li> 
+                            <li><a class="dropdown-item" href="{% url 'AjusteDeclaraciones' %}"><i class="bi bi-gear"></i> Ajuste Mes Declaración</a></li>                             
                         </ul>
                     </li>
                 </ul>
