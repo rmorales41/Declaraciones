@@ -115,7 +115,8 @@ def Vsasigna_tipo(request):
         
         
         # Convertir el queryset en una lista de diccionarios
-        datos = list(lista_clientes)                
+        datos = list(lista_clientes)    
+               
         # Retornar los datos como JsonResponse
         lista_tipos = Declaraciones_Tipo.objects.filter(
             Estado = True
@@ -125,7 +126,6 @@ def Vsasigna_tipo(request):
         )
         
         datos_tipo = list(lista_tipos)
-        
       #  return JsonResponse(datos,datos_tipo safe=False)
 
     except Exception as e:

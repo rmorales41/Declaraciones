@@ -335,7 +335,7 @@ function StAsigna_Nueva_Declaracion_Cliente() {
         }
     }
     
-   
+     
 // Permite agregar clientes a funcionarios 
 function Stagregacliente_a_funcionario() {
     // Obtener el token CSRF

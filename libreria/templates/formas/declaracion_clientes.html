@@ -37,20 +37,45 @@
 <body>
 <!-- Combo de clientes -->  
 <div class="container-xl">
+  <div class="row justify-content-end">
+      <div class="col-md-10">
+          <div class="form-group d-flex align-items-center">
+              <label class="text-primary me-2" for="ListaClientes"></br>Clientes</label>
+              <input type="text" id="searchInput" class="form-control me-2" placeholder="Buscar cliente..." oninput="filterClients()">
+              <select class="form-select me-2" id="ListaClientes"></select>
+              <button type="button" class="btn btn-success" onclick="StListaclientes()">Asignar</button>
+          </div>
+      </div>
+  </div>
+</div>
+
+
+
+
+
+<!--
+
+<div class="container-xl">
   <div class="row justify-content-center">
-    <div class="col-md-14"> <!-- Alinea el combo al centro de la pantalla -->
+    <div class="col-md-14"> 
      <div class="form-group d-flex align-items-center">
         <label class="text-primary me-2">Clientes</label>                       
         <select id="ListaClientes" class="form-select" onclick="StListaclientes()"></select>               
      </div>            
     </div>
   </div>                                
-</div>              
+</div>  
+-->
+
+
+
 <!-- Combo sin asignacion  -->  
 <div class="container-xl">
   <div class="justify-content-md-start">
     <div class="col-md-87"> <!-- Alinea los combos al centro de la pantalla onchange="Carga_Clientesfuncionario()"--> 
       <div class="row">
+
+        
        <div class="col-md-6">
          <div class="form-group d-flex align-items-center">                                    
             <label class="text-primary me-1" for="clientepend">Sin Asignación</label>
@@ -90,4 +115,24 @@
 </div>
 </div>       
 </body>
+
+
+<script>
+  function filterClients() {
+      const input = document.getElementById('searchInput');
+      const filter = input.value.toLowerCase();
+      const select = document.getElementById('ListaClientes');
+      const options = select.getElementsByTagName('option');
+
+      for (let i = 0; i < options.length; i++) {
+          const option = options[i];
+          const txtValue = option.textContent || option.innerText;
+
+          // Muestra la opción si el texto coincide con el filtro
+          option.style.display = txtValue.toLowerCase().includes(filter) ? '' : 'none';
+      }
+  }
+</script>
+
+
 {% endblock %}

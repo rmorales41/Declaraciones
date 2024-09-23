@@ -1,5 +1,5 @@
 from django import forms 
-from .models import Asignacion, declaracion, planillas_planilla_funcionarios,Declaraciones_Tipo
+from .models import Asignacion, Permisos, Roles, declaracion, planillas_planilla_funcionarios,Declaraciones_Tipo
 
 # se declara la estructura del formulario 
 class DeclaraForm(forms.ModelForm):
@@ -29,4 +29,18 @@ class TipoForm(forms.ModelForm):
     class Meta:
         db_table ="tipo"
         model = Declaraciones_Tipo
+        fields = '__all__'
+
+# se declaran los roles 
+class RolesForm(forms.ModelForm):
+    class Meta:
+        db_table ="roles"
+        model = Roles
+        fields = '__all__'
+        
+# pantalla de Permisos 
+class PermisoForm(forms.ModelForm):
+    class Meta:
+        db_table ="permisos"
+        model = Permisos 
         fields = '__all__'

@@ -145,9 +145,15 @@ function StUsuarios() {
                     <td>${item.last_name}</td>
                     <td>${item.email}</td>
                     <td>${item.is_active ? "Sí" : "No"}</td>
-                    <td><a name="" id="" class="btn btn-primary" href="#"  role="button"><i class="bi bi-pencil"></i></a>
-                        <a name="" id="" class="btn btn-danger"  href="#" onclick="eliminadecla({{a.IDDeclaracion}})"  role="button"><i class="bi bi-trash"></i></a>
+                    <td>
+                        <a class="btn btn-primary" href="#" onclick='Modifica_Usuario(${item.id})' role="button">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <a class="btn btn-danger" href="#" onclick="Elimina_Usuario(${item.id})" role="button">
+                            <i class="bi bi-trash"></i>
+                        </a>
                     </td>`;
+                    
                 tbody.appendChild(row);
             });     
                  // Inicializa DataTables después de llenar la tabla
@@ -175,8 +181,123 @@ function StUsuarios() {
         });
 }
 
-
-// Usuario Nuevo 
-function StUsuarioNuevo() {
-
+function Modifica_Usuario(userID) {
+    fetch(`/UsrBusca/${userID}/`)       
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {                
+                const user = data.usuario;
+                document.getElementById('idd').value = data.usuario.id;
+                document.getElementById('usuario').value = user.username;
+                document.getElementById('clave').value = user.password ;
+                document.getElementById('nombre').value = user.first_name;
+                document.getElementById('apellido').value = user.last_name;
+                document.getElementById('email').value = user.email;
+                document.getElementById('activo').checked = user.is_active;
+                // se actualiza la clave 
+                document.getElementById('clave').value = ''; // Limpia el campo primero
+                document.getElementById('clave').value = user.password;
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: data.error,
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire({
+                title: 'Error',
+                text: 'Se produjo un error al cargar los datos del usuario',
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+            });
+        });
 }
+
+
+// Función para obtener el valor del cookie CSRF
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Configura fetch para incluir el token CSRF
+function Elimina_Usuario(userID) {
+    const csrftoken = getCookie('csrftoken');
+    if (confirm('¿Estás seguro de que deseas eliminar este usuario?')) {
+        fetch(`/EliminarUsuario/${userID}/`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken  // Añadir el token CSRF a los headers
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Actualizar la tabla o la interfaz de usuario
+                StUsuarios();
+            } else {
+                console.error('Error al eliminar el usuario:', data.error);
+            }
+        })
+        .catch(error => console.error('Fetch error:', error));
+    }
+}
+
+// Función para actualizar la tabla con nuevos datos
+function actualizarTabla(nuevosDatos) {
+    const table = $('#TablaUsuarios').DataTable();
+    table.clear();
+    table.rows.add(nuevosDatos);
+    table.draw();
+}
+
+// lista de roles 
+function listapermiso(){
+    fetch(`/listaGrol/`)       
+    .then(response => response.json())
+    .then(data => {
+        const select = document.getElementById('ListaPermisos');
+        select.innerHTML = ''; // Limpiar el select antes de agregar nuevos elementos
+
+        if (data.success) {                
+            data.permisos.forEach(permiso => {
+                const option = document.createElement('option');
+                option.value = permiso.IDPermisos;              
+                option.textContent = permiso.Nombre_Permiso;    
+                select.appendChild(option);                     // Agrega la opción al select
+        } )} else {
+            Swal.fire({
+                title: 'Error',
+                text: data.error,
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+            });
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        Swal.fire({
+            title: 'Error',
+            text: 'Se produjo un error al cargar los datos del usuario',
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+        });
+    });
+}
+
+

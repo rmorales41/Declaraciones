@@ -26,6 +26,10 @@ SECRET_KEY = 'django-insecure-y%9#l8%x*0^%l5o(*z44+83m4ehbe+3^&m$yfvn!e1s7l&b9nl
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+#   'declaraciones.sipavit.com',
+#    'www.declaraciones.sipavit.com',
+#    '127.0.0.1:4040',
+
 ALLOWED_HOSTS = []
 
 # mensajes 

@@ -138,3 +138,11 @@ npm start  o npm run start
 # pip install reportlab
 # pip install pdf2image    // se utiliza para convertir de pdf a imagen 
 
+# obtener el detalle de librerias
+pip freeze > requirements.txt
+
+# actualiza Django 
+pip install --upgrade Django==5.0.1
+
+# instala todas las librerias 
+pip install -r requirements.txt

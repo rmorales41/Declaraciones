@@ -2,6 +2,17 @@ from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from django.db import models
 
+# Grupos de Roles 
+class Roles(models.Model):    
+    IDRoles = models.AutoField(primary_key=True)
+    Fecha_Sistema = models.DateTimeField(auto_now_add=True)
+    Detalle = models.CharField(max_length=120,blank = True, null=True, verbose_name="Detalle")    
+    Observaciones = models.TextField()
+    
+    def __str__(self):
+        return self.Detalle or str(self.IDRoles)
+
+
 # Ingreso al Sistema tabla de login 
 class LoginForm(AuthenticationForm):
     username = forms.CharField(label='Acceso Usr:',max_length=254 )
@@ -52,7 +63,7 @@ class cliente_proveedor_cliente_proveedor(models.Model):
     Tipo   = models.BooleanField(default=True) # true cliente , false proveedor             
     
     # llaves foraneas 
-    IDConfiguracion_Corporativo = models.ForeignKey(Configuracion_Corporativo, on_delete=models.CASCADE)      
+    IDConfiguracion_Corporativo = models.ForeignKey(Configuracion_Corporativo, on_delete=models.PROTECT)      
     
     def __str__(self):
         return "{}".format(self.Descripcion)
@@ -70,9 +81,9 @@ class Asignacion(models.Model):
     
     
     # llaves foraneas 
-    IDClientes_Proveedores = models.ForeignKey(cliente_proveedor_cliente_proveedor, on_delete=models.CASCADE) 
-    IDPlanilla_Funcionarios = models.ForeignKey(planillas_planilla_funcionarios, on_delete=models.CASCADE)
-    IDDeclaracion = models.ForeignKey(declaracion, null=False, blank=False,  on_delete=models.CASCADE)           
+    IDClientes_Proveedores = models.ForeignKey(cliente_proveedor_cliente_proveedor, on_delete=models.PROTECT) 
+    IDPlanilla_Funcionarios = models.ForeignKey(planillas_planilla_funcionarios, on_delete=models.PROTECT)
+    IDDeclaracion = models.ForeignKey(declaracion, null=False, blank=False,  on_delete=models.PROTECT)           
     
     def __str__(self):
         return "{}".format(self.Fecha_Presenta)
@@ -85,8 +96,8 @@ class Declaracion_Clientes(models.Model):
     Observacion = models.CharField(max_length=180)  
      
     # llaves foraneas 
-    IDClientes_Proveedores = models.ForeignKey(cliente_proveedor_cliente_proveedor, on_delete=models.CASCADE)     
-    IDDeclaracion = models.ForeignKey(declaracion, null=False, blank=False,  on_delete=models.CASCADE)           
+    IDClientes_Proveedores = models.ForeignKey(cliente_proveedor_cliente_proveedor, on_delete=models.PROTECT)     
+    IDDeclaracion = models.ForeignKey(declaracion, null=False, blank=False,  on_delete=models.PROTECT)           
     
     def __str__(self):
         return "{}".format(self.IDDeclaracion_Clientes)
@@ -98,7 +109,7 @@ class calendario_tributario(models.Model):
     Observaciones = models.TextField(blank=True, verbose_name='Observacion')
      
      # llaves foraneas 
-    IDDeclaracion = models.ForeignKey(declaracion, null=False, blank=False,  on_delete=models.CASCADE)           
+    IDDeclaracion = models.ForeignKey(declaracion, null=False, blank=False,  on_delete=models.PROTECT)           
                   
     def __str__(self):
         return f"Fecha Presentación: {self.Fecha_Presenta}, ID: {self.IDCalendario_tributario}"
@@ -124,12 +135,12 @@ class Historico_Declaraciones(models.Model):
     
     
     # llaves foraneas 
-    IDClientes_Proveedores = models.ForeignKey(cliente_proveedor_cliente_proveedor, on_delete=models.CASCADE) 
-    IDPlanilla_Funcionarios = models.ForeignKey(planillas_planilla_funcionarios, on_delete=models.CASCADE)
-    IDDeclaracion = models.ForeignKey(declaracion, null=False, blank=False,  on_delete=models.CASCADE)   
+    IDClientes_Proveedores = models.ForeignKey(cliente_proveedor_cliente_proveedor, on_delete=models.PROTECT) 
+    IDPlanilla_Funcionarios = models.ForeignKey(planillas_planilla_funcionarios, on_delete=models.PROTECT)
+    IDDeclaracion = models.ForeignKey(declaracion, null=False, blank=False,  on_delete=models.PROTECT)   
     
     # Llave foránea a la tabla 'calendario_tributario' adicional
-    IDCalendario_tributario = models.ForeignKey(calendario_tributario, null=True, blank=True, on_delete=models.CASCADE)
+    IDCalendario_tributario = models.ForeignKey(calendario_tributario, null=True, blank=True, on_delete=models.PROTECT)
     
     
 # Tipo de Beneficios 
@@ -157,8 +168,8 @@ class Declaraciones_Tipo_Cliente(models.Model):
     Ubicacion_Archivo = models.CharField(max_length=255)
     
     #llave foranea
-    IDClientes_Proveedores = models.ForeignKey(cliente_proveedor_cliente_proveedor, on_delete=models.CASCADE) 
-    IDDeclaraciones_Tipo = models.ForeignKey(Declaraciones_Tipo, on_delete=models.CASCADE)
+    IDClientes_Proveedores = models.ForeignKey(cliente_proveedor_cliente_proveedor, on_delete=models.PROTECT) 
+    IDDeclaraciones_Tipo = models.ForeignKey(Declaraciones_Tipo, on_delete=models.PROTECT)
     
     def __str__(self):
         return f"Fecha Presentación: {self.Fch_Sistema}, ID: {self.tramitado}"
@@ -186,8 +197,8 @@ class Detalle_Declaracion_Tipo(models.Model):
     Fecha_Recordatorio = models.DateField(blank=True, null=True, verbose_name="Fecha_Recordatorio")
     
     #llave foraneas
-    IDClientes_Proveedores = models.ForeignKey(cliente_proveedor_cliente_proveedor, on_delete=models.CASCADE) 
-    IDDeclaraciones_Tipo = models.ForeignKey(Declaraciones_Tipo,on_delete=models.CASCADE)
+    IDClientes_Proveedores = models.ForeignKey(cliente_proveedor_cliente_proveedor, on_delete=models.PROTECT) 
+    IDDeclaraciones_Tipo = models.ForeignKey(Declaraciones_Tipo,on_delete=models.PROTECT)
  
 # configuracion de Parametros para la conexion y datos generales 
 class Parametros_Declaraciones(models.Model):
@@ -212,4 +223,29 @@ class Bitacora(models.Model):
     Descripcion = models.TextField()
     Observaciones = models.TextField()
     Modulo = models.CharField(max_length=50,blank = True, null=True, verbose_name="Modulo") # indica en donde esta en el sistema 
+
+
     
+# Lista de Permisos 
+class Permisos(models.Model):    
+    IDPermisos     = models.AutoField(primary_key=True)
+    Fecha_Sistema  = models.DateTimeField(auto_now_add=True)
+    Nombre_Permiso = models.CharField(max_length=120,blank = True, null=True, verbose_name="Nombre_Permiso")   
+    Formulario     = models. CharField(max_length=180,blank = True, null=True, verbose_name="Formulario")
+    Url            = models. CharField(max_length=180,blank = True, null=True, verbose_name="Url")
+    Observaciones  = models.TextField()
+    
+    
+        
+# asigna permisos de Usuarios
+class Permisos_Asignados(models.Model):
+    IDPermisos_Asignados = models.AutoField(primary_key=True)
+    Fecha_Sistema   = models.DateField(auto_now_add = True)    
+    Permiso   =  models.IntegerField(null=True,default= 0) # 0 permite 1 inactivo  2 Todos 3 etc
+        
+    # llave Foranea 
+    IDPermisos = models.ForeignKey(Permisos, on_delete=models.PROTECT) 
+    IDRoles  = models.ForeignKey(Roles, on_delete=models.PROTECT)
+
+    
+       

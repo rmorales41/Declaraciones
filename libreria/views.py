@@ -19,12 +19,13 @@ from django.core import serializers
 from django.db.models import F,Q   
 from django.utils.dateparse import parse_date
 #from .forms import LoginForm
+from django.urls import reverse_lazy
+from django.contrib.auth.views import LogoutView
 
 # documentos PDF 
 from django.http import FileResponse, Http404
 import os
 from django.conf import settings
-
 
 
 
@@ -229,7 +230,7 @@ def Clientes_pendientes(request):
                 
                 )
             )
-        ).filter(tiene_asignacion=False,Estado = True,Tipo = True)
+        ).filter(tiene_asignacion=False,Estado = True,Tipo = True).order_by('Descripcion')
               
     return JsonResponse({'data':list(clientes_pendientes.values())}) 
 
@@ -453,13 +454,10 @@ def clienteafuncionario(request):
             #clientepend_id  = list(cliente_proveedor_cliente_proveedor.objects.values().filter(Tipo=True).order_by('Descripcion')             
             #clientepend_id=list(cliente_proveedor_cliente_proveedor.objects.values().filter(estado=True).order_by('codigo'))                       
 
-            cliente_proveedor_instance = cliente_proveedor_cliente_proveedor.objects.filter(Tipo=1).get(pk=clientepend_id)                                      
+            cliente_proveedor_instance = cliente_proveedor_cliente_proveedor.objects.filter(Tipo=1).get(pk=clientepend_id)                                                  
             
-            funcionario_id = data.get('IDPlanilla_Funcionarios', None)
-            print('funcionario ',funcionario_id)
-            
-            funcionario_instance = planillas_planilla_funcionarios.objects.get(pk=funcionario_id) 
-             
+            funcionario_id = data.get('IDPlanilla_Funcionarios', None)            
+            funcionario_instance = planillas_planilla_funcionarios.objects.get(pk=funcionario_id)              
            
             if clientepend_id is None or funcionario_id is None:
                 return JsonResponse({'error': 'IDs de cliente o funcionario faltantes'}, status=400)
@@ -471,6 +469,8 @@ def clienteafuncionario(request):
             
             #Declaraciones_cliente = Declaracion_Clientes.objects.values().filter(IDClientes_Proveedores=clientepend_id)
             declaraciones_cliente = Declaracion_Clientes.objects.filter(IDClientes_Proveedores=clientepend_id)
+            
+            
                         
             # Crear las asignaciones con las declaraciones del cliente
             for declaracion in declaraciones_cliente:
@@ -489,7 +489,7 @@ def clienteafuncionario(request):
             usuario = request.user.first_name 
             proceso = "Agrega Cliente a Funcionario."        
             descripcion = f"El usuario agrego el cliente '{cliente_proveedor_instance.Descripcion}' al funcionario   '{funcionario_instance.Nombre}' "
-            observaciones = "Asigna Cliente a funcionario."
+            observaciones = "Asigna Cliente a funcionario." 
             modulo = "Asignación de Clientes"
             VsCreaBitacora(request, usuario, proceso, descripcion, observaciones, modulo) 
             
@@ -1206,3 +1206,12 @@ def serve_pdf(request, filename):
         return FileResponse(open(file_path, 'rb'), content_type='application/pdf')
     else:
         raise Http404("Archivo no encontrado")
+    
+# salir     
+def logout_view(request):
+    logout(request)
+    return redirect('login')  # Redirige a la página de login o donde desees    
+
+
+
+

@@ -1,0 +1,23 @@
+{% extends "paginas/base.html" %}
+{% block titulo %} Editar Roles  {% endblock %}
+{% block contenido %}
+
+{% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+
+<div class="card">
+    <div class="card-header">Editar Roles</div>
+    <div class="card-body">
+        <h4 class="card-title">Editar Roles</h4>
+       {% include 'formas/form.html' %}
+    </div>
+    <div class="card-footer text-muted">Registro Roles</div>
+ </div>
+
+{% endblock %}

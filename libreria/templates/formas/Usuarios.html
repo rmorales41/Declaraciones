@@ -50,15 +50,17 @@
                 <div class="input-group input-group-sm mb-1">  
                     <div class="input-group-prepend">
                         <span class="input-group-text" id="inputGroup-sizing-sm">Clave</span>
-                        <input type="password" class="form-control" aria-label="Default" id="clave" name="clave" aria-describedby="inputGroup-sizing-default" maxlength="255">            
+                        <input type="password" class="form-control" aria-label="Default" id="clave" display "none" name="clave" aria-describedby="inputGroup-sizing-default" maxlength="255">            
                     </div>
                 </div>
             </div>
             <div class="col-sm-12 col-md-4">
                 <label class="form-check-label" for="flexCheckIndeterminate">Esta Activo</label>
                 <input class="form-check-input" type="checkbox" value="1" id="activo" name="activo" checked>                          
-        </div>
-
+                <label class="form-check-label" for="flexCheckIndeterminate">Id</label>
+                <input class="input-group-text" type="text" value="" id="idd" display="none" name="idd" >   
+            </div>
+ 
         <div class="row mb-3">
             <div class="col-sm-6 col-md-4">
                 <div class="input-group">
@@ -181,32 +183,11 @@
 
     function clearFormFields() {
         document.getElementById('formularioUsuario').reset(); // Limpia todos los campos del formulario
+        document.getElementById('activo').checked = true; // Reinicia el estado del checkbox
     }
 
-    function updateTable(usuarios) {
-        
-        let tableBody = document.querySelector('#TablaUsuarios tbody');
-        tableBody.innerHTML = ''; // Limpia el contenido actual
 
-        usuarios.forEach(usuario => {
-            let row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${usuario.id}</td>
-                <td>${usuario.username}</td>
-                <td>${usuario.first_name}</td>
-                <td>${usuario.last_name}</td>
-                <td>${usuario.email}</td>
-                <td>${usuario.is_active ? 'Sí' : 'No'}</td>
-                <td><button class="btn btn-warning btn-sm">Editar</button></td>
-            `;
-            tableBody.appendChild(row);
-        });
 
-        // Re-inicializa DataTable si es necesario
-        if ($.fn.DataTable.isDataTable('#TablaUsuarios')) {
-            $('#TablaUsuarios').DataTable().destroy();
-        }
-        $('#TablaUsuarios').DataTable();
-    }
 </script>
+
 {% endblock %}

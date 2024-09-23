@@ -114,44 +114,6 @@
     });
 </script>
 
-<!--
-<script>
-    const inputFile = document.getElementById('inputGroupFile02');
-    const viewPdfBtn = document.getElementById('viewPdfBtn');
-    const pdfViewer = document.getElementById('pdfViewer');
-    const ctx = pdfViewer.getContext('2d');
-
-    viewPdfBtn.addEventListener('click', () => {
-            const file = inputFile.files[0];
-            if (file && file.type === 'application/pdf') {
-                const fileReader = new FileReader();
-
-                fileReader.onload = function(e) {
-                    const loadingTask = pdfjsLib.getDocument({data: e.target.result});
-                    loadingTask.promise.then(function(pdf) {
-                        pdf.getPage(1).then(function(page) {
-                            const scale = 1.5;
-                            const viewport = page.getViewport({scale: scale});
-
-                            pdfViewer.height = viewport.height;
-                            pdfViewer.width = viewport.width;
-
-                            const renderContext = {
-                                canvasContext: ctx,
-                                viewport: viewport
-                            };
-                            page.render(renderContext);
-                        });
-                    });
-                };
-
-                fileReader.readAsArrayBuffer(file);
-            } else {
-                alert('Por favor, selecciona un archivo PDF.');
-            }
-        });
-    </script> -->
-
     <script>
         const inputFile = document.getElementById('inputGroupFile02');
         const viewPdfBtn = document.getElementById('viewPdfBtn');

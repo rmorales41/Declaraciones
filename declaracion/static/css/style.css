@@ -52,6 +52,31 @@ body.login {
     color: #6076d8; /* Color naranja */
 }
 
+/*Formulario login */ 
+body.login {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 75vh; /* Ocupa el 75% de la altura de la ventana */
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+/* Contenedor de los formularios */
+.form-container {
+    display: flex;
+    flex-direction: column; /* Coloca los formularios uno debajo del otro */
+    align-items: center; /* Centra los formularios horizontalmente */
+    gap: 20px; /* Espacio entre los formularios */
+}
+
+/* Contenedor de los botones */
+.button-container {
+    display: flex; /* Utiliza Flexbox para alinear los botones horizontalmente */
+    gap: 10px; /* Espacio entre los botones */
+    align-items: center; /* Centra verticalmente los botones */
+}
 
 /*Formulario login */ 
 body.login {
@@ -59,18 +84,154 @@ body.login {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 75vh; /* Ocupa el 100% de la altura de la ventana */
+    height: 75vh; /* Ocupa el 75% de la altura de la ventana */
     margin: 0;
     font-family: Arial, sans-serif;
 }
 
+/* Contenedor de los formularios */
+.form-container {
+    display: flex;
+    flex-direction: column; /* Coloca los formularios uno debajo del otro */
+    align-items: center; /* Centra los formularios horizontalmente */
+    gap: 20px; /* Espacio entre los formularios */
+}
+
+/* Contenedor de los botones */
+.button-container {
+    display: flex; /* Utiliza Flexbox para alinear los botones horizontalmente */
+    gap: 10px; /* Espacio entre los botones */
+}
+
+/*Formulario login */ 
+body.login {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 75vh; /* Ocupa el 75% de la altura de la ventana */
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+/* Contenedor de los formularios */
+.form-container {
+    display: flex;
+    flex-direction: column; /* Coloca los formularios uno debajo del otro */
+    align-items: center; /* Centra los formularios horizontalmente */
+    gap: 220px; /* Espacio entre los formularios */
+}
+
+/* Contenedor de los botones */
+.button-container {
+    display: flex; /* Utiliza Flexbox para alinear los botones horizontalmente */
+    gap: 5px; /* Espacio entre los botones */
+}
+
+/*Formulario login */ 
+body.login {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 75vh; /* Ocupa el 75% de la altura de la ventana */
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+/* Contenedor de los formularios */
+.form-container {
+    display: flex;
+    flex-direction: column; /* Coloca los formularios uno debajo del otro */
+    align-items: center; /* Centra los formularios horizontalmente */
+    gap: 10px; /* Espacio entre los formularios */
+    padding: 20px; /* Espacio interior alrededor del formulario */
+    width: 100%; /* Ancho del contenedor */
+    max-width: 500px; /* Ancho máximo del contenedor */
+    box-sizing: border-box; /* Incluye el padding en el ancho total */
+}
+
+/* Contenedor de los botones centrado verticalmente */
+.button-container {
+    display: flex;
+    flex-direction: column; /* Coloca los botones en una columna */
+    justify-content: center; /* Centra los botones horizontalmente */
+    align-items: center; /* Centra los botones horizontalmente */
+    gap: 5px; /* Espacio entre los botones */
+    margin-top: 10px; /* Espacio arriba del contenedor de botones */
+}
+
+/*Formulario login */
+body.login {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between ;
+    align-items: center;
+    height: 100vh; /* Ocupa el 100% de la altura de la ventana */
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+/* Contenedor de los formularios */
+.form-container {
+    display: flex;
+    flex-direction: column; /* Coloca los formularios uno debajo del otro */
+    align-items: center; /* Centra los formularios horizontalmente */
+    gap: 1px; /* Espacio entre los formularios */
+    padding: 20px; /* Espacio interior alrededor del formulario */
+    width: 100%; /* Ancho del contenedor */
+    max-width: 500px; /* Ancho máximo del contenedor */
+    box-sizing: border-box; /* Incluye el padding en el ancho total */
+    text-align: center; /* Centra el texto y el contenido del formulario */
+    border: 1px solid #927070; /* Opcional: agrega un borde al contenedor del formulario */
+    border-radius: 5px; /* Opcional: agrega bordes redondeados */
+    background-color: #24394b; /* Opcional: agrega un color de fondo */
+}
+
+
+/* Estilo específico para los botones */
+.btn-login, .btn-logout {
+    border: none; /* Sin borde */
+    color: white; /* Color del texto */
+    padding: 10px 20px; /* Espaciado interno */
+    text-align: center; /* Centrar texto */
+    text-decoration: none; /* Sin subrayado */
+    display: inline-block; /* Mostrar como un bloque en línea */
+    font-size: 16px; /* Tamaño de fuente */
+    cursor: pointer; /* Mostrar cursor de puntero al pasar sobre el botón */
+    border-radius: 5px; /* Bordes redondeados */
+    transition: background-color 0.3s; /* Transición suave para el color de fondo */
+    flex: 1; /* Hace que los botones ocupen el mismo espacio */
+    margin: 5px; /* Margen para separación de botones */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra por defecto */
+}
+
+.btn-login {
+    background-color: #4CAF50; /* Color de fondo verde para el botón de ingreso */
+}
+
+.btn-login:hover {
+    background-color: #45a049; /* Cambia el color de fondo cuando se pasa el ratón sobre el botón */
+}
+
+/* Estilo específico para el botón de cierre de sesión */
+.btn-logout {
+    background-color: #f44336; /* Color de fondo rojo */
+}
+
+.btn-logout:hover {
+    background-color: #e53935; /* Cambia el color de fondo cuando se pasa el ratón sobre el botón */
+}
+
 .form-container{
     text-align: center; /* Centra el texto y el contenido del formulario */
-    border: 1px solid #ddd; /* Opcional: agrega un borde al contenedor del formulario */
-    padding: 20px;
-    border-radius: 5px; /* Opcional: agrega bordes redondeados */
-    background-color: #f9f9f9; /* Opcional: agrega un color de fondo */
+    border: 5px solid #927070; /* Opcional: agrega un borde al contenedor del formulario */
+    padding: 30px;
+    border-radius: 25px; /* Opcional: agrega bordes redondeados */
+    background-color: #0d4c86; /* Opcional: agrega un color de fondo */
 }
+
+/* fin de login  */
 
 h2 {
   margin-bottom: 20px;
@@ -140,3 +301,14 @@ p {
     right: 20px; /* Espacio desde el lado derecho de la pantalla */
     z-index: 1000; /* Asegura que el botón esté por encima de otros elementos */
 }
+
+/* Cambiar color del texto en los elementos del menú de navegación */
+.navbar-nav .nav-link {
+    color: #007bff; /* Cambia #007bff por el color deseado */
+}
+
+.navbar-nav .nav-link:hover {
+    color: #0056b3; /* Cambia #0056b3 por el color deseado para el estado hover */
+}
+
+

@@ -40,7 +40,7 @@
       <div class="d-flex mb-0 align-items-center">
         <a href="{% url 'visor' %}" class="btn btn-primary"><i class="fa fa-reply"></i>  </a>
         <label for="clientes" class="me-2">Cliente:</label>
-        <select class="form-select flex-grow-1" onchange="StBuscaBeneficios(this.value)" id="clientes" name = "clientes_id" style="color: rgb(36, 55, 226);">
+        <select class="form-select flex-grow-1" onclick="StBuscaBeneficios(this.value)" id="clientes" name = "clientes_id" style="color: rgb(36, 55, 226);">
           {% for campo in var_clientes %}
            <option id="{{ campo.IDClientes_Proveedores}}" value="{{ campo.IDClientes_Proveedores }}">{{ campo.IDClientes_Proveedores }} - {{ campo.Descripcion }}</option>
           {% endfor %}
@@ -172,7 +172,7 @@
             },
             "searching": true,  // Habilitar búsqueda global
             "ordering": true ,   // Habilitar ordenamiento de columnas
-            "responsive": true,  // Habilitar funcionalidad Responsive
+            "responsive": true,  // Habilitar funcionalidad Responsive          
             "columnDefs": [
             { "width": "7%", "targets": [0] },
             { "width": "20%", "targets": [1] },
@@ -181,72 +181,12 @@
             { "width": "4%", "targets": [4] },
             { "width": "3%", "targets": [5] },
             // Define anchos iniciales, Responsive manejará los ajustes
-            ]
+            ]            
         });
     });
 
 
-   
-    
-   // Función para manejar clic en botón de editar
-   $('#visortipos').on('click', '.btn-editar', function() {
-    const id = $(this).data('id');    
-    // Realizar solicitud AJAX para obtener los datos del registro
-    $.ajax({
-        url: `/obtener_datos_registro/${id}/`, // URL de tu vista Django que retorna JSON
-        type: 'GET',
-        dataType: 'json',
-        success: function(response) {            
-            try {             
-                // Acceder a los campos correctamente parse los cambia para poderlos manejar 
-                var datos = JSON.parse(response);                
-                if (Array.isArray(datos) && datos.length > 0 && datos[0].hasOwnProperty('fields')) {                    
-                    var fields = datos[0].fields;                      
-
-                    // Llenar el formulario con los datos obtenidos   $('#tipos').val(fields.IDDeclaraciones_Tipo); // Ajustar según el ID del tipo
-                    $('#detalle').val(fields.Detalle);
-                    $('#fechasol').val(fields.Fecha_solicitud);
-                    $('#numero').val(fields.Numero_solicitud);                  
-                    $('#fechaauto').val(fields.Fecha_autorizacion);
-                    $('#numeroauto').val(fields.Numero_autorizado);
-                    $('#fechavence').val(fields.Fecha_vencimiento);
-                    $('#legal').val(fields.Fundamento_Legal);
-                    $('#observaciones').val(fields.observaciones); // Asegúrate de usar minúscula en 'observaciones'
-                    $('#otorgado').val(fields.Otorgadopor);
-                    $('#recuerda').val(fields.Recordar_antes);
-                    $('#cada').val(fields.Recordar_cada);
-                    $('#defaultCheck1').prop('checked', fields.Estado);
-                    $('#usert').val(fields.Correo_Notificar);
-                    $('#responsable').val(fields.Responsable);
-                    $('#porce').val(fields.Porcentaje);
-                    $('#informa').val(fields.Informa);
-                    $('#IDDetalleDeclaracionTipo').val(id);                                       
-
-                    // Mostrar el formulario para editar
-                    $('#formularioDatos').show();           
-
-                    if (fields.Imagen) {
-                      // Asignar la URL completa de la imagen al elemento img
-                      $('#previewImagen').attr('src', `${fields.Imagen}`); 
-                    } else {
-                      // Limpiar el elemento img si no hay imagen
-                      $('#previewImagen').attr('src', ''); }                   
-                
-                } else {
-                    console.error('Los datos recibidos no tienen la estructura esperada.');
-                 }
-            } catch (error) {
-                console.error('Error al procesar los datos:', error);
-            }
-        },
-        error: function(xhr, textStatus, errorThrown) {
-            console.error('Error en la solicitud AJAX:', textStatus, errorThrown);
-        }
-    });
-});
-
-
-
+  
 
 
  // elimina registro    

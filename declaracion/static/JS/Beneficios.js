@@ -38,25 +38,24 @@ function StVisorMantenimiento() {
 
 
 // Elimina tipo de Beneficio 
-function eliminatipo(IDD) {
-    console.log('eliminando ');
-    Swal.fire({
-        title: "Desea Eliminar este Tipo",
-        text: "Recuerde que si tiene documentos ligados no podrá eliminarla.",
-        icon: "warning",
-        showCancelButton: true,
-        cancelButtonText: "No, Cancelar",
-        confirmButtonText: "Si, Eliminar",
-        reverseButtons: true,
-        confirmButtonColor: "#dc3545",
-        backdrop: true,
-        showLoaderOnConfirm: true,  
-    }).then(function(result) {
-        if (result.isConfirmed) {                    
-            window.location.href = "/elimina_tipo/" + IDD;
-        }
-    });
-}
+    function eliminatipo(IDD) {    
+        Swal.fire({
+            title: "Desea Eliminar este Tipo",
+            text: "Recuerde que si tiene documentos ligados no podrá eliminarla.",
+            icon: "warning",
+            showCancelButton: true,
+            cancelButtonText: "No, Cancelar",
+            confirmButtonText: "Si, Eliminar",
+            reverseButtons: true,
+            confirmButtonColor: "#dc3545",
+            backdrop: true,
+            showLoaderOnConfirm: true,  
+        }).then(function(result) {
+            if (result.isConfirmed) {                    
+                window.location.href = "/elimina_tipo/" + IDD;
+            }
+        });
+    }
 
 // Función para editar tipo
 function editar(idTipo) {      
@@ -80,7 +79,7 @@ function StBuscaBeneficios(IDD){
         })
 
         .then(datos => {        
-        // limpiar la tabla Datatables        
+        // limpiar la tabla Datatables             
         var table = $('#visortipos').DataTable();
         table.clear().draw();
 

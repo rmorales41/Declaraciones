@@ -12,6 +12,8 @@ from django.conf import settings
 from django.contrib.staticfiles.urls import static
 from django.contrib.auth import views as auth_views
 
+from django.contrib.auth.views import LogoutView
+
 urlpatterns = [
      
     # menu principal   
@@ -134,10 +136,26 @@ urlpatterns = [
     path('BuscaUsuarios/',Views_Utilitarios.VsBuscaUsuarios, name='BuscaUsuarios'),    
     path('CrearUsuario/',Views_Utilitarios.VsCreaUsuarios, name='CrearUsuario'),    
     path('Bitacora/',views.VsBitacora, name='Bitacora'),    
+    path('UsrBusca/<int:IDD>/',Views_Utilitarios.VsUsrBusca, name='UsrBusca'),    
+    path('EliminarUsuario/<int:IDD>/',Views_Utilitarios.VsEliminaUsuario, name='EliminarUsuario'),
     
+    # Roles    
+    path('Roles/',Views_Utilitarios.VsRoles, name='Roles'),    
+    path('Nuevo_Rol/',Views_Utilitarios.VsNuevo_Roles, name='Nuevo_Rol'),    
+    path('Editar_Rol/<int:IDD>/',Views_Utilitarios.Editar_Rol, name='Editar_Rol'),    
+    path('Borrar_Rol/<int:IDD>/',Views_Utilitarios.VsBorrar_Rol, name='Borrar_Rol'),  
+    
+    #Permisos  
+    path('Permisos/',Views_Utilitarios.VsPermisos, name='Permisos'),    
+    path('Nuevo_Permiso/',Views_Utilitarios.VsNuevo_Permiso, name='Nuevo_Permiso'),    
+    path('Editar_Permiso/<int:IDD>/',Views_Utilitarios.VsEditar_Permiso, name='Editar_Permiso'),    
+    path('AsignaRol/',Views_Utilitarios.VsAsigna_Rol, name='AsignaRol'),                
+    path('listaGrol/',Views_Utilitarios.VsAsigna_GRol, name='listaGrol'),                
+        
+        
     # Otras rutas pdf ...
     path('pdfs/<str:filename>/', views.serve_pdf, name='serve_pdf'),
-     
+    path('logout/', LogoutView.as_view(), name='logout'),  # URL para cerrar sesión 
 ]
 
 #+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
